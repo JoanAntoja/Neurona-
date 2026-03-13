@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEURONA — Filtre de Consciència Digital</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── TOKENS ─────────────────────────────────────────── */
+    :root {
+      --bg:           #f0f1f5;
+      --surface:      #ffffff;
+      --surface-2:    #f7f8fb;
+      --ink:          #0d1220;
+      --ink-2:        #3d4560;
+      --ink-3:        #8892aa;
+      --accent-a:     #3a6cf4;
+      --accent-b:     #7c3af4;
+      --card-data:    #eef3ff;
+      --card-empath:  #eef9f4;
+      --card-pedag:   #fdf3e8;
+      --border-data:  #c5d4fb;
+      --border-empath:#b5e8ce;
+      --border-pedag: #f5d9a8;
+      --dot-data:     #3a6cf4;
+      --dot-empath:   #22c27a;
+      --dot-pedag:    #f5a623;
+      --radius:       18px;
+      --radius-sm:    10px;
+      --shadow:       0 4px 24px rgba(13,18,32,.08);
+      --shadow-card:  0 2px 12px rgba(13,18,32,.06);
+      --transition:   .25s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ─── RESET ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100dvh;
+      display: flex;
+      justify-content: center;
+      padding: 0 0 40px;
+    }
+
+    /* ─── SHELL ──────────────────────────────────────────── */
+    .app {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* ─── HEADER ─────────────────────────────────────────── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(240,241,245,.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid rgba(13,18,32,.07);
+    }
+
+    .header__inner {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(122,58,244,.3);
+      animation: pulse-logo 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-logo {
+      0%, 100% { box-shadow: 0 4px 14px rgba(122,58,244,.3); }
+      50%       { box-shadow: 0 4px 22px rgba(122,58,244,.55); }
+    }
+
+    .header__text {}
+
+    .title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: .08em;
+      background: linear-gradient(100deg, var(--accent-a), var(--accent-b));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+
+    .subtitle {
+      font-size: 11.5px;
+      font-weight: 400;
+      color: var(--ink-3);
+      letter-spacing: .04em;
+      margin-top: 3px;
+      text-transform: uppercase;
+    }
+
+    /* ─── MAIN CONTENT ───────────────────────────────────── */
+    .main {
+      padding: 24px 20px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ─── LABEL / HINT ───────────────────────────────────── */
+    .label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--ink-2);
+      letter-spacing: .03em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .label .badge {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      font-size: 11px;
+      background: var(--surface);
+      color: var(--ink-3);
+      border: 1px solid rgba(13,18,32,.1);
+      border-radius: 20px;
+      padding: 1px 8px;
+      letter-spacing: 0;
+    }
+
+    /* ─── TEXTAREA ───────────────────────────────────────── */
+    .input-block {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .textarea-wrap {
+      position: relative;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      border-radius: var(--radius);
+      border: 1.5px solid rgba(13,18,32,.1);
+      background: var(--surface);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.65;
+      padding: 18px 18px 44px;
+      resize: none;
+      outline: none;
+      box-shadow: var(--shadow-card);
+      transition: border-color var(--transition), box-shadow var(--transition);
+    }
+
+    textarea::placeholder { color: var(--ink-3); font-style: italic; }
+
+    textarea:focus {
+      border-color: var(--accent-a);
+      box-shadow: 0 0 0 3px rgba(58,108,244,.12), var(--shadow-card);
+    }
+
+    .char-count {
+      position: absolute;
+      bottom: 14px;
+      right: 16px;
+      font-size: 11.5px;
+      color: var(--ink-3);
+      pointer-events: none;
+    }
+
+    /* ─── BUTTON ─────────────────────────────────────────── */
+    .btn-analyze {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: var(--radius);
+      background: linear-gradient(110deg, var(--accent-a) 0%, var(--accent-b) 100%);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 6px 20px rgba(58,108,244,.35);
+      transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-analyze::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, rgba(255,255,255,.15), transparent);
+      opacity: 0;
+      transition: opacity var(--transition);
+    }
+
+    .btn-analyze:hover::after { opacity: 1; }
+    .btn-analyze:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(58,108,244,.45); }
+    .btn-analyze:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(58,108,244,.3); }
+    .btn-analyze:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+    .btn-icon {
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* ─── LOADING SPINNER ────────────────────────────────── */
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-analyze.loading .btn-label,
+    .btn-analyze.loading .btn-icon { display: none; }
+    .btn-analyze.loading .spinner { display: block; }
+
+    /* ─── DIVIDER ─────────────────────────────────────────── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink-3);
+      font-size: 11px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(13,18,32,.1);
+    }
+
+    /* ─── RESULTS SECTION ────────────────────────────────── */
+    .results {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(16px);
+      pointer-events: none;
+      max-height: 0;
+      overflow: hidden;
+      transition: opacity .4s ease, transform .4s ease, max-height .5s ease;
+    }
+
+    .results.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+      max-height: 1200px;
+    }
+
+    /* ─── CARD ───────────────────────────────────────────── */
+    .card {
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow-card);
+      border: 1.5px solid transparent;
+      position: relative;
+      overflow: hidden;
+      animation: card-in .4s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    .card:nth-child(1) { animation-delay: .05s; }
+    .card:nth-child(2) { animation-delay: .12s; }
+    .card:nth-child(3) { animation-delay: .19s; }
+
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(12px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .card--data   { background: var(--card-data);   border-color: var(--border-data); }
+    .card--empath { background: var(--card-empath); border-color: var(--border-empath); }
+    .card--pedag  { background: var(--card-pedag);  border-color: var(--border-pedag); }
+
+    /* decorative glow blob */
+    .card::before {
+      content: '';
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      top: -20px;
+      right: -20px;
+      opacity: .18;
+      filter: blur(24px);
+    }
+    .card--data::before   { background: var(--accent-a); }
+    .card--empath::before { background: var(--dot-empath); }
+    .card--pedag::before  { background: var(--dot-pedag); }
+
+    .card__header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .card__dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .card--data   .card__dot { background: var(--dot-data); }
+    .card--empath .card__dot { background: var(--dot-empath); }
+    .card--pedag  .card__dot { background: var(--dot-pedag); }
+
+    .card__icon {
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .card__title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 12.5px;
+      color: var(--ink-2);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      flex: 1;
+    }
+
+    .card__body {
+      font-size: 14.5px;
+      font-weight: 300;
+      color: var(--ink);
+      line-height: 1.7;
+    }
+
+    .card__body .skeleton {
+      background: linear-gradient(90deg, rgba(13,18,32,.07) 25%, rgba(13,18,32,.13) 50%, rgba(13,18,32,.07) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+      height: 13px;
+      margin-bottom: 8px;
+    }
+    .card__body .skeleton:last-child { width: 65%; margin-bottom: 0; }
+
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    .footer {
+      margin-top: 32px;
+      padding: 0 20px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--ink-3);
+      letter-spacing: .03em;
+      line-height: 1.7;
+    }
+
+    .footer a {
+      color: var(--accent-a);
+      text-decoration: none;
+    }
+
+    /* ─── DESKTOP CHROME ─────────────────────────────────── */
+    @media (min-width: 520px) {
+      body { padding: 32px 16px 60px; align-items: flex-start; }
+      .app {
+        border-radius: 28px;
+        box-shadow: 0 20px 60px rgba(13,18,32,.12), 0 4px 16px rgba(13,18,32,.06);
+        overflow: hidden;
+        background: var(--bg);
+      }
+      .header { border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__inner">
+      <div class="logo">🧠</div>
+      <div class="header__text">
+        <div class="title">NEURONA</div>
+        <div class="subtitle">Filtre de Consciència Digital</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- INPUT -->
+    <div class="input-block">
+      <div class="label">
+        Missatge a analitzar
+        <span class="badge">IA · Privat</span>
+      </div>
+      <div class="textarea-wrap">
+        <textarea
+          id="msgInput"
+          placeholder="Enganxa aquí el missatge sospitós..."
+          maxlength="3000"
+          aria-label="Missatge a analitzar"
+          oninput="updateCount(this)"
+        ></textarea>
+        <span class="char-count" id="charCount">0 / 3000</span>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <button class="btn-analyze" id="btnAnalyze" onclick="analyze()">
+      <span class="btn-icon">⚡</span>
+      <span class="btn-label">Analitzar Missatge</span>
+      <div class="spinner"></div>
+    </button>
+
+    <!-- DIVIDER -->
+    <div class="divider" id="divider" style="display:none">Anàlisi</div>
+
+    <!-- RESULTS -->
+    <div class="results" id="results" aria-live="polite">
+
+      <!-- Card 1: Dades -->
+      <div class="card card--data">
+        <div class="card__header">
+          <div class="card__dot"></div>
+          <span class="card__icon">📊</span>
+          <div class="card__title">Resposta Basada en Dades</div>
+        </div>
+        <div class="card__body" id="body-data">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </div>
+
+      <!-- Card 2: Empàtica -->
+      <div class="card card--empath">
+        <div class="card__header">
+          <div class="card__dot"></div>
+          <span class="card__icon">💬</span>
+          <div class="card__title">Resposta Empàtica</div>
+        </div>
+        <div class="card__body" id="body-empath">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </div>
+
+      <!-- Card 3: Pedagògica -->
+      <div class="card card--pedag">
+        <div class="card__header">
+          <div class="card__dot"></div>
+          <span class="card__icon">🎓</span>
+          <div class="card__title">Resposta Pedagògica</div>
+        </div>
+        <div class="card__body" id="body-pedag">
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+          <div class="skeleton"></div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /results -->
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    NEURONA · Eina de detecció de desinformació<br>
+    Anàlisi local · Cap dada s'envia al servidor
+  </footer>
+
+</div>
+
+<script>
+  /* ── Char counter ────────────────────────────────── */
+  function updateCount(el) {
+    document.getElementById('charCount').textContent =
+      el.value.length + ' / ' + el.maxLength;
+  }
+
+  /* ── Simulate analysis ───────────────────────────── */
+  async function analyze() {
+    const input  = document.getElementById('msgInput');
+    const btn    = document.getElementById('btnAnalyze');
+    const res    = document.getElementById('results');
+    const div    = document.getElementById('divider');
+
+    if (!input.value.trim()) {
+      input.focus();
+      input.style.borderColor = '#f43a3a';
+      setTimeout(() => input.style.borderColor = '', 1200);
+      return;
+    }
+
+    // Loading state
+    btn.disabled = true;
+    btn.classList.add('loading');
+
+    // Show skeletons
+    setSkeletons();
+    div.style.display = 'flex';
+    res.classList.add('visible');
+
+    // Simulate API delay
+    await delay(1800);
+
+    // Fill with mock results
+    fillResults(input.value.trim());
+
+    btn.disabled = false;
+    btn.classList.remove('loading');
+  }
+
+  function setSkeletons() {
+    ['data','empath','pedag'].forEach(id => {
+      document.getElementById('body-' + id).innerHTML =
+        '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+    });
+  }
+
+  function fillResults(msg) {
+    const samples = {
+      data: `Aquest missatge conté característiques associades a contingut desinformatiu: manca de fonts verificables, ús de llenguatge d'urgència i afirmacions no contrastades. La probabilitat de ser bulo és <strong>alta</strong> segons patrons estadístics.`,
+      empath: `Entenc que rebre aquest tipus de missatge pot generar confusió o por. És natural sentir-se desconcertat. T'acompanyo a analitzar-ho junts: recorda que les emocions forts que provoca un text sovint és la primera alarma d'una manipulació.`,
+      pedag: `Per detectar desinformació, aplica el mètode SIFT: <em>Stop</em> (para), <em>Investigate</em> (investiga la font), <em>Find better coverage</em> (cerca més fonts), <em>Trace claims</em> (rastreja l'origen). En aquest cas, cap font fiable confirma el contingut.`
+    };
+
+    ['data','empath','pedag'].forEach(id => {
+      document.getElementById('body-' + id).innerHTML = samples[id];
+    });
+  }
+
+  function delay(ms) {
+    return new Promise(r => setTimeout(r, ms));
+  }
+
+  /* ── Enter shortcut ──────────────────────────────── */
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') analyze();
+  });
+</script>
+</body>
+</html>
