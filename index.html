@@ -1,745 +1,1056 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NEURONA — Filtre de Consciència Digital</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
-  <style>
-    /* ─── TOKENS ─────────────────────────────────────────── */
-    :root {
-      --bg:           #f0f1f5;
-      --surface:      #ffffff;
-      --surface-2:    #f7f8fb;
-      --ink:          #0d1220;
-      --ink-2:        #3d4560;
-      --ink-3:        #8892aa;
-      --accent-a:     #3a6cf4;
-      --accent-b:     #7c3af4;
-      --card-data:    #eef3ff;
-      --card-empath:  #eef9f4;
-      --card-pedag:   #fdf3e8;
-      --border-data:  #c5d4fb;
-      --border-empath:#b5e8ce;
-      --border-pedag: #f5d9a8;
-      --dot-data:     #3a6cf4;
-      --dot-empath:   #22c27a;
-      --dot-pedag:    #f5a623;
-      --radius:       18px;
-      --radius-sm:    10px;
-      --shadow:       0 4px 24px rgba(13,18,32,.08);
-      --shadow-card:  0 2px 12px rgba(13,18,32,.06);
-      --transition:   .25s cubic-bezier(.4,0,.2,1);
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>NEURONA · Sistema d'Anàlisi Forense</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:wght@300;400;600;700&family=Share+Tech+Mono&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════ TOKENS ══════════════════════════════════════════ */
+:root{
+  --bg:       #07090f;
+  --bg2:      #0b0e18;
+  --surface:  #0f1320;
+  --surf2:    #141828;
+  --surf3:    #1a1f30;
+  --bd:       rgba(90,120,220,.1);
+  --bd2:      rgba(90,120,220,.18);
+  --ink:      #c8d0e8;
+  --ink2:     #6472a0;
+  --ink3:     #2e3650;
+  --cyan:     #22d3ee;
+  --cyanD:    rgba(34,211,238,.1);
+  --green:    #10d98a;
+  --greenD:   rgba(16,217,138,.1);
+  --amber:    #fbbf24;
+  --amberD:   rgba(251,191,36,.1);
+  --red:      #f87171;
+  --redD:     rgba(248,113,113,.1);
+  --mono:     'Share Tech Mono',monospace;
+  --exo:      'Exo 2',sans-serif;
+  --sans:     'DM Sans',sans-serif;
+  --r:        14px;
+  --rsm:      9px;
+  --tr:       .2s cubic-bezier(.4,0,.2,1);
+}
 
-    /* ─── RESET ──────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-font-smoothing: antialiased; }
+/* ═══════ RESET ═══════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100dvh;
+  display:flex;
+  justify-content:center;
+  padding:0 0 60px;
+  background-image:
+    linear-gradient(rgba(34,211,238,.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(34,211,238,.015) 1px,transparent 1px);
+  background-size:32px 32px;
+}
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-      min-height: 100dvh;
-      display: flex;
-      justify-content: center;
-      padding: 0 0 40px;
-    }
+/* ═══════ SHELL ═══════════════════════════════════════════ */
+.app{width:100%;max-width:500px;display:flex;flex-direction:column}
 
-    /* ─── SHELL ──────────────────────────────────────────── */
-    .app {
-      width: 100%;
-      max-width: 500px;
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
+/* ═══════ HEADER ══════════════════════════════════════════ */
+.header{
+  position:sticky;top:0;z-index:20;
+  background:rgba(7,9,15,.92);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bd);
+  padding:16px 18px 13px;
+}
+.header__row{display:flex;align-items:center;justify-content:space-between}
+.header__brand{display:flex;align-items:center;gap:11px}
+.logo{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,#1a6fff,#7c3bf6);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:0 0 0 1px rgba(124,59,246,.3),0 4px 16px rgba(26,111,255,.3);
+  animation:logo-glow 3.5s ease-in-out infinite;
+}
+@keyframes logo-glow{
+  0%,100%{box-shadow:0 0 0 1px rgba(124,59,246,.3),0 4px 16px rgba(26,111,255,.3)}
+  50%{box-shadow:0 0 0 2px rgba(124,59,246,.2),0 4px 22px rgba(26,111,255,.5)}
+}
+.brand-text{}
+.brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.12em;line-height:1;color:#fff}
+.brand-sub{font-family:var(--mono);font-size:9px;color:var(--ink2);letter-spacing:.08em;margin-top:2px}
+.status-row{display:flex;align-items:center;gap:6px}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.status-txt{font-family:var(--mono);font-size:9.5px;color:var(--green);letter-spacing:.06em}
+.ver-badge{font-family:var(--mono);font-size:9px;color:var(--ink3);border:1px solid var(--ink3);border-radius:4px;padding:2px 6px;letter-spacing:.05em;margin-left:8px}
 
-    /* ─── HEADER ─────────────────────────────────────────── */
-    .header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(240,241,245,.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      padding: 28px 24px 20px;
-      border-bottom: 1px solid rgba(13,18,32,.07);
-    }
+/* ═══════ MAIN ════════════════════════════════════════════ */
+.main{padding:18px 16px 0;display:flex;flex-direction:column;gap:12px}
 
-    .header__inner {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
+/* ═══════ SECTION LABELS ══════════════════════════════════ */
+.sec-label{
+  font-family:var(--mono);font-size:9.5px;
+  color:var(--ink2);letter-spacing:.1em;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+}
+.sec-label::before{content:'>';color:var(--cyan);margin-right:2px}
 
-    .logo {
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      flex-shrink: 0;
-      box-shadow: 0 4px 14px rgba(122,58,244,.3);
-      animation: pulse-logo 3s ease-in-out infinite;
-    }
+/* ═══════ TEXTAREA ════════════════════════════════════════ */
+.inp-block{display:flex;flex-direction:column;gap:7px}
+.ta-wrap{position:relative}
+textarea{
+  width:100%;min-height:140px;
+  border-radius:var(--r);border:1px solid var(--bd);
+  background:var(--surface);color:var(--ink);
+  font-family:var(--sans);font-size:14.5px;font-weight:300;line-height:1.7;
+  padding:15px 15px 42px;resize:none;outline:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+  transition:border-color var(--tr),box-shadow var(--tr);
+}
+textarea::placeholder{color:var(--ink3);font-style:italic;font-size:14px}
+textarea:focus{border-color:rgba(34,211,238,.35);box-shadow:0 0 0 3px rgba(34,211,238,.07),inset 0 1px 0 rgba(255,255,255,.03)}
+.ta-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 13px;border-top:1px solid var(--bd);
+}
+.char-ct{font-family:var(--mono);font-size:10px;color:var(--ink3)}
+.kbd-hint{font-size:10px;color:var(--ink3);font-family:var(--mono)}
+kbd{display:inline-block;background:var(--surf3);border:1px solid var(--bd2);border-radius:4px;padding:1px 4px;font-size:9px;font-family:var(--mono)}
 
-    @keyframes pulse-logo {
-      0%, 100% { box-shadow: 0 4px 14px rgba(122,58,244,.3); }
-      50%       { box-shadow: 0 4px 22px rgba(122,58,244,.55); }
-    }
+/* ═══════ BUTTONS ═════════════════════════════════════════ */
+.btn-row{display:flex;gap:9px}
+.btn-analyze{
+  flex:1;padding:13px 14px;border:none;border-radius:var(--r);
+  background:linear-gradient(110deg,#1a6fff,#7c3bf6);
+  color:#fff;font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.1em;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 4px 20px rgba(26,111,255,.25);
+  transition:transform var(--tr),box-shadow var(--tr);
+  position:relative;overflow:hidden;
+}
+.btn-analyze::before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,rgba(255,255,255,.08),transparent 60%)}
+.btn-analyze:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(26,111,255,.4)}
+.btn-analyze:active{transform:translateY(0)}
+.btn-analyze:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-clear{
+  padding:13px 14px;border:1px solid var(--bd2);border-radius:var(--r);
+  background:transparent;color:var(--ink2);font-family:var(--mono);font-size:11px;
+  cursor:pointer;white-space:nowrap;letter-spacing:.05em;
+  transition:all var(--tr);
+}
+.btn-clear:hover{background:var(--surf3);border-color:var(--ink2);color:var(--ink)}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-analyze.loading .btn-lbl,.btn-analyze.loading .btn-ico{display:none}
+.btn-analyze.loading .spinner{display:block}
 
-    .header__text {}
+/* ═══════ LOADING OVERLAY ═════════════════════════════════ */
+.scan-overlay{
+  border-radius:var(--r);border:1px solid var(--bd);background:var(--surface);
+  padding:20px 18px;display:flex;flex-direction:column;gap:10px;
+  display:none;
+}
+.scan-line{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:11px;color:var(--ink2);
+  opacity:0;animation:scan-appear .3s ease forwards;
+}
+.scan-line.s1{animation-delay:.1s}
+.scan-line.s2{animation-delay:.4s}
+.scan-line.s3{animation-delay:.7s}
+.scan-line.s4{animation-delay:1s}
+@keyframes scan-appear{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.scan-dot{width:4px;height:4px;border-radius:50%;background:var(--cyan);flex-shrink:0;animation:blink 1s ease-in-out infinite}
+.scan-bar-wrap{flex:1;height:3px;background:var(--surf3);border-radius:2px;overflow:hidden}
+.scan-bar{height:100%;border-radius:2px;background:var(--cyan);width:0;transition:width 1.2s ease}
 
-    .title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 22px;
-      letter-spacing: .08em;
-      background: linear-gradient(100deg, var(--accent-a), var(--accent-b));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-    }
+/* ═══════ DASHBOARD ═══════════════════════════════════════ */
+.dashboard{
+  display:flex;flex-direction:column;gap:11px;
+  opacity:0;transform:translateY(10px);pointer-events:none;
+  max-height:0;overflow:hidden;
+  transition:opacity .4s ease,transform .4s ease,max-height .6s ease;
+}
+.dashboard.visible{opacity:1;transform:none;pointer-events:auto;max-height:3000px}
 
-    .subtitle {
-      font-size: 11.5px;
-      font-weight: 400;
-      color: var(--ink-3);
-      letter-spacing: .04em;
-      margin-top: 3px;
-      text-transform: uppercase;
-    }
+/* scan header */
+.scan-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 12px;border-radius:var(--rsm);
+  background:var(--surf2);border:1px solid var(--bd);
+}
+.scan-id,.scan-ts{font-family:var(--mono);font-size:10px;color:var(--ink2);letter-spacing:.06em}
+.scan-id span{color:var(--cyan)}
 
-    /* ─── MAIN CONTENT ───────────────────────────────────── */
-    .main {
-      padding: 24px 20px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+/* ═══════ GAUGE PANEL ═════════════════════════════════════ */
+.gauge-panel{
+  border-radius:var(--r);border:1px solid var(--bd);background:var(--surface);
+  padding:20px 16px 16px;display:flex;flex-direction:column;align-items:center;gap:0;
+  position:relative;overflow:hidden;
+}
+.gauge-panel::before{
+  content:'';position:absolute;width:160px;height:160px;border-radius:50%;
+  top:-80px;left:50%;transform:translateX(-50%);
+  background:radial-gradient(circle,rgba(34,211,238,.06),transparent 70%);
+  pointer-events:none;
+}
+.gauge-label-top{font-family:var(--mono);font-size:9.5px;color:var(--ink2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;align-self:flex-start}
 
-    /* ─── LABEL / HINT ───────────────────────────────────── */
-    .label {
-      font-family: 'Syne', sans-serif;
-      font-weight: 600;
-      font-size: 13px;
-      color: var(--ink-2);
-      letter-spacing: .03em;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+/* SVG gauge */
+.gauge-svg{width:100%;max-width:280px}
 
-    .label .badge {
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 400;
-      font-size: 11px;
-      background: var(--surface);
-      color: var(--ink-3);
-      border: 1px solid rgba(13,18,32,.1);
-      border-radius: 20px;
-      padding: 1px 8px;
-      letter-spacing: 0;
-    }
+/* Score display */
+.gauge-score-wrap{
+  display:flex;align-items:baseline;gap:4px;
+  margin-top:-8px;
+  transition:color var(--tr);
+}
+.score-val{font-family:'Bebas Neue',sans-serif;font-size:56px;line-height:1;transition:color .5s ease}
+.score-unit{font-family:var(--mono);font-size:14px;color:var(--ink2)}
+.gauge-verdict{
+  font-family:var(--exo);font-weight:700;font-size:12px;
+  letter-spacing:.12em;text-transform:uppercase;
+  margin-top:4px;padding:4px 14px;border-radius:20px;
+  transition:all .4s ease;
+}
+.gauge-verdict.red {background:var(--redD);color:var(--red);border:1px solid rgba(248,113,113,.25)}
+.gauge-verdict.amber{background:var(--amberD);color:var(--amber);border:1px solid rgba(251,191,36,.25)}
+.gauge-verdict.green{background:var(--greenD);color:var(--green);border:1px solid rgba(16,217,138,.25)}
 
-    /* ─── TEXTAREA ───────────────────────────────────────── */
-    .input-block {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+/* zone pills under gauge */
+.gauge-zones{
+  display:flex;gap:6px;margin-top:10px;width:100%;justify-content:center;
+}
+.zone-pill{font-family:var(--mono);font-size:9px;padding:3px 9px;border-radius:20px;letter-spacing:.04em}
+.zone-pill.z-red  {background:var(--redD);color:var(--red);border:1px solid rgba(248,113,113,.15)}
+.zone-pill.z-amber{background:var(--amberD);color:var(--amber);border:1px solid rgba(251,191,36,.15)}
+.zone-pill.z-green{background:var(--greenD);color:var(--green);border:1px solid rgba(16,217,138,.15)}
 
-    .textarea-wrap {
-      position: relative;
-    }
+/* ═══════ GENERIC PANEL ═══════════════════════════════════ */
+.panel{
+  border-radius:var(--r);border:1px solid var(--bd);background:var(--surface);
+  overflow:hidden;
+}
+.panel-hdr{
+  display:flex;align-items:center;gap:9px;
+  padding:11px 14px;border-bottom:1px solid var(--bd);
+  background:var(--surf2);
+}
+.panel-ico{font-size:13px;line-height:1}
+.panel-title{font-family:var(--mono);font-size:10.5px;color:var(--ink2);letter-spacing:.1em;text-transform:uppercase;flex:1}
+.panel-count{
+  font-family:var(--mono);font-size:10px;
+  background:var(--surf3);color:var(--cyan);border:1px solid rgba(34,211,238,.2);
+  border-radius:20px;padding:2px 8px;
+}
+.panel-body{padding:14px}
 
-    textarea {
-      width: 100%;
-      min-height: 160px;
-      border-radius: var(--radius);
-      border: 1.5px solid rgba(13,18,32,.1);
-      background: var(--surface);
-      color: var(--ink);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 15px;
-      font-weight: 300;
-      line-height: 1.65;
-      padding: 18px 18px 44px;
-      resize: none;
-      outline: none;
-      box-shadow: var(--shadow-card);
-      transition: border-color var(--transition), box-shadow var(--transition);
-    }
+/* ═══════ VARIABLES LIST ══════════════════════════════════ */
+.var-item{
+  display:flex;align-items:flex-start;gap:11px;
+  padding:9px 0;border-bottom:1px solid var(--bd);
+}
+.var-item:last-child{border-bottom:none;padding-bottom:0}
+.var-badge{
+  flex-shrink:0;width:36px;height:20px;border-radius:4px;
+  font-family:var(--mono);font-size:9.5px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;letter-spacing:.03em;
+  margin-top:1px;
+}
+.var-badge.neg{background:var(--redD);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+.var-badge.pos{background:var(--greenD);color:var(--green);border:1px solid rgba(16,217,138,.2)}
+.var-info{flex:1}
+.var-label{font-family:var(--exo);font-weight:600;font-size:12.5px;color:var(--ink);line-height:1.2}
+.var-detail{font-family:var(--mono);font-size:10px;color:var(--ink2);margin-top:3px;word-break:break-word}
+.var-pts{
+  flex-shrink:0;font-family:'Bebas Neue',sans-serif;font-size:16px;
+  letter-spacing:.05em;margin-top:1px;
+}
+.var-pts.neg{color:var(--red)}
+.var-pts.pos{color:var(--green)}
+.var-empty{font-family:var(--mono);font-size:11px;color:var(--ink3);text-align:center;padding:8px 0}
 
-    textarea::placeholder { color: var(--ink-3); font-style: italic; }
+/* ═══════ CAPA DE CEBA ════════════════════════════════════ */
+.ceba-grid{display:flex;flex-direction:column;gap:10px}
+.ceba-row{display:flex;gap:10px;align-items:flex-start}
+.ceba-key{
+  font-family:var(--mono);font-size:10px;color:var(--ink2);
+  letter-spacing:.06em;text-transform:uppercase;
+  width:86px;flex-shrink:0;padding-top:1px;
+}
+.ceba-val{font-family:var(--sans);font-weight:400;font-size:13px;color:var(--ink);line-height:1.55;flex:1}
+.ceba-chip{
+  display:inline-block;font-family:var(--mono);font-size:10px;
+  padding:2px 9px;border-radius:20px;
+}
+.ceba-chip.cat{background:rgba(34,211,238,.1);color:var(--cyan);border:1px solid rgba(34,211,238,.2)}
+.ceba-chip.tone-alarm{background:var(--redD);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+.ceba-chip.tone-consp{background:rgba(155,60,255,.1);color:#b87eff;border:1px solid rgba(155,60,255,.2)}
+.ceba-chip.tone-neut {background:var(--greenD);color:var(--green);border:1px solid rgba(16,217,138,.2)}
+.ceba-chip.tone-pers {background:var(--amberD);color:var(--amber);border:1px solid rgba(251,191,36,.2)}
+.ceba-chip.tone-unk  {background:var(--surf3);color:var(--ink2);border:1px solid var(--bd2)}
+.ceba-sources{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.src-link{
+  font-family:var(--mono);font-size:10px;
+  background:var(--surf3);color:var(--cyan);
+  border:1px solid rgba(34,211,238,.15);border-radius:5px;
+  padding:2px 8px;text-decoration:none;
+  transition:all var(--tr);
+}
+.src-link:hover{background:var(--cyanD);border-color:rgba(34,211,238,.35)}
 
-    textarea:focus {
-      border-color: var(--accent-a);
-      box-shadow: 0 0 0 3px rgba(58,108,244,.12), var(--shadow-card);
-    }
+/* ═══════ VERIFY BUTTON ═══════════════════════════════════ */
+.btn-verify{
+  width:100%;padding:14px;border-radius:var(--r);
+  border:1px solid rgba(34,211,238,.25);
+  background:rgba(34,211,238,.05);
+  color:var(--cyan);
+  font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.1em;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;
+  transition:all var(--tr);
+}
+.btn-verify:hover{background:rgba(34,211,238,.1);border-color:rgba(34,211,238,.45);box-shadow:0 4px 20px rgba(34,211,238,.1)}
+.verify-sites{font-family:var(--mono);font-size:9px;color:var(--ink2);margin-top:3px;letter-spacing:.04em}
 
-    .char-count {
-      position: absolute;
-      bottom: 14px;
-      right: 16px;
-      font-size: 11.5px;
-      color: var(--ink-3);
-      pointer-events: none;
-    }
+/* ═══════ FOOTER ══════════════════════════════════════════ */
+.footer{margin-top:28px;padding:0 16px;text-align:center}
+.footer-txt{font-family:var(--mono);font-size:9.5px;color:var(--ink3);letter-spacing:.05em;line-height:1.8}
 
-    /* ─── BUTTON ─────────────────────────────────────────── */
-    .btn-analyze {
-      width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: var(--radius);
-      background: linear-gradient(110deg, var(--accent-a) 0%, var(--accent-b) 100%);
-      color: #fff;
-      font-family: 'Syne', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 6px 20px rgba(58,108,244,.35);
-      transition: transform var(--transition), box-shadow var(--transition), opacity var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn-analyze::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(110deg, rgba(255,255,255,.15), transparent);
-      opacity: 0;
-      transition: opacity var(--transition);
-    }
-
-    .btn-analyze:hover::after { opacity: 1; }
-    .btn-analyze:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(58,108,244,.45); }
-    .btn-analyze:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(58,108,244,.3); }
-    .btn-analyze:disabled { opacity: .55; cursor: not-allowed; transform: none; }
-
-    .btn-icon {
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-    }
-
-    /* ─── LOADING SPINNER ────────────────────────────────── */
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 2.5px solid rgba(255,255,255,.35);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .7s linear infinite;
-      display: none;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .btn-analyze.loading .btn-label,
-    .btn-analyze.loading .btn-icon { display: none; }
-    .btn-analyze.loading .spinner { display: block; }
-
-    /* ─── DIVIDER ─────────────────────────────────────────── */
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--ink-3);
-      font-size: 11px;
-      letter-spacing: .06em;
-      text-transform: uppercase;
-    }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: rgba(13,18,32,.1);
-    }
-
-    /* ─── RESULTS SECTION ────────────────────────────────── */
-    .results {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      opacity: 0;
-      transform: translateY(16px);
-      pointer-events: none;
-      max-height: 0;
-      overflow: hidden;
-      transition: opacity .4s ease, transform .4s ease, max-height .5s ease;
-    }
-
-    .results.visible {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-      max-height: 1200px;
-    }
-
-    /* ─── CARD ───────────────────────────────────────────── */
-    .card {
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: var(--shadow-card);
-      border: 1.5px solid transparent;
-      position: relative;
-      overflow: hidden;
-      animation: card-in .4s cubic-bezier(.34,1.56,.64,1) both;
-    }
-
-    .card:nth-child(1) { animation-delay: .05s; }
-    .card:nth-child(2) { animation-delay: .12s; }
-    .card:nth-child(3) { animation-delay: .19s; }
-
-    @keyframes card-in {
-      from { opacity: 0; transform: translateY(12px) scale(.97); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .card--data   { background: var(--card-data);   border-color: var(--border-data); }
-    .card--empath { background: var(--card-empath); border-color: var(--border-empath); }
-    .card--pedag  { background: var(--card-pedag);  border-color: var(--border-pedag); }
-
-    /* decorative glow blob */
-    .card::before {
-      content: '';
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      top: -20px;
-      right: -20px;
-      opacity: .18;
-      filter: blur(24px);
-    }
-    .card--data::before   { background: var(--accent-a); }
-    .card--empath::before { background: var(--dot-empath); }
-    .card--pedag::before  { background: var(--dot-pedag); }
-
-    .card__header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .card__dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .card--data   .card__dot { background: var(--dot-data); }
-    .card--empath .card__dot { background: var(--dot-empath); }
-    .card--pedag  .card__dot { background: var(--dot-pedag); }
-
-    .card__icon {
-      font-size: 16px;
-      line-height: 1;
-    }
-
-    .card__title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 12.5px;
-      color: var(--ink-2);
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      flex: 1;
-    }
-
-    .card__body {
-      font-size: 14.5px;
-      font-weight: 300;
-      color: var(--ink);
-      line-height: 1.7;
-    }
-
-    .card__body .skeleton {
-      background: linear-gradient(90deg, rgba(13,18,32,.07) 25%, rgba(13,18,32,.13) 50%, rgba(13,18,32,.07) 75%);
-      background-size: 200% 100%;
-      animation: shimmer 1.4s infinite;
-      border-radius: 6px;
-      height: 13px;
-      margin-bottom: 8px;
-    }
-    .card__body .skeleton:last-child { width: 65%; margin-bottom: 0; }
-
-    @keyframes shimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    /* ─── FOOTER ─────────────────────────────────────────── */
-    .footer {
-      margin-top: 32px;
-      padding: 0 20px;
-      text-align: center;
-      font-size: 11px;
-      color: var(--ink-3);
-      letter-spacing: .03em;
-      line-height: 1.7;
-    }
-
-    .footer a {
-      color: var(--accent-a);
-      text-decoration: none;
-    }
-
-    /* ─── COPY BUTTON ────────────────────────────────────── */
-    .btn-copy {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      margin-top: 14px;
-      padding: 6px 12px;
-      border: 1px solid rgba(13,18,32,.15);
-      border-radius: 20px;
-      background: var(--surface);
-      color: var(--ink-3);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11.5px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all var(--transition);
-    }
-    .btn-copy:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
-    .btn-copy.copied { background: #22c27a; color: #fff; border-color: #22c27a; }
-    .copy-icon { font-size: 13px; }
-
-    /* ─── TEMA BADGE ─────────────────────────────────────── */
-    .tema-badge {
-      font-size: 10.5px;
-      font-weight: 500;
-      background: var(--surface);
-      color: var(--accent-a);
-      border: 1px solid var(--border-data);
-      border-radius: 20px;
-      padding: 2px 10px;
-      white-space: nowrap;
-      animation: fade-in .3s ease;
-    }
-    @keyframes fade-in {
-      from { opacity: 0; transform: scale(.9); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-
-    /* ─── DESKTOP CHROME ─────────────────────────────────── */
-    @media (min-width: 520px) {
-      body { padding: 32px 16px 60px; align-items: flex-start; }
-      .app {
-        border-radius: 28px;
-        box-shadow: 0 20px 60px rgba(13,18,32,.12), 0 4px 16px rgba(13,18,32,.06);
-        overflow: hidden;
-        background: var(--bg);
-      }
-      .header { border-radius: 0; }
-    }
-  </style>
+/* ═══════ DESKTOP ═════════════════════════════════════════ */
+@media(min-width:520px){
+  body{padding:32px 16px 72px;align-items:flex-start}
+  .app{border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.04);overflow:hidden}
+}
+</style>
 </head>
 <body>
 <div class="app">
 
-  <!-- HEADER -->
-  <header class="header">
-    <div class="header__inner">
+<!-- ─── HEADER ──────────────────────────────────────────── -->
+<header class="header">
+  <div class="header__row">
+    <div class="header__brand">
       <div class="logo">🧠</div>
-      <div class="header__text">
-        <div class="title">NEURONA</div>
-        <div class="subtitle">Filtre de Consciència Digital</div>
+      <div class="brand-text">
+        <div class="brand-name">NEURONA</div>
+        <div class="brand-sub">FORENSIC ANALYSIS SYSTEM</div>
       </div>
     </div>
-  </header>
+    <div class="status-row">
+      <div class="status-dot"></div>
+      <span class="status-txt">EN LÍNIA</span>
+      <span class="ver-badge">v4.0</span>
+    </div>
+  </div>
+</header>
 
-  <!-- MAIN -->
-  <main class="main">
+<!-- ─── MAIN ─────────────────────────────────────────────── -->
+<main class="main">
 
-    <!-- INPUT -->
-    <div class="input-block">
-      <div class="label">
-        Missatge a analitzar
-        <span class="badge">IA · Privat</span>
-      </div>
-      <div class="textarea-wrap">
-        <textarea
-          id="msgInput"
-          placeholder="Enganxa aquí el missatge sospitós..."
-          maxlength="3000"
-          aria-label="Missatge a analitzar"
-          oninput="updateCount(this)"
-        ></textarea>
-        <span class="char-count" id="charCount">0 / 3000</span>
+  <!-- Input -->
+  <div class="inp-block">
+    <div class="sec-label">INPUT / Missatge a analitzar</div>
+    <div class="ta-wrap">
+      <textarea id="msgInput" maxlength="3000" placeholder="Enganxa aquí el missatge sospitós per iniciar l'anàlisi forense..." oninput="updateCount(this)" aria-label="Missatge a analitzar"></textarea>
+      <div class="ta-bar">
+        <span class="char-ct" id="charCount">0 / 3000</span>
+        <span class="kbd-hint"><kbd>⌘</kbd>+<kbd>↵</kbd></span>
       </div>
     </div>
+  </div>
 
-    <!-- CTA -->
+  <!-- Buttons -->
+  <div class="btn-row">
     <button class="btn-analyze" id="btnAnalyze" onclick="analyze()">
-      <span class="btn-icon">⚡</span>
-      <span class="btn-label">Analitzar Missatge</span>
+      <span class="btn-ico">⬡</span>
+      <span class="btn-lbl">INICIAR ANÀLISI</span>
       <div class="spinner"></div>
     </button>
+    <button class="btn-clear" onclick="clearAll()">NETEJAR</button>
+  </div>
 
-    <!-- DIVIDER -->
-    <div class="divider" id="divider" style="display:none">Anàlisi</div>
+  <!-- Scan overlay (loading) -->
+  <div class="scan-overlay" id="scanOverlay">
+    <div class="scan-line s1"><div class="scan-dot"></div><span style="width:120px">Procesant text...</span><div class="scan-bar-wrap"><div class="scan-bar" id="sb1"></div></div></div>
+    <div class="scan-line s2"><div class="scan-dot"></div><span style="width:120px">Detectant patrons...</span><div class="scan-bar-wrap"><div class="scan-bar" id="sb2"></div></div></div>
+    <div class="scan-line s3"><div class="scan-dot"></div><span style="width:120px">Classificant tema...</span><div class="scan-bar-wrap"><div class="scan-bar" id="sb3"></div></div></div>
+    <div class="scan-line s4"><div class="scan-dot"></div><span style="width:120px">Calculant fiabilitat...</span><div class="scan-bar-wrap"><div class="scan-bar" id="sb4"></div></div></div>
+  </div>
 
-    <!-- RESULTS -->
-    <div class="results" id="results" aria-live="polite">
+  <!-- Dashboard -->
+  <div class="dashboard" id="dashboard">
 
-      <!-- Card 1: Dades -->
-      <div class="card card--data">
-        <div class="card__header">
-          <div class="card__dot"></div>
-          <span class="card__icon">📊</span>
-          <div class="card__title">Resposta Basada en Dades</div>
-        </div>
-        <div class="card__body" id="body-data">
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-        </div>
-      </div>
-
-      <!-- Card 2: Empàtica -->
-      <div class="card card--empath">
-        <div class="card__header">
-          <div class="card__dot"></div>
-          <span class="card__icon">💬</span>
-          <div class="card__title">Resposta Empàtica</div>
-        </div>
-        <div class="card__body" id="body-empath">
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-        </div>
-      </div>
-
-      <!-- Card 3: Pedagògica -->
-      <div class="card card--pedag">
-        <div class="card__header">
-          <div class="card__dot"></div>
-          <span class="card__icon">🎓</span>
-          <div class="card__title">Resposta Pedagògica</div>
-        </div>
-        <div class="card__body" id="body-pedag">
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-          <div class="skeleton"></div>
-        </div>
-      </div>
-
+    <!-- Scan header -->
+    <div class="scan-hdr">
+      <span class="scan-id">SCAN #<span id="scanId">0000</span></span>
+      <span class="scan-ts" id="scanTs">--:--:--</span>
     </div>
-    <!-- /results -->
 
-  </main>
+    <!-- Gauge -->
+    <div class="gauge-panel">
+      <div class="gauge-label-top">ÍNDEX DE FIABILITAT</div>
 
-  <!-- FOOTER -->
-  <footer class="footer">
-    NEURONA · Eina de detecció de desinformació<br>
-    Anàlisi local · Cap dada s'envia al servidor
-  </footer>
+      <svg class="gauge-svg" viewBox="0 0 300 165" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Track -->
+        <path d="M 30,140 A 120,120 0 0 1 270,140"
+          stroke="#1a1f30" stroke-width="14" stroke-linecap="round" fill="none"/>
+        <!-- Zone colors (decorative) -->
+        <path d="M 30,140 A 120,120 0 0 1 95,34"
+          stroke="rgba(248,113,113,.15)" stroke-width="14" stroke-linecap="round" fill="none"/>
+        <path d="M 95,34 A 120,120 0 0 1 222,34"
+          stroke="rgba(251,191,36,.12)" stroke-width="14" stroke-linecap="round" fill="none"/>
+        <path d="M 222,34 A 120,120 0 0 1 270,140"
+          stroke="rgba(16,217,138,.12)" stroke-width="14" stroke-linecap="round" fill="none"/>
+        <!-- Fill arc (animated) -->
+        <path id="gaugeFill"
+          d="M 30,140 A 120,120 0 0 1 270,140"
+          stroke="#22d3ee" stroke-width="14" stroke-linecap="round" fill="none"
+          stroke-dasharray="376.99"
+          stroke-dashoffset="376.99"
+          style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1),stroke .5s ease"/>
+        <!-- Tick marks -->
+        <line x1="26" y1="140" x2="18" y2="140" stroke="#2e3650" stroke-width="1.5"/>
+        <line x1="274" y1="140" x2="282" y2="140" stroke="#2e3650" stroke-width="1.5"/>
+        <line x1="150" y1="16" x2="150" y2="8" stroke="#2e3650" stroke-width="1.5"/>
+        <!-- Zone tick 30% -->
+        <line id="tick30x1" x1="57" y1="69" x2="51" y2="63" stroke="#2e3650" stroke-width="1.5"/>
+        <!-- Zone tick 70% -->
+        <line x1="243" y1="69" x2="249" y2="63" stroke="#2e3650" stroke-width="1.5"/>
+        <!-- Needle -->
+        <line id="gaugeNeedle"
+          x1="150" y1="140"
+          x2="60" y2="140"
+          stroke="#c8d0e8" stroke-width="2" stroke-linecap="round"
+          style="transform-origin:150px 140px;transition:all 1s cubic-bezier(.4,0,.2,1)"/>
+        <!-- Center dot -->
+        <circle cx="150" cy="140" r="5" fill="#0f1320" stroke="#22d3ee" stroke-width="1.5"/>
+        <!-- Labels -->
+        <text x="22" y="157" font-family="Share Tech Mono" font-size="9" fill="#3d4560">0</text>
+        <text x="268" y="157" font-family="Share Tech Mono" font-size="9" fill="#3d4560">100</text>
+        <text x="84" y="27" font-family="Share Tech Mono" font-size="9" fill="#5a4040">30</text>
+        <text x="203" y="27" font-family="Share Tech Mono" font-size="9" fill="#405a40">70</text>
+      </svg>
 
-</div>
+      <div class="gauge-score-wrap">
+        <span class="score-val" id="scoreVal" style="color:var(--cyan)">--</span>
+        <span class="score-unit">/100</span>
+      </div>
+      <div class="gauge-verdict" id="gaugeVerdict"></div>
+      <div class="gauge-zones">
+        <span class="zone-pill z-red">0-30 · BULO PROBABLE</span>
+        <span class="zone-pill z-amber">31-70 · VERIFICAR</span>
+        <span class="zone-pill z-green">71-100 · FIABLE</span>
+      </div>
+    </div>
+
+    <!-- Variables detectades -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <span class="panel-ico">⬡</span>
+        <span class="panel-title">Variables detectades</span>
+        <span class="panel-count" id="varCount">0</span>
+      </div>
+      <div class="panel-body">
+        <div id="varList"></div>
+      </div>
+    </div>
+
+    <!-- Capa de ceba -->
+    <div class="panel">
+      <div class="panel-hdr">
+        <span class="panel-ico">◎</span>
+        <span class="panel-title">Capa de ceba · Context</span>
+      </div>
+      <div class="panel-body">
+        <div class="ceba-grid" id="cebaGrid"></div>
+      </div>
+    </div>
+
+    <!-- Verify button -->
+    <button class="btn-verify" onclick="verificarGoogle()">
+      <div>
+        <div>🔍 VERIFICAR A GOOGLE · FONTS OFICIALS</div>
+        <div class="verify-sites">maldita.es · newtral.es · verificat.cat · afpfactual.com</div>
+      </div>
+    </button>
+
+  </div><!-- /dashboard -->
+
+</main>
+
+<footer class="footer">
+  <div class="footer-txt">NEURONA v4.0 · ANÀLISI LOCAL · CAP DADA S'ENVIA A SERVIDORS EXTERNS</div>
+</footer>
+</div><!-- /app -->
 
 <script>
-  /* ════════════════════════════════════════════════════
-     BASE DE DADES DE TEMES
-  ════════════════════════════════════════════════════ */
-  const baseDeDades = {
+'use strict';
 
-    immigració: {
-      paraules: ['immigració','immigrant','immigrants','immigrat','immigrats','refugiat','refugiats','migrant','migrants','fronteres','frontera','deportació','il·legal','il·legals','migració','asil'],
-      data: `Els estudis demogràfics mostren que la immigració neta té un impacte <strong>positiu en el PIB</strong> a llarg termini (FMI, 2023). Les narratives que associen immigració amb criminalitat no troben suport en dades: les taxes delictives no correlacionen amb nivells d'immigració. Fonts com Eurostat i l'OIM desmunten molts dels arguments numèrics usats en bulos sobre aquest tema.`,
-      empath: `Entenc que els missatges sobre immigració sovint generen inseguretat o preocupació. Aquestes emocions són legítimes. El problema és que la por és fàcilment explotable per a la desinformació. Quan un missatge et fa sentir amenaçat de manera molt intensa i immediata, és el moment de fer una pausa i buscar context real abans de compartir-lo.`,
-      pedag: `Els bulos sobre immigració solen usar l'estratègia de la <em>«generalització falsa»</em>: prenen un cas aïllat i el presenten com a norma. Per combatre-ho: (1) Busca la font original de les dades. (2) Comprova si organitzacions com ACNUR o Eurostat contradiuen l'afirmació. (3) Aplica el principi: "Un cas no és una estadística".`
-    },
+/* ══════════════════════════════════════════════════════════
+   1. ALGORITME DE PONDERACIÓ — calcularFiabilitat(text)
+   Puntuació inicial: 100
+   Variables de text: -15 cadascuna
+   Variables cognitives/emocionals: -20 cadascuna
+   Variables de rigor: +10 cadascuna
+══════════════════════════════════════════════════════════ */
+function calcularFiabilitat(text) {
+  let score = 100;
+  const det = []; // breakdown detallat
+  const low = text.toLowerCase();
+  const norm = t => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  const nl = norm(text);
 
-    vacunes: {
-      paraules: ['vacuna','vacunes','vacunat','vacunació','vaccine','pfizer','moderna','astrazeneca','covid','sars','mrna','immunització','antivacuna','efectes secundaris'],
-      data: `L'eficàcia i seguretat de les vacunes està avalada per <strong>dècades d'evidència científica revisada per parells</strong>. L'OMS i el CDC monitoritzen contínuament efectes adversos. L'estudi fraudulent que suposadament vinculava vacunes amb autisme va ser retirat i el seu autor, inhabilitat. La taxa de greus efectes adversos és estadísticament inferior als riscos de les malalties que prevenen.`,
-      empath: `El dubte sobre les vacunes sovint neix d'una preocupació molt humana: voler protegir la família. Ningú que es pregunti sobre seguretat mèdica és "ignorant". El problema apareix quan fonts no fiables es presenten amb l'aparença de ciència oficial. Pots expressar dubtes al teu metge: és el millor canal per a preguntes reals sobre salut.`,
-      pedag: `Per avaluar informació sobre vacunes: (1) Comprova si la font és una revista científica amb revisió per parells (PubMed, Lancet, NEJM). (2) Desconfia de fonts que usen termes com "el que no et diuen" o "veritat ocultada". (3) Consulta el <em>Vaccine Safety Net</em> de l'OMS. (4) Recorda: correlació no implica causalitat.`
-    },
+  /* ── TEXT VARIABLES (−15) ──────────────────────────── */
 
-    clima: {
-      paraules: ['clima','canvi climàtic','escalfament','CO2','emissions','carboni','temperatura','efecte hivernacle','glacier','gelera','inundació','sequera','renovables','fòssil','petroli','paris','ipcc'],
-      data: `El <strong>97% dels científics climàtics</strong> coincideixen: l'escalfament global actual és d'origen humà (NASA, IPCC AR6, 2021). La temperatura global ha pujat ~1,1°C des de l'era preindustrial. Les dades de CO₂ atmosfèric (ara a 420 ppm) no han estat tan altes en 800.000 anys, segons nuclis de gel antàrtics. Els bulos solen descontextualitzar dades locals per negar tendències globals.`,
-      empath: `L'ansietat climàtica és real i comprensible. Alhora, la desinformació sobre el clima causa bloqueig: si tot sembla incert o contradictori, és difícil actuar. Quan un missatge et genera confusió sobre si el canvi climàtic existeix, recorda que el dubte sistemàtic és precisament el que algunes indústries han finançat durant dècades per aturar l'acció.`,
-      pedag: `Estratègia clàssica de negacionisme climàtic: el <em>«fals debat»</em>, fent semblar que hi ha una controvèrsia científica real quan no n'hi ha. Per detectar-ho: (1) Mira qui finança l'estudi. (2) Comprova si l'autor és expert en climatologia o en una altra àrea. (3) Consulta directament el portal de l'IPCC o NASA Climate. (4) "El temps local" ≠ "clima global".`
-    },
-
-    economia: {
-      paraules: ['economia','inflació','preu','preus','deute','deute públic','pib','atur','feina','treball','impost','impostos','pensió','pensions','euro','dòlar','borsa','crisi','recessió','mercat','pobresa','riquesa'],
-      data: `Les afirmacions econòmiques en bulos solen usar <strong>dades reals fora de context temporal o comparatiu</strong>. Per exemple, el deute públic expressat en valor absolut omete la relació deute/PIB i el context internacional. Fonts fiables: Eurostat, Banc d'Espanya, FMI, OCDE. Recorda que un gràfic sense eixos clarament etiquetats és una senyera vermella.`,
-      empath: `La incertesa econòmica genera angoixa real, i els missatges que semblen explicar "qui té la culpa" poden ser reconfortants. Però sovint aquestes explicacions simples oculten la complexitat real i assenyalen bocs expiatoris. Prendre decisions importants (polítiques, financeres) basant-se en desinformació econòmica pot tenir conseqüències concretes per a tu i la teva família.`,
-      pedag: `Per analitzar afirmacions econòmiques: (1) Demana la font de les dades i l'any. (2) Compara amb països similars, no aïlladament. (3) Desconfia de correlacions presentades com a causalitats ("els immigrants baixen els salaris" ignora desenes de variables). (4) El recurs <em>Our World in Data</em> (ourworldindata.org) ofereix dades contextualitzades i visualitzades honestament.`
-    },
-
-    gènere: {
-      paraules: ['gènere','feminisme','feminista','igualtat','LGTBI','LGTBIQ','trans','transgènere','avortament','violència de gènere','masclisme','patriarcat','ideologia de gènere','identitat sexual','orientació','homosexual','bisexual'],
-      data: `La <strong>bretxa salarial de gènere és documentada estadísticament</strong> per Eurostat (en mitjana, les dones cobren un 13% menys per hora a la UE). La violència de gènere és reconeguda com a problema de salut pública per l'OMS. El terme "ideologia de gènere" no té base científica; és una construcció política. La investigació en biologia, psicologia i sociologia dona suport a la diversitat d'identitats de gènere.`,
-      empath: `Els debats sobre gènere sovint venen carregats d'emocions molt fortes, en totes direccions. Si has rebut un missatge que et genera confusió o indignació sobre aquest tema, és bo recordar que les persones afectades per aquestes realitats (dones, persones LGTBIQ+) no són abstraccions: les dades i les polítiques sobre gènere afecten vides reals. Considera com et sentiries si fossis la persona de qui es parla.`,
-      pedag: `Els bulos sobre gènere solen usar la tàctica de la <em>«fal·làcia del pendent relliscós»</em>: "si acceptem X, llavors inevitablement passarà Y" sense cap prova. Per identificar-ho: (1) Busca estudis revisats per parells sobre la premissa concreta. (2) Distingeix entre opinió moral i evidència empírica. (3) Consulta fonts com l'OMS, ACNUR o Amnistia Internacional en lloc de llocs activistes anònims.`
-    }
-  };
-
-  /* ════════════════════════════════════════════════════
-     RESPOSTA GENÈRICA (fallback)
-  ════════════════════════════════════════════════════ */
-  const respostaGenerica = {
-    data: `No he detectat un tema específic, però el missatge presenta patrons comuns de desinformació: <strong>manca de fonts verificables</strong>, ús de llenguatge d'urgència («comparteix ara», «t'ho ocultaven») i afirmacions absolutistes sense matisos. Abans de compartir qualsevol contingut, verifica'l a Maldita.es, Newtral o AFP Factual.`,
-    empath: `Entenc que rebre missatges alarmants o sorprenents genera una reacció emocional forta, i és natural voler compartir-los per avisar als teus éssers estimats. Precisament aquesta urgència emocional és el que exploten els creadors de bulos. Fes una pausa de 5 minuts i pregunta't: "Per què em fa sentir exactament això? Qui se'n beneficia si ho comparteixo?"`,
-    pedag: `Aplica el mètode <strong>SIFT</strong> a qualsevol missatge sospitós: <em>Stop</em> — para i no comparteixis immediatament. <em>Investigate</em> — investiga la font original. <em>Find better coverage</em> — busca si altres fonts fiables ho confirmen. <em>Trace claims</em> — rastreja l'afirmació fins al seu origen. Si no trobes la font original, això ja és una senyera vermella important.`
-  };
-
-  /* ════════════════════════════════════════════════════
-     MOTOR D'ANÀLISI
-  ════════════════════════════════════════════════════ */
-  function detectarTema(text) {
-    const textNorm = text.toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // treure accents per a la cerca
-
-    for (const [tema, dades] of Object.entries(baseDeDades)) {
-      for (const paraula of dades.paraules) {
-        const paraulaNorm = paraula.toLowerCase()
-          .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        if (textNorm.includes(paraulaNorm)) {
-          return { tema, dades };
-        }
-      }
-    }
-    return null; // cap tema trobat → fallback
+  // T1. Majúscules sostingudes (>30%)
+  const alfa = text.replace(/[^a-zA-ZàáèéíïòóúüçÀÁÈÉÍÏÒÓÚÜÇ]/g,'');
+  const maj  = alfa.replace(/[a-zàáèéíïòóúüç]/g,'');
+  if (alfa.length > 18 && maj.length / alfa.length > 0.30) {
+    score -= 15;
+    det.push({t:'neg',l:'Majúscules sostingudes',d:`${Math.round(maj.length/alfa.length*100)}% del text en majúscules`,p:-15});
   }
 
-  /* ════════════════════════════════════════════════════
-     UI: COMPTADOR DE CARÀCTERS
-  ════════════════════════════════════════════════════ */
-  function updateCount(el) {
-    document.getElementById('charCount').textContent =
-      el.value.length + ' / ' + el.maxLength;
+  // T2. Exclamacions excessives (≥3)
+  const excl = (text.match(/!/g)||[]).length;
+  if (excl >= 3) {
+    score -= 15;
+    det.push({t:'neg',l:'Exclamacions excessives',d:`${excl} signes d'exclamació detectats`,p:-15});
   }
 
-  /* ════════════════════════════════════════════════════
-     UI: ANALITZAR
-  ════════════════════════════════════════════════════ */
-  async function analyze() {
-    const input = document.getElementById('msgInput');
-    const btn   = document.getElementById('btnAnalyze');
-    const res   = document.getElementById('results');
-    const div   = document.getElementById('divider');
-
-    if (!input.value.trim()) {
-      input.focus();
-      input.style.borderColor = '#f43a3a';
-      setTimeout(() => input.style.borderColor = '', 1400);
-      return;
-    }
-
-    btn.disabled = true;
-    btn.classList.add('loading');
-
-    setSkeletons();
-    div.style.display = 'flex';
-    res.classList.add('visible');
-
-    await delay(1600);
-
-    const resultat = detectarTema(input.value.trim());
-    if (resultat) {
-      const { tema, dades } = resultat;
-      omplirResultats(dades.data, dades.empath, dades.pedag, tema);
-    } else {
-      omplirResultats(respostaGenerica.data, respostaGenerica.empath, respostaGenerica.pedag, null);
-    }
-
-    btn.disabled = false;
-    btn.classList.remove('loading');
+  // T3. Crides a l'acció buides
+  const accions = ['passa-ho','pasalo','pásalo','màxima difusió','maxima difusion','maxima difusió',
+    'reenvieu','reenvia','comparte','comparteix urgent','avisa a tots','avisa a tothom',
+    'fes-ho córrer','hazlo correr','difundiu'];
+  const accTrob = accions.find(a => nl.includes(norm(a)));
+  if (accTrob) {
+    score -= 15;
+    det.push({t:'neg',l:'Crida a l\'acció buida',d:`Detectat: "${accTrob}"`,p:-15});
   }
 
-  /* ════════════════════════════════════════════════════
-     UI: HELPERS
-  ════════════════════════════════════════════════════ */
-  function setSkeletons() {
-    ['data','empath','pedag'].forEach(id => {
-      document.getElementById('body-' + id).innerHTML =
-        '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
-    });
-    // Amaga badges de tema si existien
-    document.querySelectorAll('.tema-badge').forEach(b => b.remove());
+  // T4. Urgència artificial
+  const urgencia = ['urgent!','urgente!','urgent ara','ahora mismo','inmediatamente','de seguida',
+    'abans que l\'esborrin','antes de que lo borren','s\'acaba el temps','se acaba el tiempo'];
+  const urgTrob = urgencia.find(u => nl.includes(norm(u)));
+  if (urgTrob) {
+    score -= 15;
+    det.push({t:'neg',l:'Urgència artificial',d:`Detectat: "${urgTrob}"`,p:-15});
   }
 
-  function omplirResultats(txtData, txtEmpath, txtPedag, tema) {
-    document.getElementById('body-data').innerHTML   = txtData   + copyBtn('data');
-    document.getElementById('body-empath').innerHTML = txtEmpath + copyBtn('empath');
-    document.getElementById('body-pedag').innerHTML  = txtPedag  + copyBtn('pedag');
+  /* ── COGNITIVE/EMOTIONAL VARIABLES (−20) ───────────── */
 
-    // Badge de tema detectat al divider
-    const div = document.getElementById('divider');
-    const badgeExistent = div.querySelector('.tema-badge');
-    if (badgeExistent) badgeExistent.remove();
-    if (tema) {
-      const badge = document.createElement('span');
-      badge.className = 'tema-badge';
-      badge.textContent = '🏷 ' + tema.charAt(0).toUpperCase() + tema.slice(1);
-      div.appendChild(badge);
-    }
+  // C1. Discurs conspiracionista
+  const conspir = ['ells ens enganyen','ellos nos engañan','veritat oculta','verdad oculta',
+    'ho amagues','lo ocultan','el que no et diuen','que no te cuentan','conspiracion',
+    'conspiración','illuminati','il·luminati','shadow government','deep state',
+    'nou ordre mundial','nuevo orden mundial','agenda oculta','ens controlen','nos controlan'];
+  const consTrob = conspir.find(c => nl.includes(norm(c)));
+  if (consTrob) {
+    score -= 20;
+    det.push({t:'neg',l:'Discurs conspiracionista',d:`Patró detectat: "${consTrob}"`,p:-20});
   }
 
-  function copyBtn(id) {
-    return `<button class="btn-copy" onclick="copiarText('body-${id}', this)" title="Copiar resposta">
-      <span class="copy-icon">⧉</span><span class="copy-label">Copiar</span>
-    </button>`;
+  // C2. Alarmisme i por
+  const alarm = ['fi del món','fin del mundo','tots morirem','todos moriremos',
+    'amenaça mortal','amenaza mortal','catàstrofe imminent','catastrofe inminente',
+    'perill extrem','peligro extremo','invasió imminent','genocidi','genocidio',
+    'extermini','exterminio'];
+  const alaTrob = alarm.find(a => nl.includes(norm(a)));
+  if (alaTrob) {
+    score -= 20;
+    det.push({t:'neg',l:'Alarmisme / Llenguatge de por',d:`Patró detectat: "${alaTrob}"`,p:-20});
   }
 
-  async function copiarText(bodyId, btn) {
-    const el = document.getElementById(bodyId);
-    // Agafa text sense el botó de copiar
-    const clone = el.cloneNode(true);
-    clone.querySelectorAll('.btn-copy').forEach(b => b.remove());
-    const text = clone.innerText || clone.textContent;
-
-    try {
-      await navigator.clipboard.writeText(text.trim());
-      btn.classList.add('copied');
-      btn.querySelector('.copy-label').textContent = 'Copiat!';
-      setTimeout(() => {
-        btn.classList.remove('copied');
-        btn.querySelector('.copy-label').textContent = 'Copiar';
-      }, 2000);
-    } catch {
-      // Fallback per a entorns sense clipboard API
-      const ta = document.createElement('textarea');
-      ta.value = text.trim();
-      ta.style.position = 'fixed'; ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      btn.querySelector('.copy-label').textContent = 'Copiat!';
-      setTimeout(() => btn.querySelector('.copy-label').textContent = 'Copiar', 2000);
-    }
+  // C3. Negació de ciència o institucions
+  const negac = ['la ciència menteix','la ciencia miente','els científics menteixen',
+    'los científicos mienten','mentida dels medis','mentira de los medios',
+    'la oms menteix','la oms miente','les vacunes maten','las vacunas matan',
+    'el govern amaga','el gobierno oculta','medicina alternativa cura'];
+  const negTrob = negac.find(n => nl.includes(norm(n)));
+  if (negTrob) {
+    score -= 20;
+    det.push({t:'neg',l:'Negació de ciència / institucions',d:`Patró detectat: "${negTrob}"`,p:-20});
   }
 
-  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+  // C4. Odiositat / discriminació
+  const odi = ['culpa dels immigrants','culpa de los inmigrantes','moros de merda',
+    'negres de merda','jueus controlen','judíos controlan','étnies inferiors',
+    'razas inferiores','exterminar','deportar tots','deportar a todos'];
+  const odiTrob = odi.find(o => nl.includes(norm(o)));
+  if (odiTrob) {
+    score -= 20;
+    det.push({t:'neg',l:'Discurs d\'odi / discriminatori',d:`Contingut marcat: "${odiTrob}"`,p:-20});
+  }
 
-  /* ── Drecera de teclat ───────────────────────────── */
-  document.addEventListener('keydown', e => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') analyze();
+  /* ── RIGOR VARIABLES (+10) ─────────────────────────── */
+
+  // R1. Cita de fonts
+  const fonts = ['segons fonts de','según fuentes de','publicat a','publicado en',
+    'informe de la','informe del','estudi de la','estudio de la','research by',
+    'd\'acord amb','de acuerdo con'];
+  const fontTrob = fonts.find(f => nl.includes(norm(f)));
+  if (fontTrob) {
+    score += 10;
+    det.push({t:'pos',l:'Font identificada',d:`Cita detectada: "${fontTrob}"`,p:+10});
+  }
+
+  // R2. Referència a investigació / estudi
+  if (/estudi[ao]?|investigation|investigació|peer.review|assaig clínic|clinical trial/i.test(text)) {
+    score += 10;
+    det.push({t:'pos',l:'Referència a investigació',d:'El text menciona estudis o assajos científics',p:+10});
+  }
+
+  // R3. Conté URL/link
+  if (/https?:\/\//i.test(text)) {
+    score += 10;
+    det.push({t:'pos',l:'Conté un URL verificable',d:'El text inclou un o més enllaços web',p:+10});
+  }
+
+  // R4. Data específica citada
+  if (/\b(20\d{2}|19\d{2})\b/.test(text) && /\b\d{1,2}\s*(de\s*)?(gener|febrer|març|abril|maig|juny|juliol|agost|setembre|octubre|novembre|desembre|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\b/i.test(text)) {
+    score += 10;
+    det.push({t:'pos',l:'Data específica citada',d:'El text inclou una data concreta (indicador de rigor)',p:+10});
+  }
+
+  score = Math.max(0, Math.min(100, score));
+  return {score, det};
+}
+
+/* ══════════════════════════════════════════════════════════
+   2. BASE DE DADES — 20 categories temàtiques
+══════════════════════════════════════════════════════════ */
+const DB = {
+  vacunes:{
+    nom:'Vacunes i Immunologia', icon:'💉',
+    paraules:['vacuna','vacunes','vacunat','vacunació','mrna','pfizer','moderna','astrazeneca',
+      'immunització','antivacuna','efectes secundaris','autisme i vacunes','covid','sars-cov',
+      'vacunar','antivaxxer','reacció vacunal','adjuvant','immunitat de ramat'],
+    context:'Les narratives desinformatives sobre vacunes inclouen la teoria obsoleta i retractada de la connexió autisme-vacunes, exageració d\'efectes secundaris i desconfiança en assajos clínics regulats per l\'EMA i la FDA.',
+    to_com:'Alarmista / Pseudocientífic',
+    fonts:['WHO','PubMed','EMA','Cochrane']
+  },
+  clima:{
+    nom:'Canvi Climàtic i Medi Ambient', icon:'🌡️',
+    paraules:['clima','canvi climàtic','escalfament global','co2','carboni','temperatura',
+      'hivernacle','glacier','gelera','inundació','sequera','renovables','petroli','ipcc',
+      'emissions','carbó','deforestació','biodiversitat','espècie extinta','metà'],
+    context:'El negacionisme climàtic sol usar dades climàtiques locals per desmentir tendències globals, finançament industrial per crear dubte i fals debat científic on no n\'hi ha.',
+    to_com:'Negacionista / Pseudocientífic',
+    fonts:['IPCC','NASA Climate','NOAA','Copernicus']
+  },
+  immigracio:{
+    nom:'Immigració i Refugi', icon:'🚶',
+    paraules:['immigració','immigrant','immigrants','refugiat','refugiats','migrant',
+      'migrants','frontera','deportació','il·legal','migració','asil','mena','menes',
+      'expulsió','regularització','demaners d\'asil','xenofòbia','integració','exili'],
+    context:'La desinformació sobre immigració aplica generalitzacions falses, estadístiques de criminalitat fora de context, i apel·lació a la por per crear narratives de "invasió" sense base demogràfica.',
+    to_com:'Alarmista / Xenofòbic',
+    fonts:['ACNUR','IOM','Eurostat','INE']
+  },
+  geopolitica:{
+    nom:'Geopolítica i Conflictes Internacionals', icon:'🌍',
+    paraules:['guerra','conflicte','otan','nato','rússia','ucraïna','israel','palestina',
+      'xina','taiwan','sancions','armes','soldats','bomba','ocupació','sobirania',
+      'fronteres internacionals','tractat','resolució onu','crisi diplomàtica'],
+    context:'En conflictes bèl·lics la desinformació opera des de múltiples bàndols simultàniament: xifres de baixes inflades, vídeos fora de context i fake footage presentat com a material recent.',
+    to_com:'Propagandístic / Bèl·lic',
+    fonts:['OCCRP','Bellingcat','Reuters','AP']
+  },
+  ia_deepfakes:{
+    nom:'Intel·ligència Artificial i Deepfakes', icon:'🤖',
+    paraules:['intel·ligència artificial','ia','deepfake','deepfakes','chatgpt','llm',
+      'model de llenguatge','imatge generada','fotografia falsa','vídeo manipulat',
+      'clonació de veu','sintètic','algoritme','biaix algorísmic','regulació ia',
+      'substitució laboral','robot','automatització','gpus','entrenament ia'],
+    context:'La desinformació sobre IA inclou pànic moral exagerat, deepfakes de personalitats públiques i confusió deliberada entre ciència ficció i capacitats actuals dels models.',
+    to_com:'Sensacionalista / Especulatiu',
+    fonts:['MIT TR','IEEE','ArXiv','EFF']
+  },
+  criptomonedes:{
+    nom:'Criptomonedes i Finances Digitals', icon:'₿',
+    paraules:['bitcoin','criptomoneda','crypto','blockchain','ethereum','nft','token',
+      'defi','wallet','stablecoin','pump and dump','esquema ponzi','inversió cripto',
+      'mineria cripto','altcoin','satoshi','exchange','blanqueig','monero','cbdc'],
+    context:'Els fraus en l\'espai cripto inclouen esquemes ponzi, "pump and dump", fake celebrity endorsements i promeses de rendiments garantits que viola principis bàsics de finances.',
+    to_com:'Frau financer / Especulatiu',
+    fonts:['SEC','CNMV','CoinDesk','Chainalysis']
+  },
+  salut_publica:{
+    nom:'Salut Pública i Epidèmies', icon:'🏥',
+    paraules:['salut','malaltia','epidèmia','pandèmia','virus','bacteria','contagi','infecció',
+      'simptomes','diagnòstic','tractament','hospital','emergència sanitària','mascareta',
+      'confinament','quarantena','OMS','CDC','medicament','remei natural'],
+    context:'La desinformació sanitària fa circular remeis sense base científica, nega mesures de salut pública validades i sovint apel·la a "medicines naturals" com a alternativa a tractaments provats.',
+    to_com:'Pseudocientífic / Alarmista',
+    fonts:['OMS','CDC','Cochrane','Ministeri Salut']
+  },
+  economia:{
+    nom:'Inflació, Mercat i Macroeconomia', icon:'📈',
+    paraules:['inflació','economia','preu','preus','deute','pib','atur','feina','impost',
+      'impostos','pensió','pensions','borsa','crisi','recessió','pobresa','sou','salari',
+      'euro','dòlar','reserva federal','bce','política monetària'],
+    context:'La desinformació econòmica manipula dades reals fora de context temporal o comparatiu, usa gràfics amb eixos truncats i atribueix causalitats errònies a fenòmens complexos multicausals.',
+    to_com:'Alarmista / Ideologitzat',
+    fonts:['BCE','FMI','Eurostat','BdE']
+  },
+  drets_digitals:{
+    nom:'Vigilància, Privacitat i Drets Digitals', icon:'👁️',
+    paraules:['privacitat','vigilància','espionatge','datos personals','gdpr','rgpd',
+      'seguiment','tracking','metadades','xarxes socials','censura','llibertat expressió',
+      'moderació contingut','ban','suspensió compte','algoritme','bombolla de filtre',
+      'hackejat','ciberseguretat','contrasenya'],
+    context:'En drets digitals la desinformació barreja amenaces reals documentades (recollida de dades massiva) amb teories conspiratives (microxips, vigilància total omnipresent).',
+    to_com:'Conspiracionista / Paranoic',
+    fonts:['EFF','Access Now','CPJ','Citizen Lab']
+  },
+  seguretat:{
+    nom:'Seguretat Pública i Terrorisme', icon:'🔐',
+    paraules:['terrorisme','atac','bomba','seguretat','policia','crims','delinqüència',
+      'violència','robatori','seguretat ciutadana','inseguretat','detingut','arrest',
+      'presó','jihadista','extremisme','radicalisme','tiroteig','atemptat','alerta'],
+    context:'La desinformació sobre seguretat amplifica casos aïllats com a tendències, atribueix crims a col·lectius per fabricar pànics morals, i recicla notícies antigues amb data nova.',
+    to_com:'Alarmista / Xenofòbic',
+    fonts:['Europol','Mossos','CITCO','Interior.gob.es']
+  },
+  genere:{
+    nom:'Gènere, LGTBIQ+ i Igualtat', icon:'⚧️',
+    paraules:['gènere','feminisme','feminista','igualtat','lgtbi','lgtbiq','trans',
+      'transgènere','avortament','violència de gènere','masclisme','patriarcat',
+      'ideologia de gènere','identitat sexual','homosexual','bisexual',
+      'drets reproductius','bretxa salarial','assetjament','paritat'],
+    context:'La desinformació sobre gènere aplica la fal·làcia del pendent relliscós, usa el terme "ideologia de gènere" sense base científica, i nega estadístiques documentades de discriminació.',
+    to_com:'Ideologitzat / Negacionista',
+    fonts:['OMS','Eurostat','UN Women','ILGA']
+  },
+  educacio:{
+    nom:'Educació i Valors Socials', icon:'📚',
+    paraules:['educació','escola','col·legi','institut','universitat','alumne','professor',
+      'currículum','pla estudis','adoctrinament','ideologia','llibre text',
+      'llei educació','woke','lomloe','lomce','fracàs escolar','segregació',
+      'concertada','pública','privada','beca'],
+    context:'La desinformació sobre educació sovint presenta "adoctrinament" sense citar text concret del currículum, usa episodis aïllats com a prova sistèmica i polaritza el debat entre "tradition vs. ideologia".',
+    to_com:'Ideologitzat / Moral Panic',
+    fonts:['PISA/OCDE','MEFD','Consell Escolar','MEC']
+  },
+  alimentacio:{
+    nom:'Alimentació, Nutrició i Salut', icon:'🥗',
+    paraules:['aliment','alimentació','menjar','dieta','sucre','gluten','lactosa',
+      'orgànic','ecològic','transgènic','ogm','pesticides','ultraprocessat','additiu',
+      'conservant','vegan','vegetarià','detox','suplement','nutrició','obesitat'],
+    context:'La pseudociència nutricional ven por als additius alimentaris aprovats per l\'EFSA, exagera beneficis de productes "naturals" i crea restriccions alimentàries innecessàries amb impacte real en salut.',
+    to_com:'Pseudocientífic / Comercial',
+    fonts:['EFSA','AESAN','OMS','Harvard Nutrition']
+  },
+  politica:{
+    nom:'Política Nacional i Institucions', icon:'🏛️',
+    paraules:['política','govern','president','presidenta','eleccions','vot','votar',
+      'democràcia','dreta','esquerra','extrema dreta','independència','corrupció',
+      'pp','psoe','vox','podem','erc','junts','parlament','senat','constitució',
+      'referèndum','manifest'],
+    context:'La desinformació política usa quotes fora de context, deepfakes d\'àudio/vídeo, notícies antigues reciclades, i atribueix declaracions falses a polítics identificats. S\'ha triplicat des del 2016.',
+    to_com:'Propagandístic / Polaritzador',
+    fonts:['Maldita.es','Newtral.es','Verificat.cat','AFP']
+  },
+  medis:{
+    nom:'Credibilitat dels Medis i Periodisme', icon:'📰',
+    paraules:['fake news','mitjans','medis','periodisme','premsa','tv','televisió',
+      'notícia falsa','bulo','mentida','manipulació mediàtica','mainstream','censura',
+      'propaganda','desinformació','infodèmia','verificació','fact.check',
+      'periodista','redacció','editorial'],
+    context:'La narrativa anti-medis generalitza errors concrets de cobertut com a prova de "manipulació sistèmica", creant desconfiança en totes les fonts i impossibilitant la verificació factual.',
+    to_com:'Conspiracionista / Anti-institució',
+    fonts:['IFCN','Reporters Sense Fronteres','EJO','Reuters Institute']
+  },
+  pandemia:{
+    nom:'Pandèmia, Virus i Malalties Infeccioses', icon:'🦠',
+    paraules:['pandèmia','covid','coronavirus','variant','òmicron','delta','pcr',
+      'test','positiu','confinament','lockdown','mascareta','restriccions','vaccine',
+      'grip','influença','ébola','mpox','brot','epidèmia','r0','contagi comunitari'],
+    context:'La desinformació pandèmica inclou negació de la gravetat, oposició a mesures de salut pública, rumors sobre origen artificial de virus i promoció de tractaments no validats.',
+    to_com:'Negacionista / Pseudocientífic',
+    fonts:['ECDC','OMS','Johns Hopkins','MSF']
+  },
+  tecnologia:{
+    nom:'Tecnologia 5G, Radiacions i Salut', icon:'📡',
+    paraules:['5g','antenes','radiació','microxip','microchip','ones electromagnètiques',
+      'wifi','bluetooth','torre comunicació','freqüència','hertz','electrosensibilitat',
+      'radiació no ionitzant','fibra òptica','satèl·lit','elon musk starlink',
+      'smartmeter','comptador intel·ligent','internet of things'],
+    context:'Les teories 5G operen amb pseudofísica: atribueixen efectes bioquímics a ones no ionitzants, impossibles per la física de la radiació. La teoria dels microxips és impossibilitada per la geometria de les agulles d\'injecció.',
+    to_com:'Conspiracionista / Pseudocientífic',
+    fonts:['OMS','ICNIRP','GSMA','ITU']
+  },
+  ciencia:{
+    nom:'Ciència, Pseudo-ciència i Medicina Alternativa', icon:'🔬',
+    paraules:['homeopatia','quiropraxis','acupuntura','cristalls','energia','aura',
+      'detox','desintoxicació','chakra','vibració','frequència','quantum','quàntic',
+      'magnets','imant','remei natural','herba medicinal','miracle','cura definitiva',
+      'medicina alternativa','anti-ciència'],
+    context:'La pseudociència incorpora vocabulari científic real (quàntic, freqüència, ADN) aplicat incorrectament per donar aparença de legitimitat a afirmacions no testades ni reproductibles.',
+    to_com:'Pseudocientífic / Comercial',
+    fonts:['Cochrane','SciBase','CSIC','Nature']
+  },
+  conspiranoies:{
+    nom:'Conspiracions i Grups Secrets', icon:'🕳️',
+    paraules:['bilderberg','trilateria','franc-maçons','illuminati','sionisme','reptilians',
+      'chemtrails','esteles avió','terraplanisme','terra plana','control mental',
+      'pizzagate','qanon','gran reemplaçament','cabala satànica','nwo','nou ordre',
+      'població mundial','george soros','bill gates xip','agenda 2030'],
+    context:'Les conspiranoies operen per connexions falses entre esdeveniments no relacionats, reconeixement de patrons en soroll aleatori (apofènia) i gratificació cognitiva de "tenir la veritat que els altres no veuen".',
+    to_com:'Conspiracionista / Delirant',
+    fonts:['First Draft','RAND','ISD Global','Bellingcat']
+  },
+  drogues_crims:{
+    nom:'Drogues, Crims i Violència Urbana', icon:'🔫',
+    paraules:['droga','narcotràfic','màfia','gang','banda','tràfic','haixix','cocaïna',
+      'fentanil','heroïna','dealer','inseguretat','violència urbana','tiroteig',
+      'apunyalament','robatori','barri','gueto','policia','cos','detingut','pres'],
+    context:'La desinformació sobre crims exagera estadístiques puntuals com a tendències, sol associar crims a ètnies o orígens específics, i recicla incidents de països o dècades diferents.',
+    to_com:'Alarmista / Xenofòbic',
+    fonts:['INE','Ministeri Interior','Europol','UNODC']
+  }
+};
+
+/* ══════════════════════════════════════════════════════════
+   3. DETECCIÓ DE TEMA I TO
+══════════════════════════════════════════════════════════ */
+function n(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+
+function detectarTema(text){
+  const nl=n(text);
+  let best=null, bestScore=0;
+  for(const[key,d] of Object.entries(DB)){
+    let hits=0;
+    for(const p of d.paraules){if(nl.includes(n(p)))hits++;}
+    if(hits>bestScore){bestScore=hits;best={key,d,hits};}
+  }
+  return bestScore>0?best:null;
+}
+
+function analitzarTo(text){
+  const nl=n(text);
+  const tonesChk=[
+    {id:'alarm', w:['perill','peligro','urgencia','urgència','horror','catàstrofe','amenaça','fil del mon','invasio','tots morirem']},
+    {id:'consp', w:['ells ens enganyen','veritat oculta','agenda oculta','ens controlen','deep state','nou ordre']},
+    {id:'pers',  w:['vota','comparteix','mobilitza','acció','participa','denuncia','resistència']},
+    {id:'neut',  w:['estudi','informe','investigació','publicat','font','dades','estadística','percentatge','registre']},
+  ];
+  const scores={alarm:0,consp:0,pers:0,neut:0};
+  for(const t of tonesChk){for(const w of t.w){if(nl.includes(n(w)))scores[t.id]++;}}
+  const best=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];
+  const map={alarm:'Alarmista / Emocional',consp:'Conspiracionista',pers:'Persuasiu / Propagandístic',neut:'Neutre / Informatiu'};
+  return best[1]>0?map[best[0]]:'Indeterminat';
+}
+
+/* ══════════════════════════════════════════════════════════
+   4. RENDER — GAUGE
+══════════════════════════════════════════════════════════ */
+function renderGauge(score){
+  const CIRC=376.99;
+  const fill=document.getElementById('gaugeFill');
+  const needle=document.getElementById('gaugeNeedle');
+  const val=document.getElementById('scoreVal');
+  const verdict=document.getElementById('gaugeVerdict');
+
+  // Arc fill
+  const offset=CIRC*(1-score/100);
+  fill.style.strokeDashoffset=offset;
+
+  // Color
+  let col,cls,vtext;
+  if(score<=30){col='#f87171';cls='red';vtext='BULO PROBABLE'}
+  else if(score<=70){col='#fbbf24';cls='amber';vtext='VERIFICACIÓ NECESSÀRIA'}
+  else{col='#10d98a';cls='green';vtext='INDICADORS FIABLES'}
+  fill.style.stroke=col;
+  val.style.color=col;
+
+  // Needle position
+  const angle=Math.PI*(1-score/100);
+  const nx=150+90*Math.cos(angle);
+  const ny=140-90*Math.sin(angle);
+  needle.setAttribute('x2',nx.toFixed(1));
+  needle.setAttribute('y2',ny.toFixed(1));
+
+  // Score number (animated count-up)
+  let current=0;
+  const step=score/40;
+  const timer=setInterval(()=>{
+    current=Math.min(current+step,score);
+    val.textContent=Math.round(current);
+    if(current>=score){clearInterval(timer);val.textContent=score;}
+  },25);
+
+  verdict.textContent=vtext;
+  verdict.className='gauge-verdict '+cls;
+}
+
+/* ══════════════════════════════════════════════════════════
+   5. RENDER — VARIABLES CHECKLIST
+══════════════════════════════════════════════════════════ */
+function renderVariables(det){
+  const list=document.getElementById('varList');
+  const count=document.getElementById('varCount');
+  count.textContent=det.length;
+  if(det.length===0){
+    list.innerHTML='<div class="var-empty">CAP VARIABLE DETECTADA — TEXT NEUTRE</div>';
+    return;
+  }
+  list.innerHTML=det.map(v=>`
+    <div class="var-item">
+      <div class="var-badge ${v.t}">${v.t==='neg'?'NEG':'POS'}</div>
+      <div class="var-info">
+        <div class="var-label">${v.l}</div>
+        <div class="var-detail">${v.d}</div>
+      </div>
+      <div class="var-pts ${v.t}">${v.p>0?'+':''}${v.p}</div>
+    </div>`).join('');
+}
+
+/* ══════════════════════════════════════════════════════════
+   6. RENDER — CAPA DE CEBA
+══════════════════════════════════════════════════════════ */
+function renderCeba(tema,to,score){
+  const grid=document.getElementById('cebaGrid');
+
+  const toneClass={
+    'Alarmista / Emocional':'tone-alarm',
+    'Conspiracionista':'tone-consp',
+    'Neutre / Informatiu':'tone-neut',
+    'Persuasiu / Propagandístic':'tone-pers',
+    'Indeterminat':'tone-unk'
+  }[to]||'tone-unk';
+
+  const catHtml=tema
+    ?`<span class="ceba-chip cat">${tema.d.icon} ${tema.d.nom}</span>`
+    :`<span class="ceba-chip tone-unk">⬡ No classificat</span>`;
+
+  const contextTxt=tema?tema.d.context
+    :'El text no coincideix amb cap categoria específica. Aplica verificació general: busca la font original, comprova si hi ha versions anteriors de la mateixa afirmació i contrasta amb webs de fact-checking.';
+
+  const fontsHtml=tema
+    ?`<div class="ceba-sources">${tema.d.fonts.map(f=>`<span class="src-link">${f}</span>`).join('')}</div>`
+    :`<div class="ceba-sources"><span class="src-link">Maldita.es</span><span class="src-link">Newtral.es</span><span class="src-link">Verificat.cat</span></div>`;
+
+  const scoreLabel=score<=30?'Alta probabilitat de bulo':score<=70?'Verificació recomanada':'Indicadors de fiabilitat presents';
+
+  grid.innerHTML=`
+    <div class="ceba-row">
+      <div class="ceba-key">CATEGORIA</div>
+      <div class="ceba-val">${catHtml}</div>
+    </div>
+    <div class="ceba-row">
+      <div class="ceba-key">TO DETECTAT</div>
+      <div class="ceba-val"><span class="ceba-chip ${toneClass}">${to}</span></div>
+    </div>
+    <div class="ceba-row">
+      <div class="ceba-key">DIAGNÒSTIC</div>
+      <div class="ceba-val">${scoreLabel}</div>
+    </div>
+    <div class="ceba-row">
+      <div class="ceba-key">CONTEXT</div>
+      <div class="ceba-val">${contextTxt}</div>
+    </div>
+    <div class="ceba-row">
+      <div class="ceba-key">FONTS</div>
+      <div class="ceba-val">${fontsHtml}</div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   7. VERIFY GOOGLE
+══════════════════════════════════════════════════════════ */
+function verificarGoogle(){
+  const text=document.getElementById('msgInput').value.trim();
+  if(!text){flash();return;}
+  const fragment=text.split(/\s+/).slice(0,60).join(' ');
+  const q=encodeURIComponent(fragment+' site:maldita.es OR site:newtral.es OR site:verificat.cat OR site:afpfactual.com');
+  window.open('https://www.google.com/search?q='+q,'_blank','noopener');
+}
+
+function flash(){
+  const ta=document.getElementById('msgInput');
+  ta.focus();ta.style.borderColor='rgba(248,113,113,.6)';
+  setTimeout(()=>ta.style.borderColor='',1400);
+}
+
+/* ══════════════════════════════════════════════════════════
+   8. UI HELPERS
+══════════════════════════════════════════════════════════ */
+function updateCount(el){document.getElementById('charCount').textContent=el.value.length+' / '+el.maxLength}
+
+function clearAll(){
+  document.getElementById('msgInput').value='';
+  document.getElementById('charCount').textContent='0 / 3000';
+  const db=document.getElementById('dashboard');
+  db.classList.remove('visible');
+  document.getElementById('scanOverlay').style.display='none';
+}
+
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+
+/* ══════════════════════════════════════════════════════════
+   9. MAIN ANALYZE
+══════════════════════════════════════════════════════════ */
+let scanCounter=1000;
+
+async function analyze(){
+  const input=document.getElementById('msgInput');
+  const btn=document.getElementById('btnAnalyze');
+  const dash=document.getElementById('dashboard');
+  const overlay=document.getElementById('scanOverlay');
+
+  if(!input.value.trim()){flash();return;}
+
+  // Loading UI
+  btn.disabled=true;btn.classList.add('loading');
+  dash.classList.remove('visible');
+  overlay.style.display='flex';
+
+  // Animate scan bars
+  const bars=['sb1','sb2','sb3','sb4'];
+  const widths=['72%','88%','64%','100%'];
+  bars.forEach((id,i)=>{
+    setTimeout(()=>{
+      const el=document.getElementById(id);
+      if(el){el.style.transition='width 0.9s ease';el.style.width=widths[i];}
+    },i*300+100);
   });
+
+  await delay(1900);
+
+  // Hide overlay
+  overlay.style.display='none';
+  bars.forEach(id=>{const el=document.getElementById(id);if(el)el.style.width='0'});
+
+  // Run analysis
+  const text=input.value.trim();
+  const {score,det}=calcularFiabilitat(text);
+  const tema=detectarTema(text);
+  const to=analitzarTo(text);
+
+  // Scan header
+  scanCounter++;
+  document.getElementById('scanId').textContent=scanCounter;
+  document.getElementById('scanTs').textContent=new Date().toLocaleTimeString('ca-ES');
+
+  // Render
+  renderGauge(score);
+  renderVariables(det);
+  renderCeba(tema,to,score);
+
+  // Show dashboard
+  dash.classList.add('visible');
+  setTimeout(()=>dash.scrollIntoView({behavior:'smooth',block:'start'}),100);
+
+  btn.disabled=false;btn.classList.remove('loading');
+}
+
+/* ══════════════════════════════════════════════════════════
+   10. KEYBOARD SHORTCUT
+══════════════════════════════════════════════════════════ */
+document.addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='Enter')analyze();
+});
 </script>
 </body>
 </html>
