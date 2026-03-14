@@ -5,616 +5,5216 @@
     "export_note": "Aquest fitxer és la font de veritat del motor. Modifica'l per afegir categories o ajustar pesos sense tocar el codi.",
     "toxicity_scale": "1=neutre, 5=moderat, 10=crític"
   },
-
   "categories": [
     {
       "id": "TOPIC_CONSPIRAC",
       "nom": "Conspiranoia General",
       "icon": "🕳️",
-      "fonts": ["First Draft", "RAND", "Bellingcat", "ISD Global"],
+      "fonts": [
+        "First Draft",
+        "RAND",
+        "Bellingcat",
+        "ISD Global"
+      ],
       "lexemes": [
-        {"w": "illuminati", "s": 10}, {"w": "illuminatis", "s": 10},
-        {"w": "reptilians", "s": 10}, {"w": "reptilià", "s": 10}, {"w": "reptiliano", "s": 10},
-        {"w": "deep state", "s": 10}, {"w": "nou ordre mundial", "s": 10}, {"w": "nuevo orden mundial", "s": 10},
-        {"w": "nwo", "s": 9}, {"w": "bilderberg", "s": 10}, {"w": "sionisme", "s": 9},
-        {"w": "franc-maçons", "s": 8}, {"w": "franc maçons", "s": 8}, {"w": "francmasones", "s": 8},
-        {"w": "agenda 2030", "s": 9}, {"w": "agenda oculta", "s": 10}, {"w": "agenda secreta", "s": 9},
-        {"w": "gran reemplaçament", "s": 10}, {"w": "gran reemplazo", "s": 10},
-        {"w": "qanon", "s": 10}, {"w": "pizzagate", "s": 10}, {"w": "satanisme", "s": 9},
-        {"w": "veritat oculta", "s": 9}, {"w": "verdad oculta", "s": 9},
-        {"w": "chemtrails", "s": 9}, {"w": "esteles avió", "s": 6},
-        {"w": "terraplanisme", "s": 10}, {"w": "terra plana", "s": 10}, {"w": "tierra plana", "s": 10},
-        {"w": "control mental", "s": 9}, {"w": "control de masas", "s": 8},
-        {"w": "ells saben", "s": 8}, {"w": "ellos saben", "s": 8}, {"w": "ellos lo saben", "s": 8},
-        {"w": "desperta", "s": 7}, {"w": "desperteu", "s": 8}, {"w": "despierta", "s": 7}, {"w": "despertaos", "s": 8},
-        {"w": "submisos", "s": 8}, {"w": "borregos", "s": 7}, {"w": "sheeple", "s": 8},
-        {"w": "matriu", "s": 6}, {"w": "matrix", "s": 5},
-        {"w": "shadow government", "s": 10}, {"w": "poder ocult", "s": 9}, {"w": "poder oculto", "s": 9},
-        {"w": "elit global", "s": 9}, {"w": "govern secret", "s": 9}, {"w": "gobierno secreto", "s": 9},
-        {"w": "cabala satànica", "s": 10}, {"w": "cábala satánica", "s": 10},
-        {"w": "ells ens enganyen", "s": 10}, {"w": "ellos nos engañan", "s": 10},
-        {"w": "ens controlen", "s": 9}, {"w": "nos controlan", "s": 9},
-        {"w": "ocultisme", "s": 7}, {"w": "ocultismo", "s": 7},
-        {"w": "trilateria", "s": 9}, {"w": "trilateral", "s": 7},
-        {"w": "club de roma", "s": 8}, {"w": "davos controls", "s": 7},
-        {"w": "george soros", "s": 7}, {"w": "bill gates control", "s": 9},
-        {"w": "reducció de població", "s": 10}, {"w": "reducción de población", "s": 10},
-        {"w": "depopulació", "s": 10}, {"w": "depopulation", "s": 10}
+        {
+          "w": "illuminati",
+          "s": 10
+        },
+        {
+          "w": "illuminatis",
+          "s": 10
+        },
+        {
+          "w": "reptilians",
+          "s": 10
+        },
+        {
+          "w": "reptilià",
+          "s": 10
+        },
+        {
+          "w": "reptiliano",
+          "s": 10
+        },
+        {
+          "w": "deep state",
+          "s": 10
+        },
+        {
+          "w": "nou ordre mundial",
+          "s": 10
+        },
+        {
+          "w": "nuevo orden mundial",
+          "s": 10
+        },
+        {
+          "w": "nwo",
+          "s": 9
+        },
+        {
+          "w": "bilderberg",
+          "s": 10
+        },
+        {
+          "w": "sionisme",
+          "s": 9
+        },
+        {
+          "w": "franc-maçons",
+          "s": 8
+        },
+        {
+          "w": "franc maçons",
+          "s": 8
+        },
+        {
+          "w": "francmasones",
+          "s": 8
+        },
+        {
+          "w": "agenda 2030",
+          "s": 9
+        },
+        {
+          "w": "agenda oculta",
+          "s": 10
+        },
+        {
+          "w": "agenda secreta",
+          "s": 9
+        },
+        {
+          "w": "gran reemplaçament",
+          "s": 10
+        },
+        {
+          "w": "gran reemplazo",
+          "s": 10
+        },
+        {
+          "w": "qanon",
+          "s": 10
+        },
+        {
+          "w": "pizzagate",
+          "s": 10
+        },
+        {
+          "w": "satanisme",
+          "s": 9
+        },
+        {
+          "w": "veritat oculta",
+          "s": 9
+        },
+        {
+          "w": "verdad oculta",
+          "s": 9
+        },
+        {
+          "w": "chemtrails",
+          "s": 9
+        },
+        {
+          "w": "esteles avió",
+          "s": 9
+        },
+        {
+          "w": "terraplanisme",
+          "s": 10
+        },
+        {
+          "w": "terra plana",
+          "s": 10
+        },
+        {
+          "w": "tierra plana",
+          "s": 10
+        },
+        {
+          "w": "control mental",
+          "s": 9
+        },
+        {
+          "w": "control de masas",
+          "s": 8
+        },
+        {
+          "w": "ells saben",
+          "s": 8
+        },
+        {
+          "w": "ellos saben",
+          "s": 8
+        },
+        {
+          "w": "ellos lo saben",
+          "s": 8
+        },
+        {
+          "w": "desperta",
+          "s": 9
+        },
+        {
+          "w": "desperteu",
+          "s": 8
+        },
+        {
+          "w": "despierta",
+          "s": 9
+        },
+        {
+          "w": "despertaos",
+          "s": 8
+        },
+        {
+          "w": "submisos",
+          "s": 8
+        },
+        {
+          "w": "borregos",
+          "s": 9
+        },
+        {
+          "w": "sheeple",
+          "s": 8
+        },
+        {
+          "w": "matriu",
+          "s": 9
+        },
+        {
+          "w": "matrix",
+          "s": 8
+        },
+        {
+          "w": "shadow government",
+          "s": 10
+        },
+        {
+          "w": "poder ocult",
+          "s": 9
+        },
+        {
+          "w": "poder oculto",
+          "s": 9
+        },
+        {
+          "w": "elit global",
+          "s": 9
+        },
+        {
+          "w": "govern secret",
+          "s": 9
+        },
+        {
+          "w": "gobierno secreto",
+          "s": 9
+        },
+        {
+          "w": "cabala satànica",
+          "s": 10
+        },
+        {
+          "w": "cábala satánica",
+          "s": 10
+        },
+        {
+          "w": "ells ens enganyen",
+          "s": 10
+        },
+        {
+          "w": "ellos nos engañan",
+          "s": 10
+        },
+        {
+          "w": "ens controlen",
+          "s": 9
+        },
+        {
+          "w": "nos controlan",
+          "s": 9
+        },
+        {
+          "w": "ocultisme",
+          "s": 9
+        },
+        {
+          "w": "ocultismo",
+          "s": 9
+        },
+        {
+          "w": "trilateria",
+          "s": 9
+        },
+        {
+          "w": "trilateral",
+          "s": 9
+        },
+        {
+          "w": "club de roma",
+          "s": 8
+        },
+        {
+          "w": "davos controls",
+          "s": 9
+        },
+        {
+          "w": "george soros",
+          "s": 9
+        },
+        {
+          "w": "bill gates control",
+          "s": 9
+        },
+        {
+          "w": "reducció de població",
+          "s": 10
+        },
+        {
+          "w": "reducción de población",
+          "s": 10
+        },
+        {
+          "w": "depopulació",
+          "s": 10
+        },
+        {
+          "w": "depopulation",
+          "s": 10
+        }
       ]
     },
     {
       "id": "TOPIC_VACUNES",
       "nom": "Vacunes i Immunologia",
       "icon": "💉",
-      "fonts": ["OMS", "EMA", "PubMed", "Cochrane"],
+      "fonts": [
+        "OMS",
+        "EMA",
+        "PubMed",
+        "Cochrane"
+      ],
       "lexemes": [
-        {"w": "vacuna", "s": 2}, {"w": "vacunes", "s": 2}, {"w": "vacunat", "s": 2}, {"w": "vacunació", "s": 2},
-        {"w": "vacunación", "s": 2}, {"w": "vacuna mrna", "s": 4}, {"w": "mrna", "s": 4},
-        {"w": "pfizer", "s": 3}, {"w": "moderna", "s": 3}, {"w": "astrazeneca", "s": 3}, {"w": "janssen", "s": 3},
-        {"w": "antivacuna", "s": 7}, {"w": "antivaxxer", "s": 8}, {"w": "antivax", "s": 7}, {"w": "antivacunes", "s": 7},
-        {"w": "immunització", "s": 2}, {"w": "efectes secundaris", "s": 5}, {"w": "reacció adversa", "s": 5},
-        {"w": "microxip vacuna", "s": 10}, {"w": "microchip vacuna", "s": 10}, {"w": "chip vacuna", "s": 10},
-        {"w": "autisme vacuna", "s": 10}, {"w": "vacuna autisme", "s": 10}, {"w": "wakefield", "s": 9},
-        {"w": "experiment cobai", "s": 8}, {"w": "cobai", "s": 7}, {"w": "conejillo indias", "s": 7},
-        {"w": "vacuna obligatoria", "s": 7}, {"w": "vacunació forçada", "s": 8}, {"w": "vacunación forzada", "s": 8},
-        {"w": "passaport vacunal", "s": 5}, {"w": "segregació vacunal", "s": 7},
-        {"w": "adjuvant", "s": 4}, {"w": "adyuvante", "s": 4},
-        {"w": "thimerosal", "s": 6}, {"w": "mercuri vacuna", "s": 8}, {"w": "mercurio vacuna", "s": 8},
-        {"w": "alumini vacuna", "s": 7}, {"w": "aluminio vacuna", "s": 7},
-        {"w": "immunitat natural", "s": 4}, {"w": "immunitat de ramat", "s": 3},
-        {"w": "mort vacuna", "s": 9}, {"w": "morts vacunes", "s": 9}, {"w": "mata vacuna", "s": 10},
-        {"w": "vacuna mata", "s": 10}, {"w": "vacuna gene", "s": 6}, {"w": "terapia génica", "s": 6},
-        {"w": "vacuna experimental", "s": 6}, {"w": "vacuna no provada", "s": 7},
-        {"w": "esterilitza", "s": 9}, {"w": "esterilización masiva", "s": 10},
-        {"w": "nano partícules", "s": 7}, {"w": "nanopartículas", "s": 7},
-        {"w": "grafè vacuna", "s": 9}, {"w": "grafeno vacuna", "s": 9}
+        {
+          "w": "vacuna",
+          "s": 2
+        },
+        {
+          "w": "vacunes",
+          "s": 2
+        },
+        {
+          "w": "vacunat",
+          "s": 2
+        },
+        {
+          "w": "vacunació",
+          "s": 2
+        },
+        {
+          "w": "vacunación",
+          "s": 2
+        },
+        {
+          "w": "vacuna mrna",
+          "s": 4
+        },
+        {
+          "w": "mrna",
+          "s": 4
+        },
+        {
+          "w": "pfizer",
+          "s": 3
+        },
+        {
+          "w": "moderna",
+          "s": 3
+        },
+        {
+          "w": "astrazeneca",
+          "s": 3
+        },
+        {
+          "w": "janssen",
+          "s": 3
+        },
+        {
+          "w": "antivacuna",
+          "s": 7
+        },
+        {
+          "w": "antivaxxer",
+          "s": 8
+        },
+        {
+          "w": "antivax",
+          "s": 7
+        },
+        {
+          "w": "antivacunes",
+          "s": 7
+        },
+        {
+          "w": "immunització",
+          "s": 2
+        },
+        {
+          "w": "efectes secundaris",
+          "s": 5
+        },
+        {
+          "w": "reacció adversa",
+          "s": 5
+        },
+        {
+          "w": "microxip vacuna",
+          "s": 10
+        },
+        {
+          "w": "microchip vacuna",
+          "s": 10
+        },
+        {
+          "w": "chip vacuna",
+          "s": 10
+        },
+        {
+          "w": "autisme vacuna",
+          "s": 10
+        },
+        {
+          "w": "vacuna autisme",
+          "s": 10
+        },
+        {
+          "w": "wakefield",
+          "s": 9
+        },
+        {
+          "w": "experiment cobai",
+          "s": 8
+        },
+        {
+          "w": "cobai",
+          "s": 7
+        },
+        {
+          "w": "conejillo indias",
+          "s": 7
+        },
+        {
+          "w": "vacuna obligatoria",
+          "s": 7
+        },
+        {
+          "w": "vacunació forçada",
+          "s": 8
+        },
+        {
+          "w": "vacunación forzada",
+          "s": 8
+        },
+        {
+          "w": "passaport vacunal",
+          "s": 5
+        },
+        {
+          "w": "segregació vacunal",
+          "s": 7
+        },
+        {
+          "w": "adjuvant",
+          "s": 4
+        },
+        {
+          "w": "adyuvante",
+          "s": 4
+        },
+        {
+          "w": "thimerosal",
+          "s": 6
+        },
+        {
+          "w": "mercuri vacuna",
+          "s": 8
+        },
+        {
+          "w": "mercurio vacuna",
+          "s": 8
+        },
+        {
+          "w": "alumini vacuna",
+          "s": 7
+        },
+        {
+          "w": "aluminio vacuna",
+          "s": 7
+        },
+        {
+          "w": "immunitat natural",
+          "s": 4
+        },
+        {
+          "w": "immunitat de ramat",
+          "s": 3
+        },
+        {
+          "w": "mort vacuna",
+          "s": 9
+        },
+        {
+          "w": "morts vacunes",
+          "s": 9
+        },
+        {
+          "w": "mata vacuna",
+          "s": 10
+        },
+        {
+          "w": "vacuna mata",
+          "s": 10
+        },
+        {
+          "w": "vacuna gene",
+          "s": 6
+        },
+        {
+          "w": "terapia génica",
+          "s": 6
+        },
+        {
+          "w": "vacuna experimental",
+          "s": 6
+        },
+        {
+          "w": "vacuna no provada",
+          "s": 7
+        },
+        {
+          "w": "esterilitza",
+          "s": 9
+        },
+        {
+          "w": "esterilización masiva",
+          "s": 10
+        },
+        {
+          "w": "nano partícules",
+          "s": 7
+        },
+        {
+          "w": "nanopartículas",
+          "s": 7
+        },
+        {
+          "w": "grafè vacuna",
+          "s": 9
+        },
+        {
+          "w": "grafeno vacuna",
+          "s": 9
+        }
       ]
     },
     {
       "id": "TOPIC_PANDEMIA",
       "nom": "Pandèmia i Malalties Infeccioses",
       "icon": "🦠",
-      "fonts": ["ECDC", "OMS", "Johns Hopkins", "MSF"],
+      "fonts": [
+        "ECDC",
+        "OMS",
+        "Johns Hopkins",
+        "MSF"
+      ],
       "lexemes": [
-        {"w": "covid", "s": 3}, {"w": "coronavirus", "s": 3}, {"w": "sars-cov", "s": 3},
-        {"w": "variant", "s": 3}, {"w": "ómicron", "s": 3}, {"w": "delta", "s": 3},
-        {"w": "pcr", "s": 3}, {"w": "confinament", "s": 4}, {"w": "lockdown", "s": 4},
-        {"w": "mascareta", "s": 3}, {"w": "mascarilla", "s": 3},
-        {"w": "pandèmia falsa", "s": 9}, {"w": "pandemia falsa", "s": 9},
-        {"w": "plandemia", "s": 10}, {"w": "scamdemic", "s": 10}, {"w": "casedemic", "s": 9},
-        {"w": "pcr fals", "s": 8}, {"w": "pcr manipulat", "s": 9}, {"w": "pcr manipulado", "s": 9},
-        {"w": "falsos positius covid", "s": 8}, {"w": "inventat covid", "s": 9},
-        {"w": "coronavirus arma", "s": 10}, {"w": "virus fabricat", "s": 10},
-        {"w": "virus laboratori", "s": 8}, {"w": "lab leak", "s": 7},
-        {"w": "fort detrick", "s": 7}, {"w": "wuhan lab", "s": 7},
-        {"w": "grip normal", "s": 6}, {"w": "es solo gripe", "s": 7},
-        {"w": "depopulació", "s": 10}, {"w": "depoblació", "s": 10},
-        {"w": "reducció població", "s": 9}, {"w": "reducción población", "s": 9},
-        {"w": "pandèmia programada", "s": 10}, {"w": "pandemia programada", "s": 10},
-        {"w": "event 201", "s": 8}, {"w": "simulacre pandèmia", "s": 7},
-        {"w": "kit pcr 2018", "s": 8}, {"w": "patents coronavirus", "s": 7},
-        {"w": "fauci menteix", "s": 8}, {"w": "fauci miente", "s": 8},
-        {"w": "oms corrupte", "s": 8}, {"w": "oms corrupta", "s": 8}, {"w": "oms menteix", "s": 8}
+        {
+          "w": "covid",
+          "s": 3
+        },
+        {
+          "w": "coronavirus",
+          "s": 3
+        },
+        {
+          "w": "sars-cov",
+          "s": 3
+        },
+        {
+          "w": "variant",
+          "s": 3
+        },
+        {
+          "w": "ómicron",
+          "s": 3
+        },
+        {
+          "w": "delta",
+          "s": 3
+        },
+        {
+          "w": "pcr",
+          "s": 3
+        },
+        {
+          "w": "confinament",
+          "s": 4
+        },
+        {
+          "w": "lockdown",
+          "s": 4
+        },
+        {
+          "w": "mascareta",
+          "s": 3
+        },
+        {
+          "w": "mascarilla",
+          "s": 3
+        },
+        {
+          "w": "pandèmia falsa",
+          "s": 9
+        },
+        {
+          "w": "pandemia falsa",
+          "s": 9
+        },
+        {
+          "w": "plandemia",
+          "s": 10
+        },
+        {
+          "w": "scamdemic",
+          "s": 10
+        },
+        {
+          "w": "casedemic",
+          "s": 9
+        },
+        {
+          "w": "pcr fals",
+          "s": 8
+        },
+        {
+          "w": "pcr manipulat",
+          "s": 9
+        },
+        {
+          "w": "pcr manipulado",
+          "s": 9
+        },
+        {
+          "w": "falsos positius covid",
+          "s": 8
+        },
+        {
+          "w": "inventat covid",
+          "s": 9
+        },
+        {
+          "w": "coronavirus arma",
+          "s": 10
+        },
+        {
+          "w": "virus fabricat",
+          "s": 10
+        },
+        {
+          "w": "virus laboratori",
+          "s": 8
+        },
+        {
+          "w": "lab leak",
+          "s": 7
+        },
+        {
+          "w": "fort detrick",
+          "s": 7
+        },
+        {
+          "w": "wuhan lab",
+          "s": 7
+        },
+        {
+          "w": "grip normal",
+          "s": 6
+        },
+        {
+          "w": "es solo gripe",
+          "s": 7
+        },
+        {
+          "w": "depopulació",
+          "s": 10
+        },
+        {
+          "w": "depoblació",
+          "s": 10
+        },
+        {
+          "w": "reducció població",
+          "s": 9
+        },
+        {
+          "w": "reducción población",
+          "s": 9
+        },
+        {
+          "w": "pandèmia programada",
+          "s": 10
+        },
+        {
+          "w": "pandemia programada",
+          "s": 10
+        },
+        {
+          "w": "event 201",
+          "s": 8
+        },
+        {
+          "w": "simulacre pandèmia",
+          "s": 7
+        },
+        {
+          "w": "kit pcr 2018",
+          "s": 8
+        },
+        {
+          "w": "patents coronavirus",
+          "s": 7
+        },
+        {
+          "w": "fauci menteix",
+          "s": 8
+        },
+        {
+          "w": "fauci miente",
+          "s": 8
+        },
+        {
+          "w": "oms corrupte",
+          "s": 8
+        },
+        {
+          "w": "oms corrupta",
+          "s": 8
+        },
+        {
+          "w": "oms menteix",
+          "s": 8
+        }
       ]
     },
     {
       "id": "TOPIC_5G_TECNOLOGIA",
       "nom": "5G i Radiació Electromagnètica",
       "icon": "📡",
-      "fonts": ["OMS", "ICNIRP", "GSMA", "ITU"],
+      "fonts": [
+        "OMS",
+        "ICNIRP",
+        "GSMA",
+        "ITU"
+      ],
       "lexemes": [
-        {"w": "5g", "s": 5}, {"w": "5g perill", "s": 8}, {"w": "5g causa", "s": 8},
-        {"w": "antena 5g", "s": 6}, {"w": "torre 5g", "s": 6},
-        {"w": "ones electromagnètiques", "s": 4}, {"w": "radiació electromagnètica", "s": 4},
-        {"w": "electrosensibilitat", "s": 7}, {"w": "electrosensible", "s": 7},
-        {"w": "wifi malalt", "s": 7}, {"w": "wifi perill", "s": 7}, {"w": "wifi daña", "s": 7},
-        {"w": "bluetooth dany", "s": 7}, {"w": "bluetooth daña", "s": 7},
-        {"w": "microxip", "s": 10}, {"w": "microchip", "s": 10},
-        {"w": "chip subcutani", "s": 10}, {"w": "chip subcutáneo", "s": 10},
-        {"w": "implant control", "s": 10}, {"w": "implante control", "s": 10},
-        {"w": "torre telecomunicació", "s": 4}, {"w": "antena perill", "s": 7},
-        {"w": "5g covid", "s": 10}, {"w": "5g virus", "s": 10}, {"w": "5g activa virus", "s": 9},
-        {"w": "smart meter perill", "s": 7}, {"w": "comptador intelligent malalt", "s": 7},
-        {"w": "radiació no ionitzant", "s": 4}, {"w": "microones perill", "s": 6},
-        {"w": "freqüència 432", "s": 6}, {"w": "frequencia 528", "s": 6},
-        {"w": "radi perill", "s": 5}, {"w": "emf perill", "s": 6},
-        {"w": "starlink control", "s": 8}, {"w": "satèlit vigilància", "s": 7}
+        {
+          "w": "5g",
+          "s": 5
+        },
+        {
+          "w": "5g perill",
+          "s": 8
+        },
+        {
+          "w": "5g causa",
+          "s": 8
+        },
+        {
+          "w": "antena 5g",
+          "s": 6
+        },
+        {
+          "w": "torre 5g",
+          "s": 6
+        },
+        {
+          "w": "ones electromagnètiques",
+          "s": 4
+        },
+        {
+          "w": "radiació electromagnètica",
+          "s": 4
+        },
+        {
+          "w": "electrosensibilitat",
+          "s": 7
+        },
+        {
+          "w": "electrosensible",
+          "s": 7
+        },
+        {
+          "w": "wifi malalt",
+          "s": 7
+        },
+        {
+          "w": "wifi perill",
+          "s": 7
+        },
+        {
+          "w": "wifi daña",
+          "s": 7
+        },
+        {
+          "w": "bluetooth dany",
+          "s": 7
+        },
+        {
+          "w": "bluetooth daña",
+          "s": 7
+        },
+        {
+          "w": "microxip",
+          "s": 10
+        },
+        {
+          "w": "microchip",
+          "s": 10
+        },
+        {
+          "w": "chip subcutani",
+          "s": 10
+        },
+        {
+          "w": "chip subcutáneo",
+          "s": 10
+        },
+        {
+          "w": "implant control",
+          "s": 10
+        },
+        {
+          "w": "implante control",
+          "s": 10
+        },
+        {
+          "w": "torre telecomunicació",
+          "s": 4
+        },
+        {
+          "w": "antena perill",
+          "s": 7
+        },
+        {
+          "w": "5g covid",
+          "s": 10
+        },
+        {
+          "w": "5g virus",
+          "s": 10
+        },
+        {
+          "w": "5g activa virus",
+          "s": 9
+        },
+        {
+          "w": "smart meter perill",
+          "s": 7
+        },
+        {
+          "w": "comptador intelligent malalt",
+          "s": 7
+        },
+        {
+          "w": "radiació no ionitzant",
+          "s": 4
+        },
+        {
+          "w": "microones perill",
+          "s": 6
+        },
+        {
+          "w": "freqüència 432",
+          "s": 6
+        },
+        {
+          "w": "frequencia 528",
+          "s": 6
+        },
+        {
+          "w": "radi perill",
+          "s": 5
+        },
+        {
+          "w": "emf perill",
+          "s": 6
+        },
+        {
+          "w": "starlink control",
+          "s": 8
+        },
+        {
+          "w": "satèlit vigilància",
+          "s": 7
+        }
       ]
     },
     {
       "id": "TOPIC_CLIMA",
       "nom": "Canvi Climàtic",
       "icon": "🌡️",
-      "fonts": ["IPCC", "NASA Climate", "NOAA", "Copernicus"],
+      "fonts": [
+        "IPCC",
+        "NASA Climate",
+        "NOAA",
+        "Copernicus"
+      ],
       "lexemes": [
-        {"w": "canvi climàtic", "s": 2}, {"w": "escalfament global", "s": 2}, {"w": "calentamiento global", "s": 2},
-        {"w": "co2", "s": 2}, {"w": "diòxid de carboni", "s": 2}, {"w": "dióxido carbono", "s": 2},
-        {"w": "carboni", "s": 2}, {"w": "ipcc", "s": 2}, {"w": "cop26", "s": 2}, {"w": "cop28", "s": 2},
-        {"w": "glacier", "s": 3}, {"w": "deglaciment", "s": 3}, {"w": "glaceres", "s": 3}, {"w": "hielo derretido", "s": 3},
-        {"w": "emissions", "s": 2}, {"w": "combustible fòssil", "s": 2}, {"w": "petroli", "s": 2}, {"w": "carbó", "s": 2},
-        {"w": "metà", "s": 3}, {"w": "deforestació", "s": 3}, {"w": "temperatura global", "s": 2},
-        {"w": "negacionisme climàtic", "s": 8}, {"w": "negacionista clima", "s": 8}, {"w": "negacionismo climático", "s": 8},
-        {"w": "clima fals", "s": 9}, {"w": "mentida climàtica", "s": 9}, {"w": "fraude climático", "s": 9},
-        {"w": "scam clima", "s": 9}, {"w": "hoax clima", "s": 9}, {"w": "engaño climático", "s": 9},
-        {"w": "agenda climàtica", "s": 7}, {"w": "estafa climàtica", "s": 8}, {"w": "estafa climática", "s": 8},
-        {"w": "sol controla clima", "s": 5}, {"w": "cicles naturals", "s": 4},
-        {"w": "geoenginyeria", "s": 6}, {"w": "geoingeniería", "s": 6},
-        {"w": "manipulació clima", "s": 8}, {"w": "manipulación clima", "s": 8},
-        {"w": "greta robot", "s": 7}, {"w": "greta actriu", "s": 7}, {"w": "activisme pagat", "s": 7}
+        {
+          "w": "canvi climàtic",
+          "s": 2
+        },
+        {
+          "w": "escalfament global",
+          "s": 2
+        },
+        {
+          "w": "calentamiento global",
+          "s": 2
+        },
+        {
+          "w": "co2",
+          "s": 2
+        },
+        {
+          "w": "diòxid de carboni",
+          "s": 2
+        },
+        {
+          "w": "dióxido carbono",
+          "s": 2
+        },
+        {
+          "w": "carboni",
+          "s": 2
+        },
+        {
+          "w": "ipcc",
+          "s": 2
+        },
+        {
+          "w": "cop26",
+          "s": 2
+        },
+        {
+          "w": "cop28",
+          "s": 2
+        },
+        {
+          "w": "glacier",
+          "s": 3
+        },
+        {
+          "w": "deglaciment",
+          "s": 3
+        },
+        {
+          "w": "glaceres",
+          "s": 3
+        },
+        {
+          "w": "hielo derretido",
+          "s": 3
+        },
+        {
+          "w": "emissions",
+          "s": 2
+        },
+        {
+          "w": "combustible fòssil",
+          "s": 2
+        },
+        {
+          "w": "petroli",
+          "s": 2
+        },
+        {
+          "w": "carbó",
+          "s": 2
+        },
+        {
+          "w": "metà",
+          "s": 3
+        },
+        {
+          "w": "deforestació",
+          "s": 3
+        },
+        {
+          "w": "temperatura global",
+          "s": 2
+        },
+        {
+          "w": "negacionisme climàtic",
+          "s": 8
+        },
+        {
+          "w": "negacionista clima",
+          "s": 8
+        },
+        {
+          "w": "negacionismo climático",
+          "s": 8
+        },
+        {
+          "w": "clima fals",
+          "s": 9
+        },
+        {
+          "w": "mentida climàtica",
+          "s": 9
+        },
+        {
+          "w": "fraude climático",
+          "s": 9
+        },
+        {
+          "w": "scam clima",
+          "s": 9
+        },
+        {
+          "w": "hoax clima",
+          "s": 9
+        },
+        {
+          "w": "engaño climático",
+          "s": 9
+        },
+        {
+          "w": "agenda climàtica",
+          "s": 7
+        },
+        {
+          "w": "estafa climàtica",
+          "s": 8
+        },
+        {
+          "w": "estafa climática",
+          "s": 8
+        },
+        {
+          "w": "sol controla clima",
+          "s": 5
+        },
+        {
+          "w": "cicles naturals",
+          "s": 4
+        },
+        {
+          "w": "geoenginyeria",
+          "s": 6
+        },
+        {
+          "w": "geoingeniería",
+          "s": 6
+        },
+        {
+          "w": "manipulació clima",
+          "s": 8
+        },
+        {
+          "w": "manipulación clima",
+          "s": 8
+        },
+        {
+          "w": "greta robot",
+          "s": 7
+        },
+        {
+          "w": "greta actriu",
+          "s": 7
+        },
+        {
+          "w": "activisme pagat",
+          "s": 7
+        }
       ]
     },
     {
       "id": "TOPIC_IMMIGRACIO",
       "nom": "Immigració i Refugi",
       "icon": "🚶",
-      "fonts": ["ACNUR", "IOM", "Eurostat", "INE"],
+      "fonts": [
+        "ACNUR",
+        "IOM",
+        "Eurostat",
+        "INE"
+      ],
       "lexemes": [
-        {"w": "immigrant", "s": 2}, {"w": "immigrants", "s": 2}, {"w": "immigració", "s": 2}, {"w": "inmigración", "s": 2},
-        {"w": "refugiat", "s": 2}, {"w": "refugiats", "s": 2}, {"w": "refugiado", "s": 2},
-        {"w": "migrant", "s": 2}, {"w": "migrants", "s": 2}, {"w": "migrante", "s": 2},
-        {"w": "asil", "s": 2}, {"w": "asilo", "s": 2},
-        {"w": "mena", "s": 3}, {"w": "menes", "s": 3}, {"w": "menors estrangers", "s": 3},
-        {"w": "il·legal", "s": 4}, {"w": "il·legals", "s": 4}, {"w": "ilegal", "s": 4}, {"w": "ilegales", "s": 4},
-        {"w": "clandestí", "s": 4}, {"w": "clandestins", "s": 4}, {"w": "clandestino", "s": 4},
-        {"w": "invasió migratoria", "s": 9}, {"w": "invasión migratoria", "s": 9},
-        {"w": "invasió", "s": 8}, {"w": "invasión", "s": 8},
-        {"w": "allau migrants", "s": 7}, {"w": "aluvión migrantes", "s": 7},
-        {"w": "deportació", "s": 4}, {"w": "deportación", "s": 4}, {"w": "expulsió", "s": 4},
-        {"w": "fronteres obertes", "s": 5}, {"w": "fronteras abiertas", "s": 5},
-        {"w": "gran reemplaçament", "s": 10}, {"w": "reemplaçament demogràfic", "s": 10}, {"w": "reemplazo demográfico", "s": 10},
-        {"w": "roben feina", "s": 8}, {"w": "roban trabajo", "s": 8}, {"w": "quitan empleos", "s": 7},
-        {"w": "criminals immigrants", "s": 9}, {"w": "crims immigrants", "s": 9}, {"w": "crimen inmigrantes", "s": 9},
-        {"w": "ghettos", "s": 6}, {"w": "guettos", "s": 6}, {"w": "no-go zones", "s": 7}, {"w": "zona prohibida", "s": 6},
-        {"w": "islamització", "s": 8}, {"w": "islamización", "s": 8}, {"w": "sharia europa", "s": 8},
-        {"w": "repatriació", "s": 5}, {"w": "repatriación masiva", "s": 7}
+        {
+          "w": "immigrant",
+          "s": 2
+        },
+        {
+          "w": "immigrants",
+          "s": 2
+        },
+        {
+          "w": "immigració",
+          "s": 2
+        },
+        {
+          "w": "inmigración",
+          "s": 2
+        },
+        {
+          "w": "refugiat",
+          "s": 2
+        },
+        {
+          "w": "refugiats",
+          "s": 2
+        },
+        {
+          "w": "refugiado",
+          "s": 2
+        },
+        {
+          "w": "migrant",
+          "s": 2
+        },
+        {
+          "w": "migrants",
+          "s": 2
+        },
+        {
+          "w": "migrante",
+          "s": 2
+        },
+        {
+          "w": "asil",
+          "s": 2
+        },
+        {
+          "w": "asilo",
+          "s": 2
+        },
+        {
+          "w": "mena",
+          "s": 3
+        },
+        {
+          "w": "menes",
+          "s": 3
+        },
+        {
+          "w": "menors estrangers",
+          "s": 3
+        },
+        {
+          "w": "il·legal",
+          "s": 4
+        },
+        {
+          "w": "il·legals",
+          "s": 4
+        },
+        {
+          "w": "ilegal",
+          "s": 4
+        },
+        {
+          "w": "ilegales",
+          "s": 4
+        },
+        {
+          "w": "clandestí",
+          "s": 4
+        },
+        {
+          "w": "clandestins",
+          "s": 4
+        },
+        {
+          "w": "clandestino",
+          "s": 4
+        },
+        {
+          "w": "invasió migratoria",
+          "s": 9
+        },
+        {
+          "w": "invasión migratoria",
+          "s": 9
+        },
+        {
+          "w": "invasió",
+          "s": 8
+        },
+        {
+          "w": "invasión",
+          "s": 8
+        },
+        {
+          "w": "allau migrants",
+          "s": 7
+        },
+        {
+          "w": "aluvión migrantes",
+          "s": 7
+        },
+        {
+          "w": "deportació",
+          "s": 4
+        },
+        {
+          "w": "deportación",
+          "s": 4
+        },
+        {
+          "w": "expulsió",
+          "s": 4
+        },
+        {
+          "w": "fronteres obertes",
+          "s": 5
+        },
+        {
+          "w": "fronteras abiertas",
+          "s": 5
+        },
+        {
+          "w": "gran reemplaçament",
+          "s": 10
+        },
+        {
+          "w": "reemplaçament demogràfic",
+          "s": 10
+        },
+        {
+          "w": "reemplazo demográfico",
+          "s": 10
+        },
+        {
+          "w": "roben feina",
+          "s": 8
+        },
+        {
+          "w": "roban trabajo",
+          "s": 8
+        },
+        {
+          "w": "quitan empleos",
+          "s": 7
+        },
+        {
+          "w": "criminals immigrants",
+          "s": 9
+        },
+        {
+          "w": "crims immigrants",
+          "s": 9
+        },
+        {
+          "w": "crimen inmigrantes",
+          "s": 9
+        },
+        {
+          "w": "ghettos",
+          "s": 6
+        },
+        {
+          "w": "guettos",
+          "s": 6
+        },
+        {
+          "w": "no-go zones",
+          "s": 7
+        },
+        {
+          "w": "zona prohibida",
+          "s": 6
+        },
+        {
+          "w": "islamització",
+          "s": 8
+        },
+        {
+          "w": "islamización",
+          "s": 8
+        },
+        {
+          "w": "sharia europa",
+          "s": 8
+        },
+        {
+          "w": "repatriació",
+          "s": 5
+        },
+        {
+          "w": "repatriación masiva",
+          "s": 7
+        }
       ]
     },
     {
       "id": "TOPIC_ECONOMIA",
       "nom": "Economia i Finances",
       "icon": "📈",
-      "fonts": ["BCE", "FMI", "Eurostat", "BdE"],
+      "fonts": [
+        "BCE",
+        "FMI",
+        "Eurostat",
+        "BdE"
+      ],
       "lexemes": [
-        {"w": "inflació", "s": 2}, {"w": "inflación", "s": 2}, {"w": "deflació", "s": 2},
-        {"w": "preu", "s": 1}, {"w": "preus", "s": 1}, {"w": "precio", "s": 1}, {"w": "precios", "s": 1},
-        {"w": "deute", "s": 2}, {"w": "deute públic", "s": 2}, {"w": "deuda pública", "s": 2},
-        {"w": "pib", "s": 2}, {"w": "pib negatiu", "s": 3},
-        {"w": "atur", "s": 2}, {"w": "desempleo", "s": 2}, {"w": "paro", "s": 2},
-        {"w": "pensió", "s": 2}, {"w": "pensions", "s": 2}, {"w": "pensión", "s": 2}, {"w": "pensiones", "s": 2},
-        {"w": "salari", "s": 2}, {"w": "sou", "s": 2}, {"w": "salario", "s": 2}, {"w": "sueldo", "s": 2},
-        {"w": "impost", "s": 2}, {"w": "impostos", "s": 2}, {"w": "impuesto", "s": 2}, {"w": "impuestos", "s": 2},
-        {"w": "irpf", "s": 2}, {"w": "iva", "s": 2},
-        {"w": "borsa", "s": 2}, {"w": "bolsa", "s": 2}, {"w": "mercats financers", "s": 2},
-        {"w": "crisi econòmica", "s": 3}, {"w": "crisis económica", "s": 3}, {"w": "recessió", "s": 3},
-        {"w": "pa", "s": 1}, {"w": "preus pa", "s": 3}, {"w": "lleis", "s": 1},
-        {"w": "bce", "s": 2}, {"w": "fmi", "s": 2}, {"w": "banc central", "s": 2}, {"w": "reserva federal", "s": 2},
-        {"w": "arruïnar", "s": 8}, {"w": "arruïnen", "s": 8}, {"w": "arruinan", "s": 8},
-        {"w": "destruir economia", "s": 8}, {"w": "destruyen economía", "s": 8},
-        {"w": "empobriment", "s": 6}, {"w": "empobrir", "s": 6}, {"w": "empobrecer", "s": 6},
-        {"w": "robatori fiscal", "s": 8}, {"w": "robo fiscal", "s": 8},
-        {"w": "sistema bancari corrupte", "s": 8}, {"w": "bancos corruptos", "s": 8},
-        {"w": "estafa econòmica", "s": 8}, {"w": "estafa financera", "s": 8}, {"w": "estafa financiera", "s": 8},
-        {"w": "gran reset", "s": 9}, {"w": "great reset", "s": 9}, {"w": "reset econòmic", "s": 8},
-        {"w": "economia col·lapse", "s": 7}, {"w": "colapso económico", "s": 7},
-        {"w": "hiperinflació", "s": 6}, {"w": "hiperinflación", "s": 6}
+        {
+          "w": "inflació",
+          "s": 2
+        },
+        {
+          "w": "inflación",
+          "s": 2
+        },
+        {
+          "w": "deflació",
+          "s": 2
+        },
+        {
+          "w": "preu",
+          "s": 1
+        },
+        {
+          "w": "preus",
+          "s": 1
+        },
+        {
+          "w": "precio",
+          "s": 1
+        },
+        {
+          "w": "precios",
+          "s": 1
+        },
+        {
+          "w": "deute",
+          "s": 2
+        },
+        {
+          "w": "deute públic",
+          "s": 2
+        },
+        {
+          "w": "deuda pública",
+          "s": 2
+        },
+        {
+          "w": "pib",
+          "s": 2
+        },
+        {
+          "w": "pib negatiu",
+          "s": 3
+        },
+        {
+          "w": "atur",
+          "s": 2
+        },
+        {
+          "w": "desempleo",
+          "s": 2
+        },
+        {
+          "w": "paro",
+          "s": 2
+        },
+        {
+          "w": "pensió",
+          "s": 2
+        },
+        {
+          "w": "pensions",
+          "s": 2
+        },
+        {
+          "w": "pensión",
+          "s": 2
+        },
+        {
+          "w": "pensiones",
+          "s": 2
+        },
+        {
+          "w": "salari",
+          "s": 2
+        },
+        {
+          "w": "sou",
+          "s": 2
+        },
+        {
+          "w": "salario",
+          "s": 2
+        },
+        {
+          "w": "sueldo",
+          "s": 2
+        },
+        {
+          "w": "impost",
+          "s": 2
+        },
+        {
+          "w": "impostos",
+          "s": 2
+        },
+        {
+          "w": "impuesto",
+          "s": 2
+        },
+        {
+          "w": "impuestos",
+          "s": 2
+        },
+        {
+          "w": "irpf",
+          "s": 2
+        },
+        {
+          "w": "iva",
+          "s": 2
+        },
+        {
+          "w": "borsa",
+          "s": 2
+        },
+        {
+          "w": "bolsa",
+          "s": 2
+        },
+        {
+          "w": "mercats financers",
+          "s": 2
+        },
+        {
+          "w": "crisi econòmica",
+          "s": 3
+        },
+        {
+          "w": "crisis económica",
+          "s": 3
+        },
+        {
+          "w": "recessió",
+          "s": 3
+        },
+        {
+          "w": "pa",
+          "s": 1
+        },
+        {
+          "w": "preus pa",
+          "s": 3
+        },
+        {
+          "w": "lleis",
+          "s": 1
+        },
+        {
+          "w": "bce",
+          "s": 2
+        },
+        {
+          "w": "fmi",
+          "s": 2
+        },
+        {
+          "w": "banc central",
+          "s": 2
+        },
+        {
+          "w": "reserva federal",
+          "s": 2
+        },
+        {
+          "w": "arruïnar",
+          "s": 8
+        },
+        {
+          "w": "arruïnen",
+          "s": 8
+        },
+        {
+          "w": "arruinan",
+          "s": 8
+        },
+        {
+          "w": "destruir economia",
+          "s": 8
+        },
+        {
+          "w": "destruyen economía",
+          "s": 8
+        },
+        {
+          "w": "empobriment",
+          "s": 6
+        },
+        {
+          "w": "empobrir",
+          "s": 6
+        },
+        {
+          "w": "empobrecer",
+          "s": 6
+        },
+        {
+          "w": "robatori fiscal",
+          "s": 8
+        },
+        {
+          "w": "robo fiscal",
+          "s": 8
+        },
+        {
+          "w": "sistema bancari corrupte",
+          "s": 8
+        },
+        {
+          "w": "bancos corruptos",
+          "s": 8
+        },
+        {
+          "w": "estafa econòmica",
+          "s": 8
+        },
+        {
+          "w": "estafa financera",
+          "s": 8
+        },
+        {
+          "w": "estafa financiera",
+          "s": 8
+        },
+        {
+          "w": "gran reset",
+          "s": 9
+        },
+        {
+          "w": "great reset",
+          "s": 9
+        },
+        {
+          "w": "reset econòmic",
+          "s": 8
+        },
+        {
+          "w": "economia col·lapse",
+          "s": 7
+        },
+        {
+          "w": "colapso económico",
+          "s": 7
+        },
+        {
+          "w": "hiperinflació",
+          "s": 6
+        },
+        {
+          "w": "hiperinflación",
+          "s": 6
+        }
       ]
     },
     {
       "id": "TOPIC_SALUT",
       "nom": "Salut Pública",
       "icon": "🏥",
-      "fonts": ["OMS", "CDC", "Cochrane", "Ministeri Salut"],
+      "fonts": [
+        "OMS",
+        "CDC",
+        "Cochrane",
+        "Ministeri Salut"
+      ],
       "lexemes": [
-        {"w": "malaltia", "s": 2}, {"w": "enfermedad", "s": 2},
-        {"w": "epidèmia", "s": 3}, {"w": "epidemia", "s": 3},
-        {"w": "pandèmia", "s": 3}, {"w": "pandemia", "s": 3},
-        {"w": "virus", "s": 3}, {"w": "bacteria", "s": 2}, {"w": "patogen", "s": 3},
-        {"w": "contagi", "s": 3}, {"w": "contagio", "s": 3}, {"w": "infecció", "s": 2},
-        {"w": "simptomes", "s": 2}, {"w": "síntomas", "s": 2},
-        {"w": "hospital", "s": 2}, {"w": "medicament", "s": 2}, {"w": "medicamento", "s": 2},
-        {"w": "fàrmac", "s": 2}, {"w": "fármaco", "s": 2}, {"w": "tractament", "s": 2},
-        {"w": "cura milagrosa", "s": 8}, {"w": "cura milagrosa", "s": 8}, {"w": "curación milagrosa", "s": 8},
-        {"w": "remei secret", "s": 9}, {"w": "remedio secreto", "s": 9},
-        {"w": "cura natural", "s": 5}, {"w": "curación natural", "s": 5},
-        {"w": "remei casolà", "s": 4}, {"w": "remedio casero", "s": 4},
-        {"w": "fitoteràpia cura", "s": 6}, {"w": "herbal cure", "s": 5},
-        {"w": "homeopatia cura", "s": 7}, {"w": "homeopatia funciona", "s": 7}, {"w": "homeopatía cura", "s": 7},
-        {"w": "medicina oficial mata", "s": 10}, {"w": "médicos mienten", "s": 9}, {"w": "metges menteixen", "s": 9},
-        {"w": "farmacèutiques oculten", "s": 9}, {"w": "farmacéuticas ocultan", "s": 9},
-        {"w": "cura càncer oculta", "s": 10}, {"w": "cura cancer oculta", "s": 10}, {"w": "cura cáncer oculta", "s": 10},
-        {"w": "industria farmacèutica", "s": 5}, {"w": "big pharma", "s": 7}, {"w": "big pharma oculta", "s": 9},
-        {"w": "curcuma cura", "s": 7}, {"w": "cúrcuma cura", "s": 7},
-        {"w": "diòxid clor", "s": 10}, {"w": "mms", "s": 9}, {"w": "cds", "s": 9}, {"w": "clo2", "s": 9},
-        {"w": "ozó teràpia", "s": 6}, {"w": "ozonoteràpia", "s": 6}, {"w": "ozonoterapia", "s": 6},
-        {"w": "bióxido cloro", "s": 10}, {"w": "dióxido cloro", "s": 10}
+        {
+          "w": "malaltia",
+          "s": 2
+        },
+        {
+          "w": "enfermedad",
+          "s": 2
+        },
+        {
+          "w": "epidèmia",
+          "s": 3
+        },
+        {
+          "w": "epidemia",
+          "s": 3
+        },
+        {
+          "w": "pandèmia",
+          "s": 3
+        },
+        {
+          "w": "pandemia",
+          "s": 3
+        },
+        {
+          "w": "virus",
+          "s": 3
+        },
+        {
+          "w": "bacteria",
+          "s": 2
+        },
+        {
+          "w": "patogen",
+          "s": 3
+        },
+        {
+          "w": "contagi",
+          "s": 3
+        },
+        {
+          "w": "contagio",
+          "s": 3
+        },
+        {
+          "w": "infecció",
+          "s": 2
+        },
+        {
+          "w": "simptomes",
+          "s": 2
+        },
+        {
+          "w": "síntomas",
+          "s": 2
+        },
+        {
+          "w": "hospital",
+          "s": 2
+        },
+        {
+          "w": "medicament",
+          "s": 2
+        },
+        {
+          "w": "medicamento",
+          "s": 2
+        },
+        {
+          "w": "fàrmac",
+          "s": 2
+        },
+        {
+          "w": "fármaco",
+          "s": 2
+        },
+        {
+          "w": "tractament",
+          "s": 2
+        },
+        {
+          "w": "cura milagrosa",
+          "s": 8
+        },
+        {
+          "w": "cura milagrosa",
+          "s": 8
+        },
+        {
+          "w": "curación milagrosa",
+          "s": 8
+        },
+        {
+          "w": "remei secret",
+          "s": 9
+        },
+        {
+          "w": "remedio secreto",
+          "s": 9
+        },
+        {
+          "w": "cura natural",
+          "s": 5
+        },
+        {
+          "w": "curación natural",
+          "s": 5
+        },
+        {
+          "w": "remei casolà",
+          "s": 4
+        },
+        {
+          "w": "remedio casero",
+          "s": 4
+        },
+        {
+          "w": "fitoteràpia cura",
+          "s": 6
+        },
+        {
+          "w": "herbal cure",
+          "s": 5
+        },
+        {
+          "w": "homeopatia cura",
+          "s": 7
+        },
+        {
+          "w": "homeopatia funciona",
+          "s": 7
+        },
+        {
+          "w": "homeopatía cura",
+          "s": 7
+        },
+        {
+          "w": "medicina oficial mata",
+          "s": 10
+        },
+        {
+          "w": "médicos mienten",
+          "s": 9
+        },
+        {
+          "w": "metges menteixen",
+          "s": 9
+        },
+        {
+          "w": "farmacèutiques oculten",
+          "s": 9
+        },
+        {
+          "w": "farmacéuticas ocultan",
+          "s": 9
+        },
+        {
+          "w": "cura càncer oculta",
+          "s": 10
+        },
+        {
+          "w": "cura cancer oculta",
+          "s": 10
+        },
+        {
+          "w": "cura cáncer oculta",
+          "s": 10
+        },
+        {
+          "w": "industria farmacèutica",
+          "s": 5
+        },
+        {
+          "w": "big pharma",
+          "s": 7
+        },
+        {
+          "w": "big pharma oculta",
+          "s": 9
+        },
+        {
+          "w": "curcuma cura",
+          "s": 7
+        },
+        {
+          "w": "cúrcuma cura",
+          "s": 7
+        },
+        {
+          "w": "diòxid clor",
+          "s": 10
+        },
+        {
+          "w": "mms",
+          "s": 9
+        },
+        {
+          "w": "cds",
+          "s": 9
+        },
+        {
+          "w": "clo2",
+          "s": 9
+        },
+        {
+          "w": "ozó teràpia",
+          "s": 6
+        },
+        {
+          "w": "ozonoteràpia",
+          "s": 6
+        },
+        {
+          "w": "ozonoterapia",
+          "s": 6
+        },
+        {
+          "w": "bióxido cloro",
+          "s": 10
+        },
+        {
+          "w": "dióxido cloro",
+          "s": 10
+        }
       ]
     },
     {
       "id": "TOPIC_CIBERSEGURETAT",
       "nom": "Ciberseguretat",
       "icon": "🛡️",
-      "fonts": ["INCIBE", "CCN-CERT", "ENISA", "CISA"],
+      "fonts": [
+        "INCIBE",
+        "CCN-CERT",
+        "ENISA",
+        "CISA"
+      ],
       "lexemes": [
-        {"w": "hackejat", "s": 5}, {"w": "hackeja", "s": 5}, {"w": "hacker", "s": 4}, {"w": "hackers", "s": 4},
-        {"w": "hackeado", "s": 5}, {"w": "hackear", "s": 5},
-        {"w": "phishing", "s": 6}, {"w": "malware", "s": 7}, {"w": "ransomware", "s": 7},
-        {"w": "troià", "s": 6}, {"w": "troyano", "s": 6}, {"w": "keylogger", "s": 7},
-        {"w": "virus informàtic", "s": 5}, {"w": "virus informático", "s": 5},
-        {"w": "ciberatac", "s": 5}, {"w": "ciberataque", "s": 5}, {"w": "cyberattack", "s": 5},
-        {"w": "robatori de dades", "s": 6}, {"w": "robo de datos", "s": 6}, {"w": "data breach", "s": 6},
-        {"w": "mòbil infectat", "s": 7}, {"w": "móvil infectado", "s": 7},
-        {"w": "espionatge digital", "s": 6}, {"w": "espionaje digital", "s": 6},
-        {"w": "vigilància digital", "s": 5}, {"w": "vigilancia digital", "s": 5},
-        {"w": "contrasenya robada", "s": 7}, {"w": "contraseña robada", "s": 7},
-        {"w": "darkweb", "s": 6}, {"w": "dark web", "s": 6}, {"w": "deepweb", "s": 6}, {"w": "deep web", "s": 6},
-        {"w": "doxing", "s": 7}, {"w": "swatting", "s": 7},
-        {"w": "ciberassetjament", "s": 6}, {"w": "ciberacoso", "s": 6},
-        {"w": "bitcoin estafa", "s": 8}, {"w": "crypto estafa", "s": 8}, {"w": "scam", "s": 6},
-        {"w": "zero-day", "s": 6}, {"w": "exploit", "s": 6}, {"w": "botnet", "s": 6},
-        {"w": "ddos", "s": 6}, {"w": "atac ddos", "s": 7}
+        {
+          "w": "hackejat",
+          "s": 5
+        },
+        {
+          "w": "hackeja",
+          "s": 5
+        },
+        {
+          "w": "hacker",
+          "s": 4
+        },
+        {
+          "w": "hackers",
+          "s": 4
+        },
+        {
+          "w": "hackeado",
+          "s": 5
+        },
+        {
+          "w": "hackear",
+          "s": 5
+        },
+        {
+          "w": "phishing",
+          "s": 6
+        },
+        {
+          "w": "malware",
+          "s": 7
+        },
+        {
+          "w": "ransomware",
+          "s": 7
+        },
+        {
+          "w": "troià",
+          "s": 6
+        },
+        {
+          "w": "troyano",
+          "s": 6
+        },
+        {
+          "w": "keylogger",
+          "s": 7
+        },
+        {
+          "w": "virus informàtic",
+          "s": 5
+        },
+        {
+          "w": "virus informático",
+          "s": 5
+        },
+        {
+          "w": "ciberatac",
+          "s": 5
+        },
+        {
+          "w": "ciberataque",
+          "s": 5
+        },
+        {
+          "w": "cyberattack",
+          "s": 5
+        },
+        {
+          "w": "robatori de dades",
+          "s": 6
+        },
+        {
+          "w": "robo de datos",
+          "s": 6
+        },
+        {
+          "w": "data breach",
+          "s": 6
+        },
+        {
+          "w": "mòbil infectat",
+          "s": 7
+        },
+        {
+          "w": "móvil infectado",
+          "s": 7
+        },
+        {
+          "w": "espionatge digital",
+          "s": 6
+        },
+        {
+          "w": "espionaje digital",
+          "s": 6
+        },
+        {
+          "w": "vigilància digital",
+          "s": 5
+        },
+        {
+          "w": "vigilancia digital",
+          "s": 5
+        },
+        {
+          "w": "contrasenya robada",
+          "s": 7
+        },
+        {
+          "w": "contraseña robada",
+          "s": 7
+        },
+        {
+          "w": "darkweb",
+          "s": 6
+        },
+        {
+          "w": "dark web",
+          "s": 6
+        },
+        {
+          "w": "deepweb",
+          "s": 6
+        },
+        {
+          "w": "deep web",
+          "s": 6
+        },
+        {
+          "w": "doxing",
+          "s": 7
+        },
+        {
+          "w": "swatting",
+          "s": 7
+        },
+        {
+          "w": "ciberassetjament",
+          "s": 6
+        },
+        {
+          "w": "ciberacoso",
+          "s": 6
+        },
+        {
+          "w": "bitcoin estafa",
+          "s": 8
+        },
+        {
+          "w": "crypto estafa",
+          "s": 8
+        },
+        {
+          "w": "scam",
+          "s": 6
+        },
+        {
+          "w": "zero-day",
+          "s": 6
+        },
+        {
+          "w": "exploit",
+          "s": 6
+        },
+        {
+          "w": "botnet",
+          "s": 6
+        },
+        {
+          "w": "ddos",
+          "s": 6
+        },
+        {
+          "w": "atac ddos",
+          "s": 7
+        }
       ]
     },
     {
       "id": "TOPIC_GEOPOLITICA",
       "nom": "Geopolítica i Conflictes",
       "icon": "🌍",
-      "fonts": ["OCCRP", "Bellingcat", "Reuters", "AP"],
+      "fonts": [
+        "OCCRP",
+        "Bellingcat",
+        "Reuters",
+        "AP"
+      ],
       "lexemes": [
-        {"w": "guerra", "s": 4}, {"w": "conflicte armat", "s": 4}, {"w": "conflicto armado", "s": 4},
-        {"w": "otan", "s": 3}, {"w": "nato", "s": 3},
-        {"w": "rússia", "s": 3}, {"w": "russia", "s": 3}, {"w": "ucraïna", "s": 3}, {"w": "ukraine", "s": 3},
-        {"w": "israel", "s": 3}, {"w": "palestina", "s": 3}, {"w": "gaza", "s": 4}, {"w": "cisjordània", "s": 3},
-        {"w": "xina", "s": 3}, {"w": "china", "s": 3}, {"w": "taiwan", "s": 3}, {"w": "corea del nord", "s": 4},
-        {"w": "sancions", "s": 3}, {"w": "sanciones", "s": 3},
-        {"w": "armes nuclears", "s": 6}, {"w": "bomba nuclear", "s": 7}, {"w": "arma nuclear", "s": 7},
-        {"w": "propaganda bèl·lica", "s": 7}, {"w": "propaganda bélica", "s": 7},
-        {"w": "false flag", "s": 9}, {"w": "bandera falsa", "s": 9}, {"w": "atac fals", "s": 9},
-        {"w": "falsa bandera", "s": 9}, {"w": "operació encoberta", "s": 8}, {"w": "operación encubierta", "s": 8},
-        {"w": "genocidi", "s": 7}, {"w": "genocidio", "s": 7},
-        {"w": "crims de guerra", "s": 5}, {"w": "crímenes de guerra", "s": 5},
-        {"w": "ocupació il·legal", "s": 5}, {"w": "ocupación ilegal", "s": 5},
-        {"w": "imperialisme", "s": 5}, {"w": "imperialismo", "s": 5},
-        {"w": "colonialisme", "s": 4}, {"w": "colonialismo", "s": 4},
-        {"w": "annexió", "s": 4}, {"w": "anexión", "s": 4},
-        {"w": "zona de guerra", "s": 5}, {"w": "front de guerra", "s": 5}
+        {
+          "w": "guerra",
+          "s": 4
+        },
+        {
+          "w": "conflicte armat",
+          "s": 4
+        },
+        {
+          "w": "conflicto armado",
+          "s": 4
+        },
+        {
+          "w": "otan",
+          "s": 3
+        },
+        {
+          "w": "nato",
+          "s": 3
+        },
+        {
+          "w": "rússia",
+          "s": 3
+        },
+        {
+          "w": "russia",
+          "s": 3
+        },
+        {
+          "w": "ucraïna",
+          "s": 3
+        },
+        {
+          "w": "ukraine",
+          "s": 3
+        },
+        {
+          "w": "israel",
+          "s": 3
+        },
+        {
+          "w": "palestina",
+          "s": 3
+        },
+        {
+          "w": "gaza",
+          "s": 4
+        },
+        {
+          "w": "cisjordània",
+          "s": 3
+        },
+        {
+          "w": "xina",
+          "s": 3
+        },
+        {
+          "w": "china",
+          "s": 3
+        },
+        {
+          "w": "taiwan",
+          "s": 3
+        },
+        {
+          "w": "corea del nord",
+          "s": 4
+        },
+        {
+          "w": "sancions",
+          "s": 3
+        },
+        {
+          "w": "sanciones",
+          "s": 3
+        },
+        {
+          "w": "armes nuclears",
+          "s": 6
+        },
+        {
+          "w": "bomba nuclear",
+          "s": 7
+        },
+        {
+          "w": "arma nuclear",
+          "s": 7
+        },
+        {
+          "w": "propaganda bèl·lica",
+          "s": 7
+        },
+        {
+          "w": "propaganda bélica",
+          "s": 7
+        },
+        {
+          "w": "false flag",
+          "s": 9
+        },
+        {
+          "w": "bandera falsa",
+          "s": 9
+        },
+        {
+          "w": "atac fals",
+          "s": 9
+        },
+        {
+          "w": "falsa bandera",
+          "s": 9
+        },
+        {
+          "w": "operació encoberta",
+          "s": 8
+        },
+        {
+          "w": "operación encubierta",
+          "s": 8
+        },
+        {
+          "w": "genocidi",
+          "s": 7
+        },
+        {
+          "w": "genocidio",
+          "s": 7
+        },
+        {
+          "w": "crims de guerra",
+          "s": 5
+        },
+        {
+          "w": "crímenes de guerra",
+          "s": 5
+        },
+        {
+          "w": "ocupació il·legal",
+          "s": 5
+        },
+        {
+          "w": "ocupación ilegal",
+          "s": 5
+        },
+        {
+          "w": "imperialisme",
+          "s": 5
+        },
+        {
+          "w": "imperialismo",
+          "s": 5
+        },
+        {
+          "w": "colonialisme",
+          "s": 4
+        },
+        {
+          "w": "colonialismo",
+          "s": 4
+        },
+        {
+          "w": "annexió",
+          "s": 4
+        },
+        {
+          "w": "anexión",
+          "s": 4
+        },
+        {
+          "w": "zona de guerra",
+          "s": 5
+        },
+        {
+          "w": "front de guerra",
+          "s": 5
+        }
       ]
     },
     {
       "id": "TOPIC_IA_DEEPFAKES",
       "nom": "Intel·ligència Artificial i Deepfakes",
       "icon": "🤖",
-      "fonts": ["MIT TR", "IEEE", "ArXiv", "EFF"],
+      "fonts": [
+        "MIT TR",
+        "IEEE",
+        "ArXiv",
+        "EFF"
+      ],
       "lexemes": [
-        {"w": "deepfake", "s": 7}, {"w": "deepfakes", "s": 7},
-        {"w": "chatgpt", "s": 2}, {"w": "gpt", "s": 2}, {"w": "gpt-4", "s": 2},
-        {"w": "intel·ligència artificial", "s": 2}, {"w": "inteligencia artificial", "s": 2},
-        {"w": "ia", "s": 2}, {"w": "ai", "s": 2}, {"w": "llm", "s": 3},
-        {"w": "imatge generada ia", "s": 5}, {"w": "foto falsa ia", "s": 7},
-        {"w": "vídeo manipulat", "s": 7}, {"w": "vídeo falso ia", "s": 7},
-        {"w": "voice clone", "s": 8}, {"w": "clonació de veu", "s": 8}, {"w": "clonación de voz", "s": 8},
-        {"w": "algoritme manipulació", "s": 7}, {"w": "biaix algorísmic", "s": 5}, {"w": "sesgo algorítmico", "s": 5},
-        {"w": "ia ens substituirà", "s": 6}, {"w": "robots roban trabajo", "s": 6},
-        {"w": "singularitat ia", "s": 5}, {"w": "singularidad ia", "s": 5},
-        {"w": "superintel·ligència", "s": 5}, {"w": "superinteligencia", "s": 5}, {"w": "skynet", "s": 6},
-        {"w": "control ia", "s": 6}, {"w": "censura algorítmica", "s": 7},
-        {"w": "ia controla", "s": 7}, {"w": "ia nos controla", "s": 8},
-        {"w": "robot police", "s": 7}, {"w": "robot policia", "s": 7},
-        {"w": "reconeixement facial control", "s": 8}, {"w": "reconocimiento facial control", "s": 8}
+        {
+          "w": "deepfake",
+          "s": 7
+        },
+        {
+          "w": "deepfakes",
+          "s": 7
+        },
+        {
+          "w": "chatgpt",
+          "s": 2
+        },
+        {
+          "w": "gpt",
+          "s": 2
+        },
+        {
+          "w": "gpt-4",
+          "s": 2
+        },
+        {
+          "w": "intel·ligència artificial",
+          "s": 2
+        },
+        {
+          "w": "inteligencia artificial",
+          "s": 2
+        },
+        {
+          "w": "ia",
+          "s": 2
+        },
+        {
+          "w": "ai",
+          "s": 2
+        },
+        {
+          "w": "llm",
+          "s": 3
+        },
+        {
+          "w": "imatge generada ia",
+          "s": 5
+        },
+        {
+          "w": "foto falsa ia",
+          "s": 7
+        },
+        {
+          "w": "vídeo manipulat",
+          "s": 7
+        },
+        {
+          "w": "vídeo falso ia",
+          "s": 7
+        },
+        {
+          "w": "voice clone",
+          "s": 8
+        },
+        {
+          "w": "clonació de veu",
+          "s": 8
+        },
+        {
+          "w": "clonación de voz",
+          "s": 8
+        },
+        {
+          "w": "algoritme manipulació",
+          "s": 7
+        },
+        {
+          "w": "biaix algorísmic",
+          "s": 5
+        },
+        {
+          "w": "sesgo algorítmico",
+          "s": 5
+        },
+        {
+          "w": "ia ens substituirà",
+          "s": 6
+        },
+        {
+          "w": "robots roban trabajo",
+          "s": 6
+        },
+        {
+          "w": "singularitat ia",
+          "s": 5
+        },
+        {
+          "w": "singularidad ia",
+          "s": 5
+        },
+        {
+          "w": "superintel·ligència",
+          "s": 5
+        },
+        {
+          "w": "superinteligencia",
+          "s": 5
+        },
+        {
+          "w": "skynet",
+          "s": 6
+        },
+        {
+          "w": "control ia",
+          "s": 6
+        },
+        {
+          "w": "censura algorítmica",
+          "s": 7
+        },
+        {
+          "w": "ia controla",
+          "s": 7
+        },
+        {
+          "w": "ia nos controla",
+          "s": 8
+        },
+        {
+          "w": "robot police",
+          "s": 7
+        },
+        {
+          "w": "robot policia",
+          "s": 7
+        },
+        {
+          "w": "reconeixement facial control",
+          "s": 8
+        },
+        {
+          "w": "reconocimiento facial control",
+          "s": 8
+        }
       ]
     },
     {
       "id": "TOPIC_CRIPTOMONEDES",
       "nom": "Criptomonedes i Fraus Financers",
       "icon": "₿",
-      "fonts": ["SEC", "CNMV", "CoinDesk", "Chainalysis"],
+      "fonts": [
+        "SEC",
+        "CNMV",
+        "CoinDesk",
+        "Chainalysis"
+      ],
       "lexemes": [
-        {"w": "bitcoin", "s": 3}, {"w": "cripto", "s": 3}, {"w": "criptomoneda", "s": 3}, {"w": "criptomonedes", "s": 3},
-        {"w": "blockchain", "s": 2}, {"w": "ethereum", "s": 3}, {"w": "nft", "s": 4},
-        {"w": "token", "s": 3}, {"w": "defi", "s": 4}, {"w": "wallet", "s": 3},
-        {"w": "stablecoin", "s": 3}, {"w": "altcoin", "s": 3}, {"w": "satoshi", "s": 3},
-        {"w": "pump and dump", "s": 9}, {"w": "pump dump", "s": 9}, {"w": "rug pull", "s": 9},
-        {"w": "esquema ponzi", "s": 10}, {"w": "ponzi", "s": 9}, {"w": "piràmide financera", "s": 10},
-        {"w": "pirámide financiera", "s": 10},
-        {"w": "fake celebrity cripto", "s": 8}, {"w": "elon musk cripto", "s": 8},
-        {"w": "rendiment garantit", "s": 8}, {"w": "rendimiento garantizado", "s": 8},
-        {"w": "inversió segura cripto", "s": 7}, {"w": "dobla diners", "s": 8}, {"w": "duplica dinero", "s": 8},
-        {"w": "cripto estafa", "s": 9}, {"w": "crypto scam", "s": 9}, {"w": "exchange hack", "s": 7},
-        {"w": "fortuna cripto", "s": 6}, {"w": "hacerse rico cripto", "s": 7},
-        {"w": "cbdc control", "s": 8}, {"w": "moneda digital control", "s": 8}
+        {
+          "w": "bitcoin",
+          "s": 3
+        },
+        {
+          "w": "cripto",
+          "s": 3
+        },
+        {
+          "w": "criptomoneda",
+          "s": 3
+        },
+        {
+          "w": "criptomonedes",
+          "s": 3
+        },
+        {
+          "w": "blockchain",
+          "s": 2
+        },
+        {
+          "w": "ethereum",
+          "s": 3
+        },
+        {
+          "w": "nft",
+          "s": 4
+        },
+        {
+          "w": "token",
+          "s": 3
+        },
+        {
+          "w": "defi",
+          "s": 4
+        },
+        {
+          "w": "wallet",
+          "s": 3
+        },
+        {
+          "w": "stablecoin",
+          "s": 3
+        },
+        {
+          "w": "altcoin",
+          "s": 3
+        },
+        {
+          "w": "satoshi",
+          "s": 3
+        },
+        {
+          "w": "pump and dump",
+          "s": 9
+        },
+        {
+          "w": "pump dump",
+          "s": 9
+        },
+        {
+          "w": "rug pull",
+          "s": 9
+        },
+        {
+          "w": "esquema ponzi",
+          "s": 10
+        },
+        {
+          "w": "ponzi",
+          "s": 9
+        },
+        {
+          "w": "piràmide financera",
+          "s": 10
+        },
+        {
+          "w": "pirámide financiera",
+          "s": 10
+        },
+        {
+          "w": "fake celebrity cripto",
+          "s": 8
+        },
+        {
+          "w": "elon musk cripto",
+          "s": 8
+        },
+        {
+          "w": "rendiment garantit",
+          "s": 8
+        },
+        {
+          "w": "rendimiento garantizado",
+          "s": 8
+        },
+        {
+          "w": "inversió segura cripto",
+          "s": 7
+        },
+        {
+          "w": "dobla diners",
+          "s": 8
+        },
+        {
+          "w": "duplica dinero",
+          "s": 8
+        },
+        {
+          "w": "cripto estafa",
+          "s": 9
+        },
+        {
+          "w": "crypto scam",
+          "s": 9
+        },
+        {
+          "w": "exchange hack",
+          "s": 7
+        },
+        {
+          "w": "fortuna cripto",
+          "s": 6
+        },
+        {
+          "w": "hacerse rico cripto",
+          "s": 7
+        },
+        {
+          "w": "cbdc control",
+          "s": 8
+        },
+        {
+          "w": "moneda digital control",
+          "s": 8
+        }
       ]
     },
     {
       "id": "TOPIC_DRETS_DIGITALS",
       "nom": "Privacitat i Vigilància",
       "icon": "👁️",
-      "fonts": ["EFF", "Access Now", "CPJ", "Citizen Lab"],
+      "fonts": [
+        "EFF",
+        "Access Now",
+        "CPJ",
+        "Citizen Lab"
+      ],
       "lexemes": [
-        {"w": "privacitat", "s": 2}, {"w": "privacidad", "s": 2},
-        {"w": "vigilància", "s": 3}, {"w": "vigilancia", "s": 3},
-        {"w": "espionatge", "s": 4}, {"w": "espionaje", "s": 4},
-        {"w": "gdpr", "s": 2}, {"w": "rgpd", "s": 2}, {"w": "dades personals", "s": 3},
-        {"w": "seguiment", "s": 3}, {"w": "tracking", "s": 4}, {"w": "metadades", "s": 4},
-        {"w": "censura", "s": 5}, {"w": "censurats", "s": 6}, {"w": "censurado", "s": 6},
-        {"w": "cancel·lats", "s": 6}, {"w": "cancelado", "s": 5},
-        {"w": "ban compte", "s": 4}, {"w": "suspensió compte", "s": 4}, {"w": "shadowban", "s": 5},
-        {"w": "hackejat", "s": 5}, {"w": "contrasenya filtrada", "s": 7},
-        {"w": "big brother", "s": 7}, {"w": "gran germà", "s": 7}, {"w": "totalitarisme digital", "s": 8},
-        {"w": "societat de control", "s": 7}, {"w": "sociedad de control", "s": 7},
-        {"w": "crèdit social", "s": 7}, {"w": "crédito social", "s": 7}, {"w": "social credit", "s": 7},
-        {"w": "internet apagat", "s": 7}, {"w": "apagón de internet", "s": 7},
-        {"w": "ciberguerra", "s": 6}, {"w": "guerra cibernètica", "s": 6}
+        {
+          "w": "privacitat",
+          "s": 2
+        },
+        {
+          "w": "privacidad",
+          "s": 2
+        },
+        {
+          "w": "vigilància",
+          "s": 3
+        },
+        {
+          "w": "vigilancia",
+          "s": 3
+        },
+        {
+          "w": "espionatge",
+          "s": 4
+        },
+        {
+          "w": "espionaje",
+          "s": 4
+        },
+        {
+          "w": "gdpr",
+          "s": 2
+        },
+        {
+          "w": "rgpd",
+          "s": 2
+        },
+        {
+          "w": "dades personals",
+          "s": 3
+        },
+        {
+          "w": "seguiment",
+          "s": 3
+        },
+        {
+          "w": "tracking",
+          "s": 4
+        },
+        {
+          "w": "metadades",
+          "s": 4
+        },
+        {
+          "w": "censura",
+          "s": 5
+        },
+        {
+          "w": "censurats",
+          "s": 6
+        },
+        {
+          "w": "censurado",
+          "s": 6
+        },
+        {
+          "w": "cancel·lats",
+          "s": 6
+        },
+        {
+          "w": "cancelado",
+          "s": 5
+        },
+        {
+          "w": "ban compte",
+          "s": 4
+        },
+        {
+          "w": "suspensió compte",
+          "s": 4
+        },
+        {
+          "w": "shadowban",
+          "s": 5
+        },
+        {
+          "w": "hackejat",
+          "s": 5
+        },
+        {
+          "w": "contrasenya filtrada",
+          "s": 7
+        },
+        {
+          "w": "big brother",
+          "s": 7
+        },
+        {
+          "w": "gran germà",
+          "s": 7
+        },
+        {
+          "w": "totalitarisme digital",
+          "s": 8
+        },
+        {
+          "w": "societat de control",
+          "s": 7
+        },
+        {
+          "w": "sociedad de control",
+          "s": 7
+        },
+        {
+          "w": "crèdit social",
+          "s": 7
+        },
+        {
+          "w": "crédito social",
+          "s": 7
+        },
+        {
+          "w": "social credit",
+          "s": 7
+        },
+        {
+          "w": "internet apagat",
+          "s": 7
+        },
+        {
+          "w": "apagón de internet",
+          "s": 7
+        },
+        {
+          "w": "ciberguerra",
+          "s": 6
+        },
+        {
+          "w": "guerra cibernètica",
+          "s": 6
+        }
       ]
     },
     {
       "id": "TOPIC_GENERE",
       "nom": "Gènere i Igualtat",
       "icon": "⚧️",
-      "fonts": ["OMS", "Eurostat", "UN Women", "ILGA"],
+      "fonts": [
+        "OMS",
+        "Eurostat",
+        "UN Women",
+        "ILGA"
+      ],
       "lexemes": [
-        {"w": "gènere", "s": 2}, {"w": "género", "s": 2},
-        {"w": "feminisme", "s": 2}, {"w": "feminismo", "s": 2},
-        {"w": "feminista", "s": 2}, {"w": "igualtat", "s": 2}, {"w": "igualdad", "s": 2},
-        {"w": "lgtbi", "s": 2}, {"w": "lgtbiq", "s": 2}, {"w": "lgtb", "s": 2},
-        {"w": "trans", "s": 2}, {"w": "transgènere", "s": 2}, {"w": "transgénero", "s": 2},
-        {"w": "avortament", "s": 3}, {"w": "aborto", "s": 3},
-        {"w": "violència de gènere", "s": 3}, {"w": "violencia de género", "s": 3},
-        {"w": "ideologia de gènere", "s": 7}, {"w": "ideología de género", "s": 7},
-        {"w": "adoctrinament gènere", "s": 8}, {"w": "adoctrinamiento género", "s": 8},
-        {"w": "destruir família", "s": 9}, {"w": "destruyen familia", "s": 9},
-        {"w": "atac a la família", "s": 8}, {"w": "ataque a la familia", "s": 8},
-        {"w": "feminazi", "s": 8}, {"w": "lobby lgtb", "s": 8}, {"w": "agenda gay", "s": 7},
-        {"w": "agenda lgtb", "s": 7}, {"w": "lobby gay", "s": 7},
-        {"w": "transsexualisme menors", "s": 6}, {"w": "mutilació menors", "s": 8}, {"w": "mutilación menores", "s": 8},
-        {"w": "curar homosexualitat", "s": 9}, {"w": "curar homosexualidad", "s": 9},
-        {"w": "terapia conversió", "s": 8}, {"w": "terapia de conversión", "s": 8},
-        {"w": "inversió sexual", "s": 6}, {"w": "perversió sexual", "s": 7}
+        {
+          "w": "gènere",
+          "s": 2
+        },
+        {
+          "w": "género",
+          "s": 2
+        },
+        {
+          "w": "feminisme",
+          "s": 2
+        },
+        {
+          "w": "feminismo",
+          "s": 2
+        },
+        {
+          "w": "feminista",
+          "s": 2
+        },
+        {
+          "w": "igualtat",
+          "s": 2
+        },
+        {
+          "w": "igualdad",
+          "s": 2
+        },
+        {
+          "w": "lgtbi",
+          "s": 2
+        },
+        {
+          "w": "lgtbiq",
+          "s": 2
+        },
+        {
+          "w": "lgtb",
+          "s": 2
+        },
+        {
+          "w": "trans",
+          "s": 2
+        },
+        {
+          "w": "transgènere",
+          "s": 2
+        },
+        {
+          "w": "transgénero",
+          "s": 2
+        },
+        {
+          "w": "avortament",
+          "s": 3
+        },
+        {
+          "w": "aborto",
+          "s": 3
+        },
+        {
+          "w": "violència de gènere",
+          "s": 3
+        },
+        {
+          "w": "violencia de género",
+          "s": 3
+        },
+        {
+          "w": "ideologia de gènere",
+          "s": 7
+        },
+        {
+          "w": "ideología de género",
+          "s": 7
+        },
+        {
+          "w": "adoctrinament gènere",
+          "s": 8
+        },
+        {
+          "w": "adoctrinamiento género",
+          "s": 8
+        },
+        {
+          "w": "destruir família",
+          "s": 9
+        },
+        {
+          "w": "destruyen familia",
+          "s": 9
+        },
+        {
+          "w": "atac a la família",
+          "s": 8
+        },
+        {
+          "w": "ataque a la familia",
+          "s": 8
+        },
+        {
+          "w": "feminazi",
+          "s": 8
+        },
+        {
+          "w": "lobby lgtb",
+          "s": 8
+        },
+        {
+          "w": "agenda gay",
+          "s": 7
+        },
+        {
+          "w": "agenda lgtb",
+          "s": 7
+        },
+        {
+          "w": "lobby gay",
+          "s": 7
+        },
+        {
+          "w": "transsexualisme menors",
+          "s": 6
+        },
+        {
+          "w": "mutilació menors",
+          "s": 8
+        },
+        {
+          "w": "mutilación menores",
+          "s": 8
+        },
+        {
+          "w": "curar homosexualitat",
+          "s": 9
+        },
+        {
+          "w": "curar homosexualidad",
+          "s": 9
+        },
+        {
+          "w": "terapia conversió",
+          "s": 8
+        },
+        {
+          "w": "terapia de conversión",
+          "s": 8
+        },
+        {
+          "w": "inversió sexual",
+          "s": 6
+        },
+        {
+          "w": "perversió sexual",
+          "s": 7
+        }
       ]
     },
     {
       "id": "TOPIC_POLITICA",
       "nom": "Política Nacional",
       "icon": "🏛️",
-      "fonts": ["Maldita.es", "Newtral.es", "Verificat.cat"],
+      "fonts": [
+        "Maldita.es",
+        "Newtral.es",
+        "Verificat.cat"
+      ],
       "lexemes": [
-        {"w": "eleccions fraudulentes", "s": 8}, {"w": "elecciones fraudulentas", "s": 8},
-        {"w": "frau electoral", "s": 8}, {"w": "fraude electoral", "s": 8},
-        {"w": "vots robats", "s": 9}, {"w": "votos robados", "s": 9},
-        {"w": "urnes manipulades", "s": 9}, {"w": "urnas manipuladas", "s": 9},
-        {"w": "governa mentint", "s": 7}, {"w": "gobierna mintiendo", "s": 7},
-        {"w": "dictadura", "s": 6}, {"w": "règim", "s": 5}, {"w": "régimen", "s": 5},
-        {"w": "totalitarisme", "s": 7}, {"w": "totalitarismo", "s": 7},
-        {"w": "corrupció total", "s": 7}, {"w": "todos corruptos", "s": 7},
-        {"w": "tots corruptes", "s": 7},
-        {"w": "golp d'estat", "s": 8}, {"w": "golpe de estado", "s": 8},
-        {"w": "revolució", "s": 5}, {"w": "revolución", "s": 5},
-        {"w": "govern ocult", "s": 9}, {"w": "gobierno oculto", "s": 9},
-        {"w": "comunisme", "s": 5}, {"w": "comunismo", "s": 5},
-        {"w": "feixisme", "s": 5}, {"w": "fascismo", "s": 5},
-        {"w": "nazisme", "s": 6}, {"w": "nazismo", "s": 6},
-        {"w": "podemites", "s": 6}, {"w": "extrema dreta governa", "s": 7},
-        {"w": "sanchismo", "s": 5}, {"w": "lawfare", "s": 6},
-        {"w": "preso polític", "s": 6}, {"w": "preso político", "s": 6},
-        {"w": "censura política", "s": 7}, {"w": "censura política", "s": 7}
+        {
+          "w": "eleccions fraudulentes",
+          "s": 8
+        },
+        {
+          "w": "elecciones fraudulentas",
+          "s": 8
+        },
+        {
+          "w": "frau electoral",
+          "s": 8
+        },
+        {
+          "w": "fraude electoral",
+          "s": 8
+        },
+        {
+          "w": "vots robats",
+          "s": 9
+        },
+        {
+          "w": "votos robados",
+          "s": 9
+        },
+        {
+          "w": "urnes manipulades",
+          "s": 9
+        },
+        {
+          "w": "urnas manipuladas",
+          "s": 9
+        },
+        {
+          "w": "governa mentint",
+          "s": 7
+        },
+        {
+          "w": "gobierna mintiendo",
+          "s": 7
+        },
+        {
+          "w": "dictadura",
+          "s": 6
+        },
+        {
+          "w": "règim",
+          "s": 5
+        },
+        {
+          "w": "régimen",
+          "s": 5
+        },
+        {
+          "w": "totalitarisme",
+          "s": 7
+        },
+        {
+          "w": "totalitarismo",
+          "s": 7
+        },
+        {
+          "w": "corrupció total",
+          "s": 7
+        },
+        {
+          "w": "todos corruptos",
+          "s": 7
+        },
+        {
+          "w": "tots corruptes",
+          "s": 7
+        },
+        {
+          "w": "golp d'estat",
+          "s": 8
+        },
+        {
+          "w": "golpe de estado",
+          "s": 8
+        },
+        {
+          "w": "revolució",
+          "s": 5
+        },
+        {
+          "w": "revolución",
+          "s": 5
+        },
+        {
+          "w": "govern ocult",
+          "s": 9
+        },
+        {
+          "w": "gobierno oculto",
+          "s": 9
+        },
+        {
+          "w": "comunisme",
+          "s": 5
+        },
+        {
+          "w": "comunismo",
+          "s": 5
+        },
+        {
+          "w": "feixisme",
+          "s": 5
+        },
+        {
+          "w": "fascismo",
+          "s": 5
+        },
+        {
+          "w": "nazisme",
+          "s": 6
+        },
+        {
+          "w": "nazismo",
+          "s": 6
+        },
+        {
+          "w": "podemites",
+          "s": 6
+        },
+        {
+          "w": "extrema dreta governa",
+          "s": 7
+        },
+        {
+          "w": "sanchismo",
+          "s": 5
+        },
+        {
+          "w": "lawfare",
+          "s": 6
+        },
+        {
+          "w": "preso polític",
+          "s": 6
+        },
+        {
+          "w": "preso político",
+          "s": 6
+        },
+        {
+          "w": "censura política",
+          "s": 7
+        },
+        {
+          "w": "censura política",
+          "s": 7
+        }
       ]
     },
     {
       "id": "TOPIC_SALUT_MENTAL",
       "nom": "Salut Mental i Benestar",
       "icon": "🧠",
-      "fonts": ["OMS", "APA", "NIMH", "Telefon Esperança"],
+      "fonts": [
+        "OMS",
+        "APA",
+        "NIMH",
+        "Telefon Esperança"
+      ],
       "lexemes": [
-        {"w": "ansietat", "s": 2}, {"w": "ansiedad", "s": 2},
-        {"w": "depressió", "s": 2}, {"w": "depresión", "s": 2},
-        {"w": "suïcidi", "s": 4}, {"w": "suicidio", "s": 4},
-        {"w": "autolesions", "s": 4}, {"w": "autolesiones", "s": 4},
-        {"w": "psicòleg", "s": 2}, {"w": "psicólogo", "s": 2},
-        {"w": "psiquiatre", "s": 2}, {"w": "psiquiatra", "s": 2},
-        {"w": "trastorn", "s": 2}, {"w": "trastorno", "s": 2},
-        {"w": "fòbia", "s": 2}, {"w": "fobia", "s": 2},
-        {"w": "trauma", "s": 3}, {"w": "estrès posttraumàtic", "s": 3},
-        {"w": "psicosi", "s": 3}, {"w": "psicosis", "s": 3},
-        {"w": "medicament control mental", "s": 9}, {"w": "medicación control mental", "s": 9},
-        {"w": "psicologia fake", "s": 7}, {"w": "psiquiatria fals", "s": 7}, {"w": "psiquiatría falsa", "s": 7},
-        {"w": "lithium water control", "s": 8}, {"w": "fluor control mental", "s": 8},
-        {"w": "fluorur control", "s": 8}, {"w": "fluoruro control", "s": 8},
-        {"w": "pastilles control", "s": 8}, {"w": "pastillas control", "s": 8}
+        {
+          "w": "ansietat",
+          "s": 2
+        },
+        {
+          "w": "ansiedad",
+          "s": 2
+        },
+        {
+          "w": "depressió",
+          "s": 2
+        },
+        {
+          "w": "depresión",
+          "s": 2
+        },
+        {
+          "w": "suïcidi",
+          "s": 4
+        },
+        {
+          "w": "suicidio",
+          "s": 4
+        },
+        {
+          "w": "autolesions",
+          "s": 4
+        },
+        {
+          "w": "autolesiones",
+          "s": 4
+        },
+        {
+          "w": "psicòleg",
+          "s": 2
+        },
+        {
+          "w": "psicólogo",
+          "s": 2
+        },
+        {
+          "w": "psiquiatre",
+          "s": 2
+        },
+        {
+          "w": "psiquiatra",
+          "s": 2
+        },
+        {
+          "w": "trastorn",
+          "s": 2
+        },
+        {
+          "w": "trastorno",
+          "s": 2
+        },
+        {
+          "w": "fòbia",
+          "s": 2
+        },
+        {
+          "w": "fobia",
+          "s": 2
+        },
+        {
+          "w": "trauma",
+          "s": 3
+        },
+        {
+          "w": "estrès posttraumàtic",
+          "s": 3
+        },
+        {
+          "w": "psicosi",
+          "s": 3
+        },
+        {
+          "w": "psicosis",
+          "s": 3
+        },
+        {
+          "w": "medicament control mental",
+          "s": 9
+        },
+        {
+          "w": "medicación control mental",
+          "s": 9
+        },
+        {
+          "w": "psicologia fake",
+          "s": 9
+        },
+        {
+          "w": "psiquiatria fals",
+          "s": 9
+        },
+        {
+          "w": "psiquiatría falsa",
+          "s": 9
+        },
+        {
+          "w": "lithium water control",
+          "s": 8
+        },
+        {
+          "w": "fluor control mental",
+          "s": 8
+        },
+        {
+          "w": "fluorur control",
+          "s": 8
+        },
+        {
+          "w": "fluoruro control",
+          "s": 8
+        },
+        {
+          "w": "pastilles control",
+          "s": 8
+        },
+        {
+          "w": "pastillas control",
+          "s": 8
+        }
       ]
     },
     {
       "id": "TOPIC_ALIMENTACIO",
       "nom": "Alimentació i Nutrició",
       "icon": "🥗",
-      "fonts": ["EFSA", "AESAN", "OMS", "Harvard Nutrition"],
+      "fonts": [
+        "EFSA",
+        "AESAN",
+        "OMS",
+        "Harvard Nutrition"
+      ],
       "lexemes": [
-        {"w": "gluten", "s": 3}, {"w": "lactosa", "s": 2},
-        {"w": "transgènic", "s": 3}, {"w": "transgénico", "s": 3},
-        {"w": "ogm", "s": 3}, {"w": "aliment transgènic", "s": 4},
-        {"w": "pesticides", "s": 3}, {"w": "pesticidas", "s": 3},
-        {"w": "ultraprocessat", "s": 4}, {"w": "ultraprocesado", "s": 4},
-        {"w": "additiu", "s": 3}, {"w": "aditivo", "s": 3}, {"w": "conservant", "s": 3},
-        {"w": "conservante", "s": 3}, {"w": "colorant", "s": 3},
-        {"w": "detox", "s": 5}, {"w": "desintoxicació", "s": 5}, {"w": "desintoxicación", "s": 5},
-        {"w": "suplement miracle", "s": 7}, {"w": "suplemento milagro", "s": 7},
-        {"w": "aliment que mata", "s": 8}, {"w": "menjar que mata", "s": 8}, {"w": "alimento que mata", "s": 8},
-        {"w": "monsanto enverina", "s": 8}, {"w": "monsanto envenena", "s": 8},
-        {"w": "monsanto controla", "s": 8}, {"w": "bayer enverina", "s": 8},
-        {"w": "enverina", "s": 8}, {"w": "envenena", "s": 8}, {"w": "veneno alimentario", "s": 9},
-        {"w": "verinós", "s": 7}, {"w": "tòxic aliment", "s": 7}, {"w": "alimento tóxico", "s": 7},
-        {"w": "cura càncer dieta", "s": 8}, {"w": "dieta cura tot", "s": 7}, {"w": "dieta cura todo", "s": 7},
-        {"w": "ayuno cura", "s": 6}, {"w": "dejuni cura", "s": 6}
+        {
+          "w": "gluten",
+          "s": 3
+        },
+        {
+          "w": "lactosa",
+          "s": 2
+        },
+        {
+          "w": "transgènic",
+          "s": 3
+        },
+        {
+          "w": "transgénico",
+          "s": 3
+        },
+        {
+          "w": "ogm",
+          "s": 3
+        },
+        {
+          "w": "aliment transgènic",
+          "s": 4
+        },
+        {
+          "w": "pesticides",
+          "s": 3
+        },
+        {
+          "w": "pesticidas",
+          "s": 3
+        },
+        {
+          "w": "ultraprocessat",
+          "s": 4
+        },
+        {
+          "w": "ultraprocesado",
+          "s": 4
+        },
+        {
+          "w": "additiu",
+          "s": 3
+        },
+        {
+          "w": "aditivo",
+          "s": 3
+        },
+        {
+          "w": "conservant",
+          "s": 3
+        },
+        {
+          "w": "conservante",
+          "s": 3
+        },
+        {
+          "w": "colorant",
+          "s": 3
+        },
+        {
+          "w": "detox",
+          "s": 5
+        },
+        {
+          "w": "desintoxicació",
+          "s": 5
+        },
+        {
+          "w": "desintoxicación",
+          "s": 5
+        },
+        {
+          "w": "suplement miracle",
+          "s": 7
+        },
+        {
+          "w": "suplemento milagro",
+          "s": 7
+        },
+        {
+          "w": "aliment que mata",
+          "s": 8
+        },
+        {
+          "w": "menjar que mata",
+          "s": 8
+        },
+        {
+          "w": "alimento que mata",
+          "s": 8
+        },
+        {
+          "w": "monsanto enverina",
+          "s": 8
+        },
+        {
+          "w": "monsanto envenena",
+          "s": 8
+        },
+        {
+          "w": "monsanto controla",
+          "s": 8
+        },
+        {
+          "w": "bayer enverina",
+          "s": 8
+        },
+        {
+          "w": "enverina",
+          "s": 8
+        },
+        {
+          "w": "envenena",
+          "s": 8
+        },
+        {
+          "w": "veneno alimentario",
+          "s": 9
+        },
+        {
+          "w": "verinós",
+          "s": 7
+        },
+        {
+          "w": "tòxic aliment",
+          "s": 7
+        },
+        {
+          "w": "alimento tóxico",
+          "s": 7
+        },
+        {
+          "w": "cura càncer dieta",
+          "s": 8
+        },
+        {
+          "w": "dieta cura tot",
+          "s": 7
+        },
+        {
+          "w": "dieta cura todo",
+          "s": 7
+        },
+        {
+          "w": "ayuno cura",
+          "s": 6
+        },
+        {
+          "w": "dejuni cura",
+          "s": 6
+        }
       ]
     },
     {
       "id": "TOPIC_EDUCACIO",
       "nom": "Educació i Valors",
       "icon": "📚",
-      "fonts": ["PISA/OCDE", "MEFD", "Consell Escolar"],
+      "fonts": [
+        "PISA/OCDE",
+        "MEFD",
+        "Consell Escolar"
+      ],
       "lexemes": [
-        {"w": "adoctrinament", "s": 7}, {"w": "adoctrina", "s": 7}, {"w": "adoctrinat", "s": 7},
-        {"w": "adoctrinamiento", "s": 7}, {"w": "adoctrinan", "s": 7},
-        {"w": "educació ideològica", "s": 7}, {"w": "educación ideológica", "s": 7},
-        {"w": "escola woke", "s": 8}, {"w": "escuela woke", "s": 8}, {"w": "woke", "s": 6},
-        {"w": "ideologia escola", "s": 7}, {"w": "ideología escuela", "s": 7},
-        {"w": "endoctrinament", "s": 7}, {"w": "endoctrinamiento", "s": 7},
-        {"w": "teoria gènere escola", "s": 8}, {"w": "teoría género escuela", "s": 8},
-        {"w": "agenda lgtb escola", "s": 8}, {"w": "agenda lgtb escuela", "s": 8},
-        {"w": "roben fills", "s": 9}, {"w": "roban hijos", "s": 9},
-        {"w": "fills adoctrinats", "s": 8}, {"w": "hijos adoctrinados", "s": 8},
-        {"w": "professor adoctrinador", "s": 8}, {"w": "maestro adoctrinador", "s": 8},
-        {"w": "censura escolar", "s": 6}, {"w": "censura escuela", "s": 6},
-        {"w": "manual marxista escola", "s": 8}, {"w": "marxisme educació", "s": 8},
-        {"w": "marxismo educación", "s": 8},
-        {"w": "lgbtq nens", "s": 7}, {"w": "lgbtq niños", "s": 7},
-        {"w": "sexualitat menors", "s": 6}, {"w": "sexualidad menores", "s": 6}
+        {
+          "w": "adoctrinament",
+          "s": 7
+        },
+        {
+          "w": "adoctrina",
+          "s": 7
+        },
+        {
+          "w": "adoctrinat",
+          "s": 7
+        },
+        {
+          "w": "adoctrinamiento",
+          "s": 7
+        },
+        {
+          "w": "adoctrinan",
+          "s": 7
+        },
+        {
+          "w": "educació ideològica",
+          "s": 7
+        },
+        {
+          "w": "educación ideológica",
+          "s": 7
+        },
+        {
+          "w": "escola woke",
+          "s": 8
+        },
+        {
+          "w": "escuela woke",
+          "s": 8
+        },
+        {
+          "w": "woke",
+          "s": 6
+        },
+        {
+          "w": "ideologia escola",
+          "s": 7
+        },
+        {
+          "w": "ideología escuela",
+          "s": 7
+        },
+        {
+          "w": "endoctrinament",
+          "s": 7
+        },
+        {
+          "w": "endoctrinamiento",
+          "s": 7
+        },
+        {
+          "w": "teoria gènere escola",
+          "s": 8
+        },
+        {
+          "w": "teoría género escuela",
+          "s": 8
+        },
+        {
+          "w": "agenda lgtb escola",
+          "s": 8
+        },
+        {
+          "w": "agenda lgtb escuela",
+          "s": 8
+        },
+        {
+          "w": "roben fills",
+          "s": 9
+        },
+        {
+          "w": "roban hijos",
+          "s": 9
+        },
+        {
+          "w": "fills adoctrinats",
+          "s": 8
+        },
+        {
+          "w": "hijos adoctrinados",
+          "s": 8
+        },
+        {
+          "w": "professor adoctrinador",
+          "s": 8
+        },
+        {
+          "w": "maestro adoctrinador",
+          "s": 8
+        },
+        {
+          "w": "censura escolar",
+          "s": 6
+        },
+        {
+          "w": "censura escuela",
+          "s": 6
+        },
+        {
+          "w": "manual marxista escola",
+          "s": 8
+        },
+        {
+          "w": "marxisme educació",
+          "s": 8
+        },
+        {
+          "w": "marxismo educación",
+          "s": 8
+        },
+        {
+          "w": "lgbtq nens",
+          "s": 7
+        },
+        {
+          "w": "lgbtq niños",
+          "s": 7
+        },
+        {
+          "w": "sexualitat menors",
+          "s": 6
+        },
+        {
+          "w": "sexualidad menores",
+          "s": 6
+        }
       ]
     },
     {
       "id": "TOPIC_MEDIS",
       "nom": "Credibilitat dels Medis",
       "icon": "📰",
-      "fonts": ["IFCN", "RSF", "Reuters Institute"],
+      "fonts": [
+        "IFCN",
+        "RSF",
+        "Reuters Institute"
+      ],
       "lexemes": [
-        {"w": "fake news", "s": 5}, {"w": "bulo", "s": 5}, {"w": "bulos", "s": 5},
-        {"w": "mentida mediàtica", "s": 7}, {"w": "mentira mediática", "s": 7},
-        {"w": "manipulació mediàtica", "s": 8}, {"w": "manipulación mediática", "s": 8},
-        {"w": "mainstream media", "s": 5}, {"w": "media mainstream", "s": 5},
-        {"w": "media menteix", "s": 8}, {"w": "medios mienten", "s": 8},
-        {"w": "periodistes menteixen", "s": 8}, {"w": "periodistas mienten", "s": 8},
-        {"w": "medis controlen", "s": 9}, {"w": "medios controlan", "s": 9},
-        {"w": "periodisme corrupte", "s": 7}, {"w": "periodismo corrupto", "s": 7},
-        {"w": "censura informativa", "s": 7}, {"w": "censura informativa", "s": 7},
-        {"w": "silencien", "s": 7}, {"w": "silencian", "s": 7},
-        {"w": "suprimeixen", "s": 7}, {"w": "suprimen", "s": 7},
-        {"w": "esborren", "s": 7}, {"w": "borran", "s": 7},
-        {"w": "informació prohibida", "s": 8}, {"w": "información prohibida", "s": 8},
-        {"w": "notícia censurada", "s": 8}, {"w": "noticia censurada", "s": 8},
-        {"w": "propietaris dels medis", "s": 7}, {"w": "dueños de los medios", "s": 7},
-        {"w": "periodista a sou", "s": 8}, {"w": "periodista a sueldo", "s": 8}
+        {
+          "w": "fake news",
+          "s": 5
+        },
+        {
+          "w": "bulo",
+          "s": 5
+        },
+        {
+          "w": "bulos",
+          "s": 5
+        },
+        {
+          "w": "mentida mediàtica",
+          "s": 7
+        },
+        {
+          "w": "mentira mediática",
+          "s": 7
+        },
+        {
+          "w": "manipulació mediàtica",
+          "s": 8
+        },
+        {
+          "w": "manipulación mediática",
+          "s": 8
+        },
+        {
+          "w": "mainstream media",
+          "s": 5
+        },
+        {
+          "w": "media mainstream",
+          "s": 5
+        },
+        {
+          "w": "media menteix",
+          "s": 8
+        },
+        {
+          "w": "medios mienten",
+          "s": 8
+        },
+        {
+          "w": "periodistes menteixen",
+          "s": 8
+        },
+        {
+          "w": "periodistas mienten",
+          "s": 8
+        },
+        {
+          "w": "medis controlen",
+          "s": 9
+        },
+        {
+          "w": "medios controlan",
+          "s": 9
+        },
+        {
+          "w": "periodisme corrupte",
+          "s": 7
+        },
+        {
+          "w": "periodismo corrupto",
+          "s": 7
+        },
+        {
+          "w": "censura informativa",
+          "s": 7
+        },
+        {
+          "w": "censura informativa",
+          "s": 7
+        },
+        {
+          "w": "silencien",
+          "s": 7
+        },
+        {
+          "w": "silencian",
+          "s": 7
+        },
+        {
+          "w": "suprimeixen",
+          "s": 7
+        },
+        {
+          "w": "suprimen",
+          "s": 7
+        },
+        {
+          "w": "esborren",
+          "s": 7
+        },
+        {
+          "w": "borran",
+          "s": 7
+        },
+        {
+          "w": "informació prohibida",
+          "s": 8
+        },
+        {
+          "w": "información prohibida",
+          "s": 8
+        },
+        {
+          "w": "notícia censurada",
+          "s": 8
+        },
+        {
+          "w": "noticia censurada",
+          "s": 8
+        },
+        {
+          "w": "propietaris dels medis",
+          "s": 7
+        },
+        {
+          "w": "dueños de los medios",
+          "s": 7
+        },
+        {
+          "w": "periodista a sou",
+          "s": 8
+        },
+        {
+          "w": "periodista a sueldo",
+          "s": 8
+        }
       ]
     },
     {
       "id": "TOPIC_MEDI_AMBIENT",
       "nom": "Medi Ambient i Biodiversitat",
       "icon": "🌿",
-      "fonts": ["WWF", "IUCN", "UNEP", "Greenpeace"],
+      "fonts": [
+        "WWF",
+        "IUCN",
+        "UNEP",
+        "Greenpeace"
+      ],
       "lexemes": [
-        {"w": "biodiversitat", "s": 2}, {"w": "biodiversidad", "s": 2},
-        {"w": "extinció", "s": 3}, {"w": "extinción", "s": 3},
-        {"w": "espècie amenaçada", "s": 3}, {"w": "especie amenazada", "s": 3},
-        {"w": "deforestació", "s": 3}, {"w": "deforestación", "s": 3},
-        {"w": "plàstic", "s": 2}, {"w": "plástico", "s": 2},
-        {"w": "microplàstics", "s": 3}, {"w": "microplásticos", "s": 3},
-        {"w": "pol·lució", "s": 3}, {"w": "polución", "s": 3},
-        {"w": "contaminació", "s": 3}, {"w": "contaminación", "s": 3},
-        {"w": "greenwashing", "s": 5}, {"w": "ecoblanqueig", "s": 5},
-        {"w": "empresa verda mentida", "s": 7}, {"w": "empresa verde mentira", "s": 7},
-        {"w": "activisme ecologista pagat", "s": 7}, {"w": "activismo ecologista pagado", "s": 7},
-        {"w": "escassetat artificial", "s": 7}, {"w": "escasez artificial", "s": 7},
-        {"w": "oceans verí", "s": 7}, {"w": "oceanos envenados", "s": 7},
-        {"w": "aire contaminat intencionalment", "s": 8}
+        {
+          "w": "biodiversitat",
+          "s": 2
+        },
+        {
+          "w": "biodiversidad",
+          "s": 2
+        },
+        {
+          "w": "extinció",
+          "s": 3
+        },
+        {
+          "w": "extinción",
+          "s": 3
+        },
+        {
+          "w": "espècie amenaçada",
+          "s": 3
+        },
+        {
+          "w": "especie amenazada",
+          "s": 3
+        },
+        {
+          "w": "deforestació",
+          "s": 3
+        },
+        {
+          "w": "deforestación",
+          "s": 3
+        },
+        {
+          "w": "plàstic",
+          "s": 2
+        },
+        {
+          "w": "plástico",
+          "s": 2
+        },
+        {
+          "w": "microplàstics",
+          "s": 3
+        },
+        {
+          "w": "microplásticos",
+          "s": 3
+        },
+        {
+          "w": "pol·lució",
+          "s": 3
+        },
+        {
+          "w": "polución",
+          "s": 3
+        },
+        {
+          "w": "contaminació",
+          "s": 3
+        },
+        {
+          "w": "contaminación",
+          "s": 3
+        },
+        {
+          "w": "greenwashing",
+          "s": 5
+        },
+        {
+          "w": "ecoblanqueig",
+          "s": 5
+        },
+        {
+          "w": "empresa verda mentida",
+          "s": 7
+        },
+        {
+          "w": "empresa verde mentira",
+          "s": 7
+        },
+        {
+          "w": "activisme ecologista pagat",
+          "s": 7
+        },
+        {
+          "w": "activismo ecologista pagado",
+          "s": 7
+        },
+        {
+          "w": "escassetat artificial",
+          "s": 7
+        },
+        {
+          "w": "escasez artificial",
+          "s": 7
+        },
+        {
+          "w": "oceans verí",
+          "s": 7
+        },
+        {
+          "w": "oceanos envenados",
+          "s": 7
+        },
+        {
+          "w": "aire contaminat intencionalment",
+          "s": 8
+        }
+      ]
+    },
+    {
+      "id": "TOPIC_EMOCIO",
+      "nom": "Emoció i Manipulació Emocional",
+      "icon": "😱",
+      "fonts": [
+        "First Draft",
+        "RAND",
+        "Reuters Institute"
+      ],
+      "lexemes": [
+        {
+          "w": "por",
+          "s": 7
+        },
+        {
+          "w": "pànic",
+          "s": 8
+        },
+        {
+          "w": "pánico",
+          "s": 8
+        },
+        {
+          "w": "terror",
+          "s": 8
+        },
+        {
+          "w": "horror",
+          "s": 8
+        },
+        {
+          "w": "ràbia",
+          "s": 7
+        },
+        {
+          "w": "rabia",
+          "s": 7
+        },
+        {
+          "w": "odi",
+          "s": 8
+        },
+        {
+          "w": "odio",
+          "s": 8
+        },
+        {
+          "w": "fàstic",
+          "s": 7
+        },
+        {
+          "w": "asco",
+          "s": 7
+        },
+        {
+          "w": "indignació",
+          "s": 7
+        },
+        {
+          "w": "indignación",
+          "s": 7
+        },
+        {
+          "w": "vergonya",
+          "s": 6
+        },
+        {
+          "w": "vergüenza",
+          "s": 6
+        },
+        {
+          "w": "amenaça",
+          "s": 7
+        },
+        {
+          "w": "amenaza",
+          "s": 7
+        },
+        {
+          "w": "perill imminent",
+          "s": 9
+        },
+        {
+          "w": "peligro inminente",
+          "s": 9
+        },
+        {
+          "w": "catàstrofe",
+          "s": 8
+        },
+        {
+          "w": "catástrofe",
+          "s": 8
+        },
+        {
+          "w": "apocalipsi",
+          "s": 9
+        },
+        {
+          "w": "apocalipsis",
+          "s": 9
+        },
+        {
+          "w": "fi del món",
+          "s": 10
+        },
+        {
+          "w": "fin del mundo",
+          "s": 10
+        },
+        {
+          "w": "tots morirem",
+          "s": 10
+        },
+        {
+          "w": "todos moriremos",
+          "s": 10
+        },
+        {
+          "w": "destrucció total",
+          "s": 9
+        },
+        {
+          "w": "destrucción total",
+          "s": 9
+        },
+        {
+          "w": "no hi ha esperança",
+          "s": 8
+        },
+        {
+          "w": "no hay esperanza",
+          "s": 8
+        },
+        {
+          "w": "esteu condemnats",
+          "s": 9
+        },
+        {
+          "w": "estáis condenados",
+          "s": 9
+        },
+        {
+          "w": "plora",
+          "s": 5
+        },
+        {
+          "w": "llora",
+          "s": 5
+        },
+        {
+          "w": "suplic",
+          "s": 6
+        },
+        {
+          "w": "suplico",
+          "s": 6
+        },
+        {
+          "w": "desesperació",
+          "s": 7
+        },
+        {
+          "w": "desesperación",
+          "s": 7
+        },
+        {
+          "w": "patiment",
+          "s": 6
+        },
+        {
+          "w": "sufrimiento",
+          "s": 6
+        },
+        {
+          "w": "víctimes innocents",
+          "s": 7
+        },
+        {
+          "w": "víctimas inocentes",
+          "s": 7
+        },
+        {
+          "w": "nens moren",
+          "s": 9
+        },
+        {
+          "w": "niños mueren",
+          "s": 9
+        },
+        {
+          "w": "indefensos",
+          "s": 7
+        },
+        {
+          "w": "desprotegits",
+          "s": 7
+        }
+      ]
+    },
+    {
+      "id": "TOPIC_URGENCIA",
+      "nom": "Urgència i Alarmisme Artificial",
+      "icon": "⏰",
+      "fonts": [
+        "Maldita.es",
+        "Newtral.es",
+        "Poynter"
+      ],
+      "lexemes": [
+        {
+          "w": "urgent",
+          "s": 7
+        },
+        {
+          "w": "urgente",
+          "s": 7
+        },
+        {
+          "w": "ara o mai",
+          "s": 9
+        },
+        {
+          "w": "ahora o nunca",
+          "s": 9
+        },
+        {
+          "w": "s'acaba el temps",
+          "s": 9
+        },
+        {
+          "w": "se acaba el tiempo",
+          "s": 9
+        },
+        {
+          "w": "últimes hores",
+          "s": 8
+        },
+        {
+          "w": "últimas horas",
+          "s": 8
+        },
+        {
+          "w": "compte enrere",
+          "s": 8
+        },
+        {
+          "w": "cuenta atrás",
+          "s": 8
+        },
+        {
+          "w": "actua ara",
+          "s": 8
+        },
+        {
+          "w": "actúa ahora",
+          "s": 8
+        },
+        {
+          "w": "massa tard aviat",
+          "s": 8
+        },
+        {
+          "w": "pronto será tarde",
+          "s": 8
+        },
+        {
+          "w": "demà serà tard",
+          "s": 8
+        },
+        {
+          "w": "mañana será tarde",
+          "s": 8
+        },
+        {
+          "w": "no esperis",
+          "s": 7
+        },
+        {
+          "w": "no esperes",
+          "s": 7
+        },
+        {
+          "w": "imminent",
+          "s": 8
+        },
+        {
+          "w": "inminente",
+          "s": 8
+        },
+        {
+          "w": "passa-ho ara",
+          "s": 9
+        },
+        {
+          "w": "pásalo ahora",
+          "s": 9
+        },
+        {
+          "w": "reenvieu ara",
+          "s": 9
+        },
+        {
+          "w": "reenvíalo ya",
+          "s": 9
+        },
+        {
+          "w": "màxima difusió",
+          "s": 9
+        },
+        {
+          "w": "maxima difusion",
+          "s": 9
+        },
+        {
+          "w": "avisa a tothom",
+          "s": 9
+        },
+        {
+          "w": "avisa a todos",
+          "s": 9
+        },
+        {
+          "w": "fes-ho córrer",
+          "s": 9
+        },
+        {
+          "w": "hazlo correr",
+          "s": 9
+        },
+        {
+          "w": "alerteu",
+          "s": 8
+        },
+        {
+          "w": "alerta roja",
+          "s": 8
+        },
+        {
+          "w": "alerta màxima",
+          "s": 8
+        },
+        {
+          "w": "temps limitat",
+          "s": 7
+        },
+        {
+          "w": "tiempo limitado",
+          "s": 7
+        },
+        {
+          "w": "abans que esborrin",
+          "s": 10
+        },
+        {
+          "w": "antes que lo borren",
+          "s": 10
+        },
+        {
+          "w": "esborren tot",
+          "s": 9
+        },
+        {
+          "w": "borran todo",
+          "s": 9
+        },
+        {
+          "w": "el temps s'esgota",
+          "s": 8
+        },
+        {
+          "w": "el tiempo se agota",
+          "s": 8
+        }
+      ]
+    },
+    {
+      "id": "TOPIC_PSEUDOCIENCIA",
+      "nom": "Pseudociència i Cures Miraculoses",
+      "icon": "🔮",
+      "fonts": [
+        "Cochrane",
+        "PubMed",
+        "Science-Based Medicine"
+      ],
+      "lexemes": [
+        {
+          "w": "cura miraculosa",
+          "s": 9
+        },
+        {
+          "w": "curación milagrosa",
+          "s": 9
+        },
+        {
+          "w": "remei secret",
+          "s": 9
+        },
+        {
+          "w": "remedio secreto",
+          "s": 9
+        },
+        {
+          "w": "cura definitiva",
+          "s": 9
+        },
+        {
+          "w": "curación definitiva",
+          "s": 9
+        },
+        {
+          "w": "mètode prohibit",
+          "s": 9
+        },
+        {
+          "w": "método prohibido",
+          "s": 9
+        },
+        {
+          "w": "els metges no volen",
+          "s": 10
+        },
+        {
+          "w": "los médicos no quieren",
+          "s": 10
+        },
+        {
+          "w": "la farmàcia amaga",
+          "s": 10
+        },
+        {
+          "w": "la farmacia oculta",
+          "s": 10
+        },
+        {
+          "w": "big pharma oculta",
+          "s": 10
+        },
+        {
+          "w": "big pharma amaga",
+          "s": 10
+        },
+        {
+          "w": "homeopatia cura tot",
+          "s": 9
+        },
+        {
+          "w": "homeopatía cura todo",
+          "s": 9
+        },
+        {
+          "w": "energia quàntica",
+          "s": 8
+        },
+        {
+          "w": "energía cuántica",
+          "s": 8
+        },
+        {
+          "w": "vibracional",
+          "s": 9
+        },
+        {
+          "w": "frequència curativa",
+          "s": 8
+        },
+        {
+          "w": "frecuencia curativa",
+          "s": 8
+        },
+        {
+          "w": "detox total",
+          "s": 9
+        },
+        {
+          "w": "desintoxicació total",
+          "s": 9
+        },
+        {
+          "w": "aura curant",
+          "s": 9
+        },
+        {
+          "w": "cristalls curant",
+          "s": 9
+        },
+        {
+          "w": "cristales curan",
+          "s": 9
+        },
+        {
+          "w": "diòxid de clor",
+          "s": 10
+        },
+        {
+          "w": "dióxido de cloro",
+          "s": 10
+        },
+        {
+          "w": "mms guareix",
+          "s": 10
+        },
+        {
+          "w": "mms cura",
+          "s": 10
+        },
+        {
+          "w": "ozó cura càncer",
+          "s": 9
+        },
+        {
+          "w": "ozono cura cancer",
+          "s": 9
+        },
+        {
+          "w": "ment sobre matèria",
+          "s": 9
+        },
+        {
+          "w": "mente sobre materia",
+          "s": 9
+        },
+        {
+          "w": "medicina oficial falla",
+          "s": 9
+        },
+        {
+          "w": "medicina convencional falla",
+          "s": 9
+        },
+        {
+          "w": "xaman cura",
+          "s": 9
+        },
+        {
+          "w": "chamán cura",
+          "s": 9
+        },
+        {
+          "w": "oli miraculous",
+          "s": 8
+        },
+        {
+          "w": "aceite milagroso",
+          "s": 8
+        },
+        {
+          "w": "planta cura tot",
+          "s": 8
+        },
+        {
+          "w": "planta cura todo",
+          "s": 8
+        },
+        {
+          "w": "quantum healing",
+          "s": 8
+        },
+        {
+          "w": "curación cuántica",
+          "s": 8
+        },
+        {
+          "w": "epigenètica cura",
+          "s": 9
+        },
+        {
+          "w": "epigenética cura",
+          "s": 9
+        }
+      ]
+    },
+    {
+      "id": "TOPIC_INSTITUCIONS",
+      "nom": "Desconfiança en Institucions",
+      "icon": "🏛️",
+      "fonts": [
+        "RAND",
+        "Reuters Institute",
+        "ISD Global"
+      ],
+      "lexemes": [
+        {
+          "w": "veritat oculta",
+          "s": 9
+        },
+        {
+          "w": "verdad oculta",
+          "s": 9
+        },
+        {
+          "w": "el que no et diuen",
+          "s": 10
+        },
+        {
+          "w": "lo que no te cuentan",
+          "s": 10
+        },
+        {
+          "w": "el que no veuràs a la tele",
+          "s": 10
+        },
+        {
+          "w": "lo que no verás en la tele",
+          "s": 10
+        },
+        {
+          "w": "estan intentant",
+          "s": 9
+        },
+        {
+          "w": "están intentando",
+          "s": 9
+        },
+        {
+          "w": "el pla secret",
+          "s": 9
+        },
+        {
+          "w": "el plan secreto",
+          "s": 9
+        },
+        {
+          "w": "el govern no diu",
+          "s": 9
+        },
+        {
+          "w": "el gobierno no dice",
+          "s": 9
+        },
+        {
+          "w": "oculten la realitat",
+          "s": 10
+        },
+        {
+          "w": "ocultan la realidad",
+          "s": 10
+        },
+        {
+          "w": "la veritat és",
+          "s": 6
+        },
+        {
+          "w": "la verdad es",
+          "s": 6
+        },
+        {
+          "w": "el sistema falla",
+          "s": 7
+        },
+        {
+          "w": "el sistema falla",
+          "s": 7
+        },
+        {
+          "w": "institucions corruptes",
+          "s": 9
+        },
+        {
+          "w": "instituciones corruptas",
+          "s": 9
+        },
+        {
+          "w": "tot és mentida",
+          "s": 9
+        },
+        {
+          "w": "todo es mentira",
+          "s": 9
+        },
+        {
+          "w": "no et pots fiar",
+          "s": 8
+        },
+        {
+          "w": "no te puedes fiar",
+          "s": 8
+        },
+        {
+          "w": "tots menteixen",
+          "s": 9
+        },
+        {
+          "w": "todos mienten",
+          "s": 9
+        },
+        {
+          "w": "sistema podrit",
+          "s": 9
+        },
+        {
+          "w": "sistema podrido",
+          "s": 9
+        },
+        {
+          "w": "no hi ha salvació dins",
+          "s": 8
+        },
+        {
+          "w": "no hay solución dentro",
+          "s": 8
+        },
+        {
+          "w": "truca't",
+          "s": 5
+        },
+        {
+          "w": "desconfieu",
+          "s": 7
+        },
+        {
+          "w": "desconfiad",
+          "s": 7
+        },
+        {
+          "w": "no creieu res",
+          "s": 8
+        },
+        {
+          "w": "no creáis nada",
+          "s": 8
+        },
+        {
+          "w": "qüestiona-ho tot",
+          "s": 7
+        },
+        {
+          "w": "cuestionad todo",
+          "s": 7
+        },
+        {
+          "w": "posa-ho en dubte",
+          "s": 6
+        },
+        {
+          "w": "ponlo en duda",
+          "s": 6
+        },
+        {
+          "w": "govern mentider",
+          "s": 9
+        },
+        {
+          "w": "gobierno mentiroso",
+          "s": 9
+        },
+        {
+          "w": "jutges corruptes",
+          "s": 8
+        },
+        {
+          "w": "jueces corruptos",
+          "s": 8
+        },
+        {
+          "w": "policia corrupte",
+          "s": 8
+        },
+        {
+          "w": "policía corrupta",
+          "s": 8
+        },
+        {
+          "w": "periodistes venuts",
+          "s": 9
+        },
+        {
+          "w": "periodistas vendidos",
+          "s": 9
+        },
+        {
+          "w": "científics pagats",
+          "s": 9
+        },
+        {
+          "w": "científicos pagados",
+          "s": 9
+        },
+        {
+          "w": "metges corruptes",
+          "s": 9
+        },
+        {
+          "w": "médicos corruptos",
+          "s": 9
+        },
+        {
+          "w": "professors adoctrinadors",
+          "s": 9
+        },
+        {
+          "w": "profesores adoctrinadores",
+          "s": 9
+        }
+      ]
+    },
+    {
+      "id": "TOPIC_CONNECTORS_MANIPULACIO",
+      "nom": "Connectors de Manipulació",
+      "icon": "🎭",
+      "fonts": [
+        "First Draft",
+        "EUvsDisinfo",
+        "Bellingcat"
+      ],
+      "lexemes": [
+        {
+          "w": "veritat oculta",
+          "s": 9
+        },
+        {
+          "w": "verdad oculta",
+          "s": 9
+        },
+        {
+          "w": "el que no et diuen",
+          "s": 9
+        },
+        {
+          "w": "lo que no te cuentan",
+          "s": 9
+        },
+        {
+          "w": "estan intentant eliminar",
+          "s": 10
+        },
+        {
+          "w": "están intentando eliminar",
+          "s": 10
+        },
+        {
+          "w": "estan intentant controlar",
+          "s": 10
+        },
+        {
+          "w": "están intentando controlar",
+          "s": 10
+        },
+        {
+          "w": "estan intentant enganyar",
+          "s": 10
+        },
+        {
+          "w": "están intentando engañar",
+          "s": 10
+        },
+        {
+          "w": "el pla secret",
+          "s": 9
+        },
+        {
+          "w": "el plan secreto",
+          "s": 9
+        },
+        {
+          "w": "el pla ocult",
+          "s": 9
+        },
+        {
+          "w": "el plan oculto",
+          "s": 9
+        },
+        {
+          "w": "la veritat que amaguen",
+          "s": 10
+        },
+        {
+          "w": "la verdad que ocultan",
+          "s": 10
+        },
+        {
+          "w": "el que els poderosos no volen",
+          "s": 10
+        },
+        {
+          "w": "lo que los poderosos no quieren",
+          "s": 10
+        },
+        {
+          "w": "han esborrat",
+          "s": 9
+        },
+        {
+          "w": "han borrado",
+          "s": 9
+        },
+        {
+          "w": "han censurat",
+          "s": 9
+        },
+        {
+          "w": "han censurado",
+          "s": 9
+        },
+        {
+          "w": "no els deixaran publicar",
+          "s": 9
+        },
+        {
+          "w": "no dejarán publicar",
+          "s": 9
+        },
+        {
+          "w": "llegeix abans que esborrin",
+          "s": 10
+        },
+        {
+          "w": "lee antes de que borren",
+          "s": 10
+        },
+        {
+          "w": "comparteix abans que",
+          "s": 9
+        },
+        {
+          "w": "comparte antes de que",
+          "s": 9
+        },
+        {
+          "w": "obren els ulls",
+          "s": 8
+        },
+        {
+          "w": "abrid los ojos",
+          "s": 8
+        },
+        {
+          "w": "desperta d'una vegada",
+          "s": 9
+        },
+        {
+          "w": "despierta de una vez",
+          "s": 9
+        },
+        {
+          "w": "no siguis un borrec",
+          "s": 9
+        },
+        {
+          "w": "no seas un borrego",
+          "s": 9
+        },
+        {
+          "w": "els que saben callen",
+          "s": 9
+        },
+        {
+          "w": "los que saben callan",
+          "s": 9
+        },
+        {
+          "w": "silencien la veritat",
+          "s": 9
+        },
+        {
+          "w": "silencian la verdad",
+          "s": 9
+        },
+        {
+          "w": "informació suprimida",
+          "s": 9
+        },
+        {
+          "w": "información suprimida",
+          "s": 9
+        },
+        {
+          "w": "document filtrat",
+          "s": 8
+        },
+        {
+          "w": "documento filtrado",
+          "s": 8
+        },
+        {
+          "w": "font anònima confirma",
+          "s": 8
+        },
+        {
+          "w": "fuente anónima confirma",
+          "s": 8
+        }
       ]
     },
     {
       "id": "TOPIC_TERRORISME",
       "nom": "Seguretat i Terrorisme",
       "icon": "🔐",
-      "fonts": ["Europol", "Mossos", "CITCO", "Interior.gob.es"],
+      "fonts": [
+        "Europol",
+        "Mossos",
+        "CITCO",
+        "Interior.gob.es"
+      ],
       "lexemes": [
-        {"w": "terrorisme", "s": 5}, {"w": "terrorismo", "s": 5},
-        {"w": "atemptat", "s": 5}, {"w": "atentado", "s": 5},
-        {"w": "terrorista", "s": 6}, {"w": "terroristas", "s": 6},
-        {"w": "bomba", "s": 6}, {"w": "explosiu", "s": 6}, {"w": "explosivo", "s": 6},
-        {"w": "jihadisme", "s": 7}, {"w": "jihadista", "s": 7}, {"w": "yihadismo", "s": 7},
-        {"w": "extremisme", "s": 5}, {"w": "extremismo", "s": 5},
-        {"w": "radicalisme", "s": 5}, {"w": "radicalismo", "s": 5},
-        {"w": "yihad", "s": 7}, {"w": "jihad", "s": 7}, {"w": "califa", "s": 6},
-        {"w": "atac imminent", "s": 8}, {"w": "ataque inminente", "s": 8},
-        {"w": "amenaça terrorista", "s": 7}, {"w": "amenaza terrorista", "s": 7},
-        {"w": "cèl·lula dormant", "s": 7}, {"w": "célula durmiente", "s": 7},
-        {"w": "lone wolf", "s": 6}, {"w": "llop solitari", "s": 6},
-        {"w": "falsa bandera", "s": 9}, {"w": "false flag atac", "s": 9}, {"w": "false flag ataque", "s": 9},
-        {"w": "atac controlat governs", "s": 9}, {"w": "ataque organizado gobierno", "s": 9},
-        {"w": "11s fals", "s": 10}, {"w": "11s conspiració", "s": 10}, {"w": "11s conspiración", "s": 10}
+        {
+          "w": "terrorisme",
+          "s": 5
+        },
+        {
+          "w": "terrorismo",
+          "s": 5
+        },
+        {
+          "w": "atemptat",
+          "s": 5
+        },
+        {
+          "w": "atentado",
+          "s": 5
+        },
+        {
+          "w": "terrorista",
+          "s": 6
+        },
+        {
+          "w": "terroristas",
+          "s": 6
+        },
+        {
+          "w": "bomba",
+          "s": 6
+        },
+        {
+          "w": "explosiu",
+          "s": 6
+        },
+        {
+          "w": "explosivo",
+          "s": 6
+        },
+        {
+          "w": "jihadisme",
+          "s": 7
+        },
+        {
+          "w": "jihadista",
+          "s": 7
+        },
+        {
+          "w": "yihadismo",
+          "s": 7
+        },
+        {
+          "w": "extremisme",
+          "s": 5
+        },
+        {
+          "w": "extremismo",
+          "s": 5
+        },
+        {
+          "w": "radicalisme",
+          "s": 5
+        },
+        {
+          "w": "radicalismo",
+          "s": 5
+        },
+        {
+          "w": "yihad",
+          "s": 7
+        },
+        {
+          "w": "jihad",
+          "s": 7
+        },
+        {
+          "w": "califa",
+          "s": 6
+        },
+        {
+          "w": "atac imminent",
+          "s": 8
+        },
+        {
+          "w": "ataque inminente",
+          "s": 8
+        },
+        {
+          "w": "amenaça terrorista",
+          "s": 7
+        },
+        {
+          "w": "amenaza terrorista",
+          "s": 7
+        },
+        {
+          "w": "cèl·lula dormant",
+          "s": 7
+        },
+        {
+          "w": "célula durmiente",
+          "s": 7
+        },
+        {
+          "w": "lone wolf",
+          "s": 6
+        },
+        {
+          "w": "llop solitari",
+          "s": 6
+        },
+        {
+          "w": "falsa bandera",
+          "s": 9
+        },
+        {
+          "w": "false flag atac",
+          "s": 9
+        },
+        {
+          "w": "false flag ataque",
+          "s": 9
+        },
+        {
+          "w": "atac controlat governs",
+          "s": 9
+        },
+        {
+          "w": "ataque organizado gobierno",
+          "s": 9
+        },
+        {
+          "w": "11s fals",
+          "s": 10
+        },
+        {
+          "w": "11s conspiració",
+          "s": 10
+        },
+        {
+          "w": "11s conspiración",
+          "s": 10
+        }
       ]
     }
   ],
-
   "verbs_atac": [
-    {"w": "oculten", "s": 8}, {"w": "ocultan", "s": 8}, {"w": "amaguen", "s": 7}, {"w": "amagan", "s": 7},
-    {"w": "menteixen", "s": 8}, {"w": "mienten", "s": 8}, {"w": "menteix", "s": 8}, {"w": "miente", "s": 8},
-    {"w": "enganyen", "s": 8}, {"w": "engañan", "s": 8}, {"w": "enganya", "s": 8}, {"w": "engaña", "s": 8},
-    {"w": "manipulen", "s": 8}, {"w": "manipulan", "s": 8}, {"w": "manipula", "s": 8},
-    {"w": "controlen", "s": 7}, {"w": "controlan", "s": 7}, {"w": "controla", "s": 7},
-    {"w": "obliguen", "s": 7}, {"w": "obligan", "s": 7}, {"w": "forcen", "s": 7}, {"w": "fuerzan", "s": 7},
-    {"w": "roben", "s": 8}, {"w": "roban", "s": 8}, {"w": "roba", "s": 8},
-    {"w": "envenen", "s": 9}, {"w": "envenenan", "s": 9}, {"w": "enverina", "s": 9}, {"w": "envenena", "s": 9},
-    {"w": "destrueixen", "s": 7}, {"w": "destruyen", "s": 7}, {"w": "destrueix", "s": 7}, {"w": "destruye", "s": 7},
-    {"w": "amenacen", "s": 7}, {"w": "amenazan", "s": 7}, {"w": "amenaça", "s": 6}, {"w": "amenaza", "s": 6},
-    {"w": "silencien", "s": 7}, {"w": "silencian", "s": 7},
-    {"w": "censuren", "s": 7}, {"w": "censuran", "s": 7},
-    {"w": "reprimeixen", "s": 7}, {"w": "reprimen", "s": 7},
-    {"w": "oprimeixen", "s": 7}, {"w": "oprimen", "s": 7},
-    {"w": "arruïnen", "s": 8}, {"w": "arruinan", "s": 8}, {"w": "arruïna", "s": 8}, {"w": "arruina", "s": 8},
-    {"w": "programen", "s": 7}, {"w": "programan", "s": 7},
-    {"w": "adoctrinen", "s": 8}, {"w": "adoctrinan", "s": 8},
-    {"w": "inoculen", "s": 7}, {"w": "inoculan", "s": 7},
-    {"w": "injecten", "s": 6}, {"w": "inyectan", "s": 6},
-    {"w": "experimenten", "s": 6}, {"w": "experimentan", "s": 6},
-    {"w": "esborren", "s": 7}, {"w": "borran", "s": 7},
-    {"w": "suprimen", "s": 7}, {"w": "suprimeixen", "s": 7},
-    {"w": "assassinen", "s": 9}, {"w": "asesinan", "s": 9},
-    {"w": "eliminen", "s": 7}, {"w": "eliminan", "s": 7}
+    {
+      "w": "oculten",
+      "s": 8
+    },
+    {
+      "w": "ocultan",
+      "s": 8
+    },
+    {
+      "w": "amaguen",
+      "s": 7
+    },
+    {
+      "w": "amagan",
+      "s": 7
+    },
+    {
+      "w": "menteixen",
+      "s": 8
+    },
+    {
+      "w": "mienten",
+      "s": 8
+    },
+    {
+      "w": "menteix",
+      "s": 8
+    },
+    {
+      "w": "miente",
+      "s": 8
+    },
+    {
+      "w": "enganyen",
+      "s": 8
+    },
+    {
+      "w": "engañan",
+      "s": 8
+    },
+    {
+      "w": "enganya",
+      "s": 8
+    },
+    {
+      "w": "engaña",
+      "s": 8
+    },
+    {
+      "w": "manipulen",
+      "s": 8
+    },
+    {
+      "w": "manipulan",
+      "s": 8
+    },
+    {
+      "w": "manipula",
+      "s": 8
+    },
+    {
+      "w": "controlen",
+      "s": 7
+    },
+    {
+      "w": "controlan",
+      "s": 7
+    },
+    {
+      "w": "controla",
+      "s": 7
+    },
+    {
+      "w": "obliguen",
+      "s": 7
+    },
+    {
+      "w": "obligan",
+      "s": 7
+    },
+    {
+      "w": "forcen",
+      "s": 7
+    },
+    {
+      "w": "fuerzan",
+      "s": 7
+    },
+    {
+      "w": "roben",
+      "s": 8
+    },
+    {
+      "w": "roban",
+      "s": 8
+    },
+    {
+      "w": "roba",
+      "s": 8
+    },
+    {
+      "w": "envenen",
+      "s": 9
+    },
+    {
+      "w": "envenenan",
+      "s": 9
+    },
+    {
+      "w": "enverina",
+      "s": 9
+    },
+    {
+      "w": "envenena",
+      "s": 9
+    },
+    {
+      "w": "destrueixen",
+      "s": 7
+    },
+    {
+      "w": "destruyen",
+      "s": 7
+    },
+    {
+      "w": "destrueix",
+      "s": 7
+    },
+    {
+      "w": "destruye",
+      "s": 7
+    },
+    {
+      "w": "amenacen",
+      "s": 7
+    },
+    {
+      "w": "amenazan",
+      "s": 7
+    },
+    {
+      "w": "amenaça",
+      "s": 6
+    },
+    {
+      "w": "amenaza",
+      "s": 6
+    },
+    {
+      "w": "silencien",
+      "s": 7
+    },
+    {
+      "w": "silencian",
+      "s": 7
+    },
+    {
+      "w": "censuren",
+      "s": 7
+    },
+    {
+      "w": "censuran",
+      "s": 7
+    },
+    {
+      "w": "reprimeixen",
+      "s": 7
+    },
+    {
+      "w": "reprimen",
+      "s": 7
+    },
+    {
+      "w": "oprimeixen",
+      "s": 7
+    },
+    {
+      "w": "oprimen",
+      "s": 7
+    },
+    {
+      "w": "arruïnen",
+      "s": 8
+    },
+    {
+      "w": "arruinan",
+      "s": 8
+    },
+    {
+      "w": "arruïna",
+      "s": 8
+    },
+    {
+      "w": "arruina",
+      "s": 8
+    },
+    {
+      "w": "programen",
+      "s": 7
+    },
+    {
+      "w": "programan",
+      "s": 7
+    },
+    {
+      "w": "adoctrinen",
+      "s": 8
+    },
+    {
+      "w": "adoctrinan",
+      "s": 8
+    },
+    {
+      "w": "inoculen",
+      "s": 7
+    },
+    {
+      "w": "inoculan",
+      "s": 7
+    },
+    {
+      "w": "injecten",
+      "s": 6
+    },
+    {
+      "w": "inyectan",
+      "s": 6
+    },
+    {
+      "w": "experimenten",
+      "s": 6
+    },
+    {
+      "w": "experimentan",
+      "s": 6
+    },
+    {
+      "w": "esborren",
+      "s": 7
+    },
+    {
+      "w": "borran",
+      "s": 7
+    },
+    {
+      "w": "suprimen",
+      "s": 7
+    },
+    {
+      "w": "suprimeixen",
+      "s": 7
+    },
+    {
+      "w": "assassinen",
+      "s": 9
+    },
+    {
+      "w": "asesinan",
+      "s": 9
+    },
+    {
+      "w": "eliminen",
+      "s": 7
+    },
+    {
+      "w": "eliminan",
+      "s": 7
+    }
   ],
-
   "bigrames_perill": [
     {
-      "a": ["aigua", "water", "aigüa"],
-      "b": ["control", "controlen", "controla", "contaminada", "envenenada", "fluorur", "fluor"],
+      "a": [
+        "aigua",
+        "water",
+        "aigüa"
+      ],
+      "b": [
+        "control",
+        "controlen",
+        "controla",
+        "contaminada",
+        "envenenada",
+        "fluorur",
+        "fluor"
+      ],
       "label": "Conspiració Aigüa-Control"
     },
     {
-      "a": ["vacuna", "vacunes", "vacunació"],
-      "b": ["microxip", "chip", "control", "mata", "assassina", "esterilitza", "grafè"],
+      "a": [
+        "vacuna",
+        "vacunes",
+        "vacunació"
+      ],
+      "b": [
+        "microxip",
+        "chip",
+        "control",
+        "mata",
+        "assassina",
+        "esterilitza",
+        "grafè"
+      ],
       "label": "Bulo vacuna+tecnologia"
     },
     {
-      "a": ["5g", "antena", "wifi"],
-      "b": ["virus", "covid", "malaltia", "mata", "causa", "activa", "propaga"],
+      "a": [
+        "5g",
+        "antena",
+        "wifi"
+      ],
+      "b": [
+        "virus",
+        "covid",
+        "malaltia",
+        "mata",
+        "causa",
+        "activa",
+        "propaga"
+      ],
       "label": "Bulo 5G-malaltia"
     },
     {
-      "a": ["govern", "estado", "govern", "gobierno"],
-      "b": ["menteix", "oculta", "amaga", "enganya", "destrueix", "enverina"],
+      "a": [
+        "govern",
+        "estado",
+        "govern",
+        "gobierno"
+      ],
+      "b": [
+        "menteix",
+        "oculta",
+        "amaga",
+        "enganya",
+        "destrueix",
+        "enverina"
+      ],
       "label": "Narrativa govern corrupte"
     },
     {
-      "a": ["medis", "premsa", "periodistes", "periódicos", "televisión"],
-      "b": ["controlen", "menteixen", "oculten", "censurats", "controlan", "mienten"],
+      "a": [
+        "medis",
+        "premsa",
+        "periodistes",
+        "periódicos",
+        "televisión"
+      ],
+      "b": [
+        "controlen",
+        "menteixen",
+        "oculten",
+        "censurats",
+        "controlan",
+        "mienten"
+      ],
       "label": "Narrativa antimedis"
     },
     {
-      "a": ["immigrants", "migrants", "refugiats", "inmigrantes"],
-      "b": ["invasió", "arrasaran", "destrueixen", "delinqüents", "criminales", "invaden"],
+      "a": [
+        "immigrants",
+        "migrants",
+        "refugiats",
+        "inmigrantes"
+      ],
+      "b": [
+        "invasió",
+        "arrasaran",
+        "destrueixen",
+        "delinqüents",
+        "criminales",
+        "invaden"
+      ],
       "label": "Bulo immigració-criminalitat"
     },
     {
-      "a": ["escola", "educació", "professor", "escuela", "maestro"],
-      "b": ["adoctrinen", "manipulen", "programen", "endoctrinen", "adoctrinan", "manipulan"],
+      "a": [
+        "escola",
+        "educació",
+        "professor",
+        "escuela",
+        "maestro"
+      ],
+      "b": [
+        "adoctrinen",
+        "manipulen",
+        "programen",
+        "endoctrinen",
+        "adoctrinan",
+        "manipulan"
+      ],
       "label": "Bulo adoctrinament escolar"
     },
     {
-      "a": ["aliment", "menjar", "pa", "agua", "alimentos"],
-      "b": ["enverina", "envenena", "mata", "modifica", "contamina", "tóxico"],
+      "a": [
+        "aliment",
+        "menjar",
+        "pa",
+        "agua",
+        "alimentos"
+      ],
+      "b": [
+        "enverina",
+        "envenena",
+        "mata",
+        "modifica",
+        "contamina",
+        "tóxico"
+      ],
       "label": "Bulo alimentació-verí"
     },
     {
-      "a": ["bill gates", "gates"],
-      "b": ["chip", "microxip", "control", "depopulació", "vacuna", "vacunes"],
+      "a": [
+        "bill gates",
+        "gates"
+      ],
+      "b": [
+        "chip",
+        "microxip",
+        "control",
+        "depopulació",
+        "vacuna",
+        "vacunes"
+      ],
       "label": "Teoria Gates-control"
     },
     {
-      "a": ["soros", "george soros"],
-      "b": ["paga", "financia", "controla", "immigrants", "immigració", "revolució"],
+      "a": [
+        "soros",
+        "george soros"
+      ],
+      "b": [
+        "paga",
+        "financia",
+        "controla",
+        "immigrants",
+        "immigració",
+        "revolució"
+      ],
       "label": "Teoria Soros"
     }
   ]
