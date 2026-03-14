@@ -871,8 +871,6 @@ async function analyze() {
   setTimeout(() => dash.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
 }
 
-}
-
 /* ═══════════════════════════════════════════════════════════════════
    ANÀLISI PROFUNDA AMB CLAUDE (gratuït via claude.ai)
    Construeix un prompt forense preformat i obre Claude.ai
