@@ -479,7 +479,7 @@ function renderVariables(det) {
 }
 
 /* Context panel ------------------------------------------------- */
-function renderContext(temaData, to, score, neutral) {
+function renderContext(temaData, to, score, neutral, kwCount) {
   const grid = document.getElementById('cebaGrid');
   grid.innerHTML = ''; // CLEAR
 
@@ -487,9 +487,9 @@ function renderContext(temaData, to, score, neutral) {
     ? `<span class="ceba-chip chip-cat">${temaData.icon} ${temaData.nom}</span>`
     : `<span class="ceba-chip chip-unk">⬡ General</span>`;
 
-  // Diagnòstic
+  // Diagnòstic — kwCount evita el bug de scope de detectedKW
   let diag;
-  if (neutral && detectedKW.length === 0) {
+  if (neutral && kwCount === 0) {
     diag = '🔍 Text no identificat com a notícia: No s\'han detectat paraules clau informatives. Pot ser una conversa personal, una opinió o un tema privat. No és possible determinar si és un bulo o una veritat.';
   } else if (neutral) {
     diag = '⚖️ Resultat Inconclusiu: els indicadors de risc i de fiabilitat s\'equilibren. Aplica verificació manual.';
@@ -538,50 +538,86 @@ function renderContext(temaData, to, score, neutral) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   4. CERCA DE CONTRAST Intel·ligent
-   - Si detecta una font oficial → site:domini "paraules del text"
-   - Si no → [paraules de risc] bulo verificacion + fact-checkers
+   CERCA INTEL·LIGENT — Multi-cerca (Opció C)
+   1. Extreu paraules clau reals del text (no del JSON)
+   2. Obre Google News per informació recent
+   3. Obre els fact-checkers per verificació
+   Les paraules clau s'extreuen del text de l'usuari directament,
+   ignorant articles, preposicions i paraules buides.
 ════════════════════════════════════════════════════════════════════ */
+
+// Paraules buides que NO volem a la cerca (ca + es + en)
+const STOP_WORDS = new Set([
+  'el','la','els','les','un','una','uns','unes','de','del','dels','a','en','i','o','que',
+  'es','per','amb','com','però','si','no','sí','ja','molt','més','tot','tots','tota',
+  'totes','aquest','aquesta','aquests','aquestes','aquell','aquella','aquells','aquelles',
+  'lo','los','las','hay','han','son','ser','este','esta','estos','estas','ese','esa',
+  'con','por','para','pero','porque','como','cuando','donde','me','te','se','nos',
+  'os','le','les','al','mi','tu','su','sus','mis','tus','yo','tú','él','ella',
+  'nosotros','ellos','ellas','the','and','for','are','but','not','you','all','can',
+  'had','her','was','one','our','que','les','des','une','est','qui','que','sur',
+  'se','si','ni','na','hi','ho','li','hem','heu','han','era','eren','fou','van',
+  'molt','poc','cap','cada','altre','altres','mateix','mateixa',
+  'también','también','también','porque','cuando','donde','sobre','entre',
+  'hasta','desde','hacia','según','durante','mediante','ante','bajo','tras',
+  'este','aquel','algún','ningún','todo','cada','ambos','varios'
+]);
+
+function extraureParaulesClau(text) {
+  return [...new Set(
+    text
+      .replace(/[^\w\sàáèéíïòóúüçÀÁÈÉÍÏÒÓÚÜÇ]/g, ' ')
+      .split(/\s+/)
+      .map(w => w.trim().toLowerCase())
+      .filter(w => w.length >= 4 && !STOP_WORDS.has(w) && !/^\d+$/.test(w))
+  )].sort((a, b) => b.length - a.length);
+}
+
 function verificarGoogle() {
   const text = document.getElementById('msgInput').value.trim();
   if (!text) { flashInput(); return; }
 
-  let q;
+  // ── Extreu les paraules clau reals del text ──────────────────────
+  const kwText    = extraureParaulesClau(text);
+  // Top 4 paraules més llargues i significatives del text de l'usuari
+  const topText   = kwText.slice(0, 4);
 
-  // ── Cas A: Es va detectar una font oficial (TRUST) ────────────
-  // → site:domini "fragment del text"
-  const trustKW = lastResult?.detectedKW?.find(kw => kw.type === 'trust');
-  const temaData = lastResult?.temaData;
+  // ── Afegeix paraules de risc del JSON si n'hi ha ─────────────────
+  const riskKW = lastResult?.detectedKW
+    ?.filter(kw => kw.type === 'risk' || !kw.type)
+    ?.sort((a, b) => b.score - a.score)
+    ?.slice(0, 2)
+    ?.map(k => k.word) || [];
 
-  if (trustKW && temaData?.fonts_fiables?.length) {
-    // Agafa el primer domini de fonts_fiables i posa el fragment entre cometes
-    const domain  = temaData.fonts_fiables[0];
-    const snippet = text.split(/\s+/).slice(0, 8).join(' ');
-    q = encodeURIComponent(`site:${domain} "${snippet}"`);
+  // Combina: text real primer, després paraules de risc del JSON
+  const allTerms = [...new Set([...topText, ...riskKW])].slice(0, 5);
+  const queryBase = allTerms.join(' ');
 
-  // ── Cas B: Sense font detectada → paraules de risc + bulo verificacion
-  } else {
-    // Top 2 paraules RISK per score
-    let topTerms = [];
-    if (lastResult?.detectedKW?.length >= 1) {
-      const seen = new Set();
-      const riskKW = lastResult.detectedKW
-        .filter(kw => kw.type === 'risk' || !kw.type)
-        .filter(kw => { if (seen.has(kw.word)) return false; seen.add(kw.word); return true; });
-      topTerms = riskKW.sort((a,b) => b.score - a.score).slice(0,2).map(k => k.word);
-    }
-    // Fallback: 2 paraules més llargues del text
-    if (topTerms.length < 1) {
-      topTerms = [...new Set(
-        text.replace(/[^\w\sàáèéíïòóúüç]/g,' ').split(/\s+/)
-            .map(w => w.trim()).filter(w => w.length >= 5)
-      )].sort((a,b) => b.length - a.length).slice(0,2);
-    }
-    const siteOps = 'site:maldita.es OR site:newtral.es OR site:verificat.cat OR site:afpfactual.com';
-    q = encodeURIComponent(`${topTerms.join(' ')} bulo verificacion ${siteOps}`);
-  }
+  // ── Fonts específiques de la categoria detectada ─────────────────
+  const temaData  = lastResult?.temaData;
+  const siteFC    = temaData?.fonts_fiables?.length
+    ? temaData.fonts_fiables.slice(0, 3).map(u => `site:${u}`).join(' OR ')
+    : 'site:maldita.es OR site:newtral.es OR site:verificat.cat OR site:afpfactual.com';
 
-  window.open('https://www.google.com/search?q=' + q, '_blank', 'noopener');
+  // ── Construeix les 3 URLs ─────────────────────────────────────────
+
+  // 1. Google News — informació recent sobre el tema
+  const qNews = encodeURIComponent(queryBase);
+  const urlNews = `https://news.google.com/search?q=${qNews}&hl=ca&gl=ES`;
+
+  // 2. Fact-checkers oficials — verificació específica
+  const qFC = encodeURIComponent(`${queryBase} ${siteFC}`);
+  const urlFC = `https://www.google.com/search?q=${qFC}`;
+
+  // 3. Google general — context ampli
+  const qGeneral = encodeURIComponent(`${queryBase} verificacion bulo`);
+  const urlGeneral = `https://www.google.com/search?q=${qGeneral}`;
+
+  // ── Obre les 3 pestanyes amb un petit retard entre elles ─────────
+  // (alguns navegadors bloquegen obertures simultànies)
+  window.open(urlNews,    '_blank', 'noopener');
+  setTimeout(() => window.open(urlFC,     '_blank', 'noopener'), 300);
+  setTimeout(() => window.open(urlGeneral,'_blank', 'noopener'), 600);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -800,10 +836,22 @@ async function analyze() {
   await delay(1900);
   showLoading(false);
 
-  // 2. Càlcul
-  const text   = input.value.trim();
-  const result = calcularFiabilitat(text);
-  const to     = analitzarTo(text);
+  // 2. Càlcul — envoltat en try/catch perquè mai es quedi en blanc
+  const text = input.value.trim();
+  let result, to;
+  try {
+    result = calcularFiabilitat(text);
+    to     = analitzarTo(text);
+  } catch (err) {
+    console.error('[NEURONA] Error al càlcul:', err);
+    // Fallback segur: mostra 50 amb missatge d'error
+    result = {
+      score: 50, det: [], detectedKW: [], bigramesDetectats: [], verbsDetectats: [],
+      temaData: null, riskTotal: 0, trustTotal: 0, toxicityTotal: 0, neutral: true, numAlarm: false
+    };
+    result.det.push({ t: 'neg', ico: '⚠️', l: 'Error intern', d: `El sistema ha trobat un problema: ${err.message}`, p: 0 });
+    to = { label: 'Indeterminat', cls: 'chip-unk' };
+  }
 
   scanCounter++;
   const scanId = scanCounter;
@@ -819,7 +867,7 @@ async function analyze() {
   renderGauge(result.score);
   renderHeatmap(result.detectedKW, result.bigramesDetectats, result.verbsDetectats);
   renderVariables(result.det);
-  renderContext(result.temaData, to, result.score, result.neutral);
+  renderContext(result.temaData, to, result.score, result.neutral, result.detectedKW.length);
 
   // 5. Mostra el dashboard
   const dash = document.getElementById('dashboard');
