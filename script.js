@@ -216,6 +216,18 @@ function calcularFiabilitat(text) {
     det.push({ t: 'neg', ico: '🚨', l: "Emojis d'alarma", d: `${alarmEmoji} emojis d'alerta`, p: -8 });
   }
 
+  /* ── Regla d'Or: si >3 paraules de risc, cap a 60% ─────────── *
+   * Encara que l'usuari escrigui "Segons la UNESCO", si ha detectat
+   * més de 3 paraules de risc la nota no pot pujar del 60%.
+   * ─────────────────────────────────────────────────────────────── */
+  const riskWordCount = detectedKW.filter(k => k.type !== 'trust').length;
+  if (riskWordCount > 3 && score > 60) {
+    score = 60;
+    det.push({ t: 'neg', ico: '🔒',
+               l: 'Regla d\'Or activada',
+               d: `Més de 3 paraules de risc detectades (${riskWordCount}) — nota limitada al 60%`, p: 0 });
+  }
+
   /* ── Fase 7: Detector de Números Alarmistes (Regex) ─────────── *
    * REGLA: Si % detectat > 50 sense font verificada → −30 pts
    * REGLA: Si import monetari > 1.000€/$ sense font → −30 pts
@@ -259,21 +271,19 @@ function calcularFiabilitat(text) {
     det.push({ t: 'pos', ico: '🔬', l: 'Referència científica', d: 'Menciona estudis o investigacions', p: +8 });
   }
 
-  /* ── Cas "Jaume" — sense paraules clau → fiabilitat 50 + avís ── *
-   * Si el càlcul final es queda entre 45–55% i no s'ha detectat
-   * cap paraula clau, és un text neutre (opinió, tema privat).
-   * La fiabilitat es fixa a 50 i es mostra el missatge d'avís.
+  /* ── Cas Neutral: sense cap paraula del JSON → exactament 50% ── *
+   * Si no s'ha detectat cap paraula (ni risc ni confiança),
+   * la fiabilitat es fixa a 50 amb missatge d'avís específic.
    * ─────────────────────────────────────────────────────────────── */
-  const finalScore = Math.max(0, Math.min(100, Math.round(score)));
+  let finalScore = Math.max(0, Math.min(100, Math.round(score)));
   let neutral = false;
   if (detectedKW.length === 0 && verbsDetectats.length === 0) {
-    // Sense cap paraula clau del JSON → fiabilitat = 50 + missatge d'avís
-    neutral = true;
+    finalScore = 50;   // ← fixat a 50, no calculat
+    neutral    = true;
     det.push({ t: 'neg', ico: 'ℹ️',
-               l: 'Sense indicadors forenses',
-               d: 'Cap paraula clau detectada al JSON — fiabilitat fixada al 50%', p: 0 });
+               l: 'Anàlisi Inconclusa',
+               d: 'No hi ha prou dades per validar el text', p: 0 });
   } else if (finalScore >= 45 && finalScore <= 55) {
-    // Paraules detectades però el càlcul es queda al centre → inconclusió
     neutral = true;
     det.push({ t: 'neg', ico: '⚖️',
                l: 'Resultat Inconclusiu',
@@ -465,10 +475,10 @@ function renderContext(temaData, to, score, neutral) {
     ? `<span class="ceba-chip chip-cat">${temaData.icon} ${temaData.nom}</span>`
     : `<span class="ceba-chip chip-unk">⬡ General</span>`;
 
-  // Diagnòstic — inclou el cas "Jaume" (45-55% sense KW)
+  // Diagnòstic
   let diag;
   if (neutral && detectedKW.length === 0) {
-    diag = '⚠️ Resultat Inconclusiu: El text no conté prou indicadors ni de risc ni de veracitat oficial. Sembla una opinió personal o un tema privat.';
+    diag = '⚠️ Anàlisi Inconclusa: No hi ha prou dades per validar el text.';
   } else if (neutral) {
     diag = '⚖️ Resultat Inconclusiu: els indicadors de risc i de fiabilitat s\'equilibren. Aplica verificació manual.';
   } else if (score <= 30) {
@@ -517,43 +527,48 @@ function renderContext(temaData, to, score, neutral) {
 
 /* ═══════════════════════════════════════════════════════════════════
    4. CERCA DE CONTRAST Intel·ligent
-   - Top 2 paraules RISK (les de major toxicity score)
-   - Query: [KW1] [KW2] bulo desmentido verificacion + site:fonts_fiables
+   - Si detecta una font oficial → site:domini "paraules del text"
+   - Si no → [paraules de risc] bulo verificacion + fact-checkers
 ════════════════════════════════════════════════════════════════════ */
 function verificarGoogle() {
   const text = document.getElementById('msgInput').value.trim();
   if (!text) { flashInput(); return; }
 
-  // Top 2 paraules RISK ordenades per score (les de major perill)
-  let topTerms = [];
-  if (lastResult && lastResult.detectedKW.length >= 1) {
-    const seen = new Set();
-    const riskKW = lastResult.detectedKW
-      .filter(kw => kw.type === 'risk' || !kw.type)
-      .filter(kw => { if (seen.has(kw.word)) return false; seen.add(kw.word); return true; });
-    topTerms = riskKW.sort((a,b) => b.score - a.score).slice(0,2).map(k => k.word);
-  }
+  let q;
 
-  // Fallback: 2 paraules més llargues del text de l'usuari
-  if (topTerms.length < 1) {
-    topTerms = [...new Set(
-      text.replace(/[^\w\sàáèéíïòóúüç]/g,' ').split(/\s+/)
-          .map(w => w.trim()).filter(w => w.length >= 5)
-    )].sort((a,b) => b.length - a.length).slice(0,2);
-  }
-
-  // Site operators: fonts_fiables de la categoria dominant, o fallback genèric
-  let siteOps;
+  // ── Cas A: Es va detectar una font oficial (TRUST) ────────────
+  // → site:domini "fragment del text"
+  const trustKW = lastResult?.detectedKW?.find(kw => kw.type === 'trust');
   const temaData = lastResult?.temaData;
-  if (temaData?.fonts_fiables?.length) {
-    siteOps = temaData.fonts_fiables.slice(0,4).map(u => `site:${u}`).join(' OR ');
+
+  if (trustKW && temaData?.fonts_fiables?.length) {
+    // Agafa el primer domini de fonts_fiables i posa el fragment entre cometes
+    const domain  = temaData.fonts_fiables[0];
+    const snippet = text.split(/\s+/).slice(0, 8).join(' ');
+    q = encodeURIComponent(`site:${domain} "${snippet}"`);
+
+  // ── Cas B: Sense font detectada → paraules de risc + bulo verificacion
   } else {
-    siteOps = 'site:maldita.es OR site:newtral.es OR site:verificat.cat OR site:afpfactual.com';
+    // Top 2 paraules RISK per score
+    let topTerms = [];
+    if (lastResult?.detectedKW?.length >= 1) {
+      const seen = new Set();
+      const riskKW = lastResult.detectedKW
+        .filter(kw => kw.type === 'risk' || !kw.type)
+        .filter(kw => { if (seen.has(kw.word)) return false; seen.add(kw.word); return true; });
+      topTerms = riskKW.sort((a,b) => b.score - a.score).slice(0,2).map(k => k.word);
+    }
+    // Fallback: 2 paraules més llargues del text
+    if (topTerms.length < 1) {
+      topTerms = [...new Set(
+        text.replace(/[^\w\sàáèéíïòóúüç]/g,' ').split(/\s+/)
+            .map(w => w.trim()).filter(w => w.length >= 5)
+      )].sort((a,b) => b.length - a.length).slice(0,2);
+    }
+    const siteOps = 'site:maldita.es OR site:newtral.es OR site:verificat.cat OR site:afpfactual.com';
+    q = encodeURIComponent(`${topTerms.join(' ')} bulo verificacion ${siteOps}`);
   }
 
-  // Construeix: [KW1] [KW2] bulo desmentido verificacion site:...
-  const verifyTerms = 'bulo desmentido verificacion';
-  const q = encodeURIComponent(`${topTerms.join(' ')} ${verifyTerms} ${siteOps}`);
   window.open('https://www.google.com/search?q=' + q, '_blank', 'noopener');
 }
 
