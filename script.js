@@ -543,15 +543,8 @@ function renderContext(temaData, to, score, neutral, kwCount) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   CERCA INTEL·LIGENT — Multi-cerca (Opció C)
-   1. Extreu paraules clau reals del text (no del JSON)
-   2. Obre Google News per informació recent
-   3. Obre els fact-checkers per verificació
-   Les paraules clau s'extreuen del text de l'usuari directament,
-   ignorant articles, preposicions i paraules buides.
+   UTILITATS DE CERCA — Paraules buides i extracció de nucli
 ════════════════════════════════════════════════════════════════════ */
-
-// Paraules buides que NO volem a la cerca (ca + es + en)
 const STOP_WORDS = new Set([
   'el','la','els','les','un','una','uns','unes','de','del','dels','a','en','i','o','que',
   'es','per','amb','com','però','si','no','sí','ja','molt','més','tot','tots','tota',
@@ -560,12 +553,13 @@ const STOP_WORDS = new Set([
   'con','por','para','pero','porque','como','cuando','donde','me','te','se','nos',
   'os','le','les','al','mi','tu','su','sus','mis','tus','yo','tú','él','ella',
   'nosotros','ellos','ellas','the','and','for','are','but','not','you','all','can',
-  'had','her','was','one','our','que','les','des','une','est','qui','que','sur',
-  'se','si','ni','na','hi','ho','li','hem','heu','han','era','eren','fou','van',
-  'molt','poc','cap','cada','altre','altres','mateix','mateixa',
-  'también','también','también','porque','cuando','donde','sobre','entre',
-  'hasta','desde','hacia','según','durante','mediante','ante','bajo','tras',
-  'este','aquel','algún','ningún','todo','cada','ambos','varios'
+  'had','her','was','one','our','se','si','ni','na','hi','ho','li','hem','heu','han',
+  'era','eren','fou','van','molt','poc','cap','cada','altre','altres','mateix','mateixa',
+  'también','porque','cuando','donde','sobre','entre','hasta','desde','hacia','según',
+  'durante','ante','bajo','tras','este','aquel','algún','ningún','todo','ambos','varios',
+  'seran','sera','seria','poden','podria','podran','hauria','haurien','tindran',
+  'nivells','niveles','nivel','aproximadament','aproximadamente','aproximat',
+  'podemos','pueden','seria','serian','habra','habran','estima','estiman','segun'
 ]);
 
 function extraureParaulesClau(text) {
@@ -578,52 +572,75 @@ function extraureParaulesClau(text) {
   )].sort((a, b) => b.length - a.length);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   CERCA DE VERIFICACIÓ — Opció A (Frase exacta als fact-checkers)
+   Estratègia:
+   1. Extreu el NUCLI de la notícia (frase de 4-6 paraules clau)
+   2. Llança UNA sola cerca molt precisa amb la frase entre cometes
+      als principals fact-checkers en català, castellà i anglès
+   3. Si la categoria és coneguda, afegeix els fact-checkers específics
+════════════════════════════════════════════════════════════════════ */
 function verificarGoogle() {
   const text = document.getElementById('msgInput').value.trim();
   if (!text) { flashInput(); return; }
 
-  // ── Extreu les paraules clau reals del text ──────────────────────
-  const kwText    = extraureParaulesClau(text);
-  // Top 4 paraules més llargues i significatives del text de l'usuari
-  const topText   = kwText.slice(0, 4);
+  // ── 1. Extreu el nucli de la notícia ────────────────────────────
+  // Agafa les 5 paraules més significatives del text real
+  const kwText = extraureParaulesClau(text).slice(0, 5);
 
-  // ── Afegeix paraules de risc del JSON si n'hi ha ─────────────────
-  const riskKW = lastResult?.detectedKW
-    ?.filter(kw => kw.type === 'risk' || !kw.type)
-    ?.sort((a, b) => b.score - a.score)
-    ?.slice(0, 2)
-    ?.map(k => k.word) || [];
+  // Si hi ha paraules de risc del JSON, prioritza les 2 amb més pes
+  const riskKW = (lastResult?.detectedKW || [])
+    .filter(k => k.type === 'risk')
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 2)
+    .map(k => k.word);
 
-  // Combina: text real primer, després paraules de risc del JSON
-  const allTerms = [...new Set([...topText, ...riskKW])].slice(0, 5);
-  const queryBase = allTerms.join(' ');
+  // El nucli: fins a 5 termes únics, prioritzant els de risc
+  const nucli = [...new Set([...riskKW, ...kwText])].slice(0, 5);
 
-  // ── Fonts específiques de la categoria detectada ─────────────────
-  const temaData  = lastResult?.temaData;
-  const siteFC    = temaData?.fonts_fiables?.length
+  // ── 2. Construeix la frase entre cometes (molt més precís) ───────
+  // Si tenim 3+ paraules, posem el nucli entre cometes
+  // Si en tenim menys, millor sense cometes per no limitar massa
+  const fraseBase = nucli.length >= 3
+    ? `"${nucli.join(' ')}"`
+    : nucli.join(' ');
+
+  // ── 3. Fact-checkers — llista extensa i precisa ──────────────────
+  // Fact-checkers en català i castellà
+  const fcLocal = [
+    'site:maldita.es',
+    'site:newtral.es',
+    'site:verificat.cat',
+    'site:afpfactual.com',
+    'site:efe.com/efe-verifica',
+    'site:elconfidencial.com',
+  ].join(' OR ');
+
+  // Fact-checkers internacionals (anglès)
+  const fcIntl = [
+    'site:snopes.com',
+    'site:fullfact.org',
+    'site:factcheck.org',
+    'site:politifact.com',
+  ].join(' OR ');
+
+  // Fact-checkers específics de la categoria detectada
+  const temaData = lastResult?.temaData;
+  const fcTema   = temaData?.fonts_fiables?.length
     ? temaData.fonts_fiables.slice(0, 3).map(u => `site:${u}`).join(' OR ')
-    : 'site:maldita.es OR site:newtral.es OR site:verificat.cat OR site:afpfactual.com';
+    : '';
 
-  // ── Construeix les 3 URLs ─────────────────────────────────────────
+  // Combina tots els fact-checkers en un sol operador site:
+  const totsFC = [fcLocal, fcTema, fcIntl].filter(Boolean).join(' OR ');
 
-  // 1. Google News — informació recent sobre el tema
-  const qNews = encodeURIComponent(queryBase);
-  const urlNews = `https://news.google.com/search?q=${qNews}&hl=ca&gl=ES`;
+  // ── 4. Una sola URL de Google molt precisa ───────────────────────
+  // Format: "frase exacta" (site:A OR site:B OR ...) fact-check
+  const queryFinal = `${fraseBase} (${totsFC})`;
+  const url = `https://www.google.com/search?q=${encodeURIComponent(queryFinal)}&lr=lang_ca|lang_es|lang_en`;
 
-  // 2. Fact-checkers oficials — verificació específica
-  const qFC = encodeURIComponent(`${queryBase} ${siteFC}`);
-  const urlFC = `https://www.google.com/search?q=${qFC}`;
-
-  // 3. Google general — context ampli
-  const qGeneral = encodeURIComponent(`${queryBase} verificacion bulo`);
-  const urlGeneral = `https://www.google.com/search?q=${qGeneral}`;
-
-  // ── Obre les 3 pestanyes amb un petit retard entre elles ─────────
-  // (alguns navegadors bloquegen obertures simultànies)
-  window.open(urlNews,    '_blank', 'noopener');
-  setTimeout(() => window.open(urlFC,     '_blank', 'noopener'), 300);
-  setTimeout(() => window.open(urlGeneral,'_blank', 'noopener'), 600);
+  window.open(url, '_blank', 'noopener');
 }
+
 
 /* ═══════════════════════════════════════════════════════════════════
    5. INFORME FORENSE — Blob HTML, download directe
