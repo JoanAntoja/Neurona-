@@ -816,6 +816,39 @@ async function analyze() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   ANÀLISI PROFUNDA AMB CLAUDE (gratuït via claude.ai)
+   Construeix un prompt forense preformat i obre Claude.ai
+   amb el text de l'usuari ja inclòs. No necessita API key.
+════════════════════════════════════════════════════════════════════ */
+function analisiProfunda() {
+  const text = document.getElementById('msgInput').value.trim();
+  if (!text) { flashInput(); return; }
+
+  // Resum del que el motor local ja ha detectat (per donar context a Claude)
+  let resumLocal = '';
+  if (lastResult) {
+    const { score, riskTotal, trustTotal, temaData } = lastResult;
+    resumLocal = `\n\nCONTEXT: El meu analitzador local ha obtingut una puntuació de fiabilitat de ${score}/100 (risc acumulat: ${riskTotal}, confiança: ${trustTotal})${temaData ? `, categoria detectada: ${temaData.nom}` : ''}.`;
+  }
+
+  // Prompt forense complet que enviem a Claude
+  const prompt =
+    `Ets un expert en verificació de fets i detecció de desinformació. ` +
+    `Analitza el text següent i respon en català amb:\n\n` +
+    `1. **Veredicte** (0-100): Quina probabilitat hi ha que sigui desinformació?\n` +
+    `2. **Indicadors de risc**: Quines frases o elements et semblen sospitosos?\n` +
+    `3. **Indicadors de credibilitat**: Hi ha elements que augmentin la confiança?\n` +
+    `4. **Context**: De quin tema tracta i quines fonts oficials es podrien consultar?\n` +
+    `5. **Recomanació**: Hauria l'usuari de compartir aquest contingut?\n\n` +
+    `TEXT A ANALITZAR:\n"${text}"` +
+    resumLocal;
+
+  // Obre claude.ai amb el prompt preomplert a la URL
+  const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
+  window.open(url, '_blank', 'noopener');
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    8. INICIALITZACIÓ — carrega data.json via fetch
 ════════════════════════════════════════════════════════════════════ */
 async function init() {
