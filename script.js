@@ -68,92 +68,80 @@ function detectarRelacioConceptes(temaHits, toxicityTotal) {
 
 /* ═══════════════════════════════════════════════════════════════════
    1. MOTOR PRINCIPAL — calcularFiabilitat(text)
+   BASE: 50 punts.  RISK → resta.  TRUST → suma.
    Retorna: { score, det, detectedKW, bigramesDetectats,
-               verbsDetectats, temaData, toxicityTotal }
+               verbsDetectats, temaData, riskTotal, trustTotal, neutral }
 ════════════════════════════════════════════════════════════════════ */
 function calcularFiabilitat(text) {
-  const textNorm      = norm(text);
-  let   score         = 100;
-  const det           = [];      // Variables estructurals (chips)
-  const detectedKW    = [];      // Paraules clau amb pes
+  const textNorm = norm(text);
+  let   score    = 50;          // ← BASE: 50 (neutre)
+  const det           = [];
+  const detectedKW    = [];
   const bigramesDetectats = [];
   const verbsDetectats    = [];
 
-  /* ── Fase 1: Escaneig de categories ─────────────────────────── */
-  let toxicityTotal = 0;
-  const temaHits    = {};   // id → { count, tox, topic }
+  /* ── Fase 1: Escaneig de categories RISK i TRUST ────────────── */
+  let riskTotal  = 0;
+  let trustTotal = 0;
+  const temaHits = {};
 
   for (const topic of DB.categories) {
     let hits = 0, topicTox = 0;
+    const isTrust = topic.type === 'trust';
+
     for (const lex of topic.lexemes) {
       if (trobarLexema(textNorm, lex.w)) {
         hits++;
-        topicTox      += lex.s;
-        toxicityTotal += lex.s;
+        topicTox += lex.s;
+        // TRUST: s < 0 → suma fiabilitat. RISK: s > 0 → resta.
+        if (isTrust) {
+          trustTotal += Math.abs(lex.s);
+          score      += Math.abs(lex.s);   // suma
+        } else {
+          riskTotal  += lex.s;
+          score      -= lex.s;             // resta
+        }
         detectedKW.push({
           word:      lex.w,
           score:     lex.s,
           topicId:   topic.id,
           topicIcon: topic.icon,
           topicNom:  topic.nom,
+          type:      topic.type || 'risk',
         });
       }
     }
-    if (hits > 0) temaHits[topic.id] = { count: hits, tox: topicTox, topic };
+    if (hits > 0) temaHits[topic.id] = { count: hits, tox: Math.abs(topicTox), topic };
   }
 
-  /* Regla de toxicitat acumulada */
-  if (toxicityTotal > 0) {
-    if (toxicityTotal >= 15) {
-      const penalty = Math.min(60, 10 + toxicityTotal * 2.5);
-      score -= penalty;
-      det.push({
-        t: 'neg', ico: '☠️',
-        l: `Toxicitat crítica (Σ=${toxicityTotal})`,
-        d: `Suma de pesos supera el llindar crític de 15`,
-        p: -Math.round(penalty),
-      });
-    } else if (toxicityTotal >= 8) {
-      const penalty = Math.min(30, toxicityTotal * 2);
-      score -= penalty;
-      det.push({
-        t: 'neg', ico: '⚠️',
-        l: `Toxicitat moderada (Σ=${toxicityTotal})`,
-        d: `${detectedKW.length} paraules de risc detectades`,
-        p: -Math.round(penalty),
-      });
-    } else {
-      score -= toxicityTotal;
-      det.push({
-        t: 'neg', ico: '🔍',
-        l: `Lexemes de risc (Σ=${toxicityTotal})`,
-        d: `${detectedKW.length} paraules clau de risc baix`,
-        p: -toxicityTotal,
-      });
-    }
+  // Resum de risc acumulat
+  if (riskTotal > 0) {
+    let ico, label;
+    if      (riskTotal >= 20) { ico = '☠️'; label = `Risc crític acumulat (Σ=${riskTotal})`; }
+    else if (riskTotal >= 10) { ico = '⚠️'; label = `Risc moderat (Σ=${riskTotal})`;          }
+    else                      { ico = '🔍'; label = `Indicadors de risc (Σ=${riskTotal})`;    }
+    det.push({ t: 'neg', ico, l: label,
+               d: `${detectedKW.filter(k=>k.type==='risk').length} lexemes de risc detectats`, p: -riskTotal });
+  }
+  if (trustTotal > 0) {
+    det.push({ t: 'pos', ico: '✅',
+               l: `Indicadors de fiabilitat (Σ=+${trustTotal})`,
+               d: `${detectedKW.filter(k=>k.type==='trust').length} lexemes de confiança`, p: +trustTotal });
   }
 
-  /* ── Penalització per densitat (text curt + toxicitat alta) ─── *
-   * Fórmula exponencial: si el text té < 80 paraules però
-   * toxicityTotal > 8, la relació paraules/toxicitat és sospitosa.
-   * Penalty = toxicityTotal² / wordCount   (cap a −40 pts màx)
-   * ─────────────────────────────────────────────────────────────── */
+  /* ── Fase 2: Penalització per densitat ──────────────────────── */
   const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
-  if (wordCount > 0 && wordCount < 80 && toxicityTotal >= 8) {
-    const densityRatio  = toxicityTotal / wordCount;         // tox per paraula
-    const densityPenalty = Math.min(40, Math.round(densityRatio * densityRatio * 6));
+  if (wordCount > 0 && wordCount < 80 && riskTotal >= 8) {
+    const densityRatio   = riskTotal / wordCount;
+    const densityPenalty = Math.min(25, Math.round(densityRatio * densityRatio * 4));
     if (densityPenalty >= 3) {
       score -= densityPenalty;
-      det.push({
-        t: 'neg', ico: '📐',
-        l: `Alta densitat de risc`,
-        d: `Text curt (${wordCount} paraules) amb toxicitat alta → penalització exponencial`,
-        p: -densityPenalty,
-      });
+      det.push({ t: 'neg', ico: '📐', l: 'Alta densitat de risc',
+                 d: `Text curt (${wordCount} paraules) amb risc alt`, p: -densityPenalty });
     }
   }
 
-  /* ── Fase 2: Verbs d'atac transversals ──────────────────────── */
+  /* ── Fase 3: Verbs d'atac transversals ──────────────────────── */
   let verbPenalty = 0;
   for (const verb of DB.verbs_atac) {
     if (trobarLexema(textNorm, verb.w)) {
@@ -162,132 +150,140 @@ function calcularFiabilitat(text) {
     }
   }
   if (verbPenalty > 0) {
-    const cap = Math.min(verbPenalty, 30);
+    const cap = Math.min(verbPenalty, 20);
     score -= cap;
-    det.push({
-      t: 'neg', ico: '🗡️',
-      l: `Verbs d'atac (${verbsDetectats.length})`,
-      d: `"${verbsDetectats.slice(0, 4).join('", "')}"${verbsDetectats.length > 4 ? '...' : ''}`,
-      p: -cap,
-    });
+    det.push({ t: 'neg', ico: '🗡️',
+               l: `Verbs d'atac (${verbsDetectats.length})`,
+               d: `"${verbsDetectats.slice(0,4).join('", "')}"${verbsDetectats.length>4?'...':''}`,
+               p: -cap });
   }
 
-  /* ── Fase 3: Bigrames perillosos (−30% extra) ───────────────── */
+  /* ── Fase 4: Bigrames perillosos (−25% del score actual) ───── */
   for (const bigram of DB.bigrames_perill) {
     const hasA = bigram.a.some(w => trobarLexema(textNorm, w));
     const hasB = bigram.b.some(w => trobarLexema(textNorm, w));
     if (hasA && hasB) {
       bigramesDetectats.push(bigram.label);
-      const penalty = Math.round(score * 0.30);
+      const penalty = Math.round(score * 0.25);
       score -= penalty;
-      det.push({
-        t: 'neg', ico: '💥',
-        l: `Bigrama: ${bigram.label}`,
-        d: 'Combinació temàtica+conspiracionista → −30% fiabilitat',
-        p: -penalty,
-      });
+      det.push({ t: 'neg', ico: '💥',
+                 l: `Bigrama: ${bigram.label}`,
+                 d: 'Combinació temàtica+conspiracionista → −25% fiabilitat', p: -penalty });
     }
   }
 
-  /* ── Fase 3b: Relació de Conceptes (multiplicador x1.5) ────────
-   * Si detectem categories emocionals + categories de contingut
-   * en el mateix text, apliquem un 50% extra sobre la toxicitat.
-   * ─────────────────────────────────────────────────────────────── */
-  const relacio = detectarRelacioConceptes(temaHits, toxicityTotal);
+  /* ── Fase 5: Relació de conceptes (multiplicador ×1.5) ─────── */
+  const relacio = detectarRelacioConceptes(temaHits, riskTotal);
   if (relacio.active && relacio.penalty > 0) {
     score -= relacio.penalty;
-    det.push({
-      t: 'neg', ico: '🔗',
-      l: `Relació de conceptes (×1.5)`,
-      d: `Combinació d'emocionalitat + contingut: ${relacio.cats.slice(0,3).join(' + ')}`,
-      p: -relacio.penalty,
-    });
+    det.push({ t: 'neg', ico: '🔗',
+               l: 'Relació de conceptes (×1.5)',
+               d: `Emocionalitat + contingut: ${relacio.cats.slice(0,3).join(' + ')}`,
+               p: -relacio.penalty });
   }
 
-  /* ── Fase 4: Variables estructurals de text ─────────────────── */
-  // T1. Majúscules sostingudes (≥20%) → −15% del score actual
+  /* ── Fase 6: Anomalies de format ────────────────────────────── */
+  // Majúscules ≥ 20% → −15% del score actual
   const alfa   = text.replace(/[^a-zA-ZàáèéíïòóúüçÀÁÈÉÍÏÒÓÚÜÇ]/g, '');
   const majPct = alfa.length > 10
-    ? alfa.replace(/[a-zàáèéíïòóúüç]/g, '').length / alfa.length
-    : 0;
+    ? alfa.replace(/[a-zàáèéíïòóúüç]/g, '').length / alfa.length : 0;
   if (majPct >= 0.20) {
-    // Penalització proporcional: −15% del score actual (mai menys de −15 ni més de −30)
     const rawP = Math.round(score * 0.15);
-    const p    = -(majPct >= 0.50 ? Math.min(rawP * 2, 30) : Math.max(rawP, 15));
+    const p    = -(majPct >= 0.50 ? Math.min(rawP * 2, 25) : Math.max(rawP, 10));
     score += p;
-    det.push({
-      t: 'neg', ico: '🔠',
-      l: 'Majúscules excessives',
-      d: `${Math.round(majPct * 100)}% del text en majúscules → −15% fiabilitat automàtic`,
-      p,
-    });
+    det.push({ t: 'neg', ico: '🔠', l: 'Majúscules excessives',
+               d: `${Math.round(majPct*100)}% del text en majúscules → −15% automàtic`, p });
   }
-
-  // T2. Exclamacions excessives (≥3) → −15% del score actual
+  // Exclamacions ≥ 3 → −15% del score actual
   const excl = (text.match(/!/g) || []).length;
   if (excl >= 3) {
-    const p = -(Math.max(Math.round(score * 0.15), 15));
+    const p = -(Math.max(Math.round(score * 0.15), 10));
     score += p;
-    det.push({ t: 'neg', ico: '❗', l: 'Exclamacions excessives', d: `${excl} signes d'exclamació → −15% fiabilitat automàtic`, p });
+    det.push({ t: 'neg', ico: '❗', l: 'Exclamacions excessives',
+               d: `${excl} signes d'exclamació → −15% automàtic`, p });
   }
-
-  // T3. Crida a l'acció buida
+  // Crida a l'acció
   const ctaRx = /\b(passa.?ho|p[aà]sa.?lo|m[àa]xima.difusi[oó]|reenvieu|comparte|fes.ho.córrer|avisa.a.tothom|avisa.a.todos)\b/i;
   const ctaM  = text.match(ctaRx);
   if (ctaM) {
-    score -= 15;
-    det.push({ t: 'neg', ico: '📢', l: "Crida a l'acció buida", d: `"${ctaM[0]}"`, p: -15 });
+    score -= 12;
+    det.push({ t: 'neg', ico: '📢', l: "Crida a l'acció buida", d: `"${ctaM[0]}"`, p: -12 });
   }
-
-  // T4. Emojis d'alarma (≥2)
+  // Emojis d'alarma
   const alarmEmoji = (text.match(/[🚨⚠️🔴❗‼️🆘]/g) || []).length;
   if (alarmEmoji >= 2) {
-    score -= 10;
-    det.push({ t: 'neg', ico: '🚨', l: "Emojis d'alarma", d: `${alarmEmoji} emojis d'alerta`, p: -10 });
+    score -= 8;
+    det.push({ t: 'neg', ico: '🚨', l: "Emojis d'alarma", d: `${alarmEmoji} emojis d'alerta`, p: -8 });
   }
 
-  /* ── Fase 5: Indicadors de rigor (+10) ──────────────────────── */
+  /* ── Fase 7: Detector de Números Alarmistes ─────────────────── *
+   * Detecta percentatges > 50% o xifres monetàries > 1000
+   * que apareguin sense context de font verificada.
+   * ─────────────────────────────────────────────────────────────── */
+  let numAlarm = false;
+  // Percentatges: busca N% on N > 50
+  const pctMatches = [...text.matchAll(/(\d+(?:[.,]\d+)?)\s*%/g)];
+  const highPct    = pctMatches.filter(m => parseFloat(m[1].replace(',','.')) > 50);
+  // Xifres monetàries: busca €N o $N o N€ o N$ on N > 1000
+  const monMatches = [...text.matchAll(/([€$])\s*(\d+(?:[.,]\d+)?)|(\d+(?:[.,]\d+)?)\s*([€$])/g)];
+  const highMon    = monMatches.filter(m => {
+    const val = parseFloat((m[2] || m[3] || '0').replace(',','.'));
+    return val > 1000;
+  });
+  if (highPct.length > 0 || highMon.length > 0) {
+    // Penalitza si NO hi ha indicadors de font (confiança)
+    if (trustTotal === 0) {
+      score     -= 25;
+      numAlarm   = true;
+      const examples = [
+        ...highPct.map(m => m[0]),
+        ...highMon.map(m => m[0]),
+      ].slice(0, 3).join(', ');
+      det.push({ t: 'neg', ico: '💰',
+                 l: 'Números alarmistes sense font',
+                 d: `Detectat: ${examples} — sense font verificada → −25 pts`, p: -25 });
+    }
+  }
+
+  /* ── Fase 8: Indicadors de rigor addicionals (+) ────────────── */
   if (/\b(seg[uú]ns?|según|d.acord.amb|de.acuerdo.con|publicat.a|publicado.en|informe.de|estudi.de|font:)\b/i.test(text)) {
-    score += 10;
-    det.push({ t: 'pos', ico: '📎', l: 'Font identificada', d: 'El text cita fonts', p: +10 });
+    score += 8;
+    det.push({ t: 'pos', ico: '📎', l: 'Font citada en el text', d: 'El text menciona una font', p: +8 });
   }
   if (/https?:\/\/[^\s]+/.test(text)) {
-    score += 10;
-    det.push({ t: 'pos', ico: '🔗', l: 'URL present', d: 'Conté enllaços verificables', p: +10 });
+    score += 8;
+    det.push({ t: 'pos', ico: '🔗', l: 'URL verificable present', d: 'Conté un o més enllaços', p: +8 });
   }
   if (/\b(estudi[ao]?|investigaci[oó]|peer.review|assaig.cl[ií]nic|metaanàlisi)\b/i.test(text)) {
-    score += 10;
-    det.push({ t: 'pos', ico: '🔬', l: 'Referència científica', d: 'Menciona estudis o investigacions', p: +10 });
+    score += 8;
+    det.push({ t: 'pos', ico: '🔬', l: 'Referència científica', d: 'Menciona estudis o investigacions', p: +8 });
   }
 
-  /* ── Lògica de neutralitat: cap indicador → exactament 50% ──── */
+  /* ── Cas "Jaume" — llindar d'inconclusió 45–55% ─────────────── */
+  const finalScore = Math.max(0, Math.min(100, Math.round(score)));
   let neutral = false;
-  if (detectedKW.length === 0 && verbsDetectats.length === 0 && det.filter(d => d.t === 'neg').length === 0) {
-    score   = 50;
+  if (finalScore >= 45 && finalScore <= 55 && detectedKW.length === 0) {
+    // Sense paraules clau i score al centre → inconclusió
     neutral = true;
-    det.push({
-      t: 'neg', ico: 'ℹ️',
-      l: 'Anàlisi Neutral',
-      d: 'No es detecten indicadors de risc',
-      p: 0,
-    });
+    det.push({ t: 'neg', ico: 'ℹ️',
+               l: 'Anàlisi Neutral',
+               d: 'No es detecten indicadors de risc ni de veracitat', p: 0 });
   }
 
-  /* ── Tema dominant ───────────────────────────────────────────── */
+  /* ── Tema dominant (per categoria de risc) ───────────────────── */
   let temaData = null, topTox = 0;
   for (const [, data] of Object.entries(temaHits)) {
-    if (data.tox > topTox) { topTox = data.tox; temaData = data.topic; }
+    if (data.topic.type !== 'trust' && data.tox > topTox) {
+      topTox = data.tox; temaData = data.topic;
+    }
   }
 
   return {
-    score:    Math.max(0, Math.min(100, Math.round(score))),
-    det,
-    detectedKW,
-    bigramesDetectats,
-    verbsDetectats,
-    temaData,
-    toxicityTotal,
-    neutral,
+    score: finalScore,
+    det, detectedKW, bigramesDetectats, verbsDetectats,
+    temaData, riskTotal, trustTotal,
+    toxicityTotal: riskTotal,   // compatibilitat amb heatmap
+    neutral, numAlarm,
   };
 }
 
@@ -459,25 +455,31 @@ function renderContext(temaData, to, score, neutral) {
     ? `<span class="ceba-chip chip-cat">${temaData.icon} ${temaData.nom}</span>`
     : `<span class="ceba-chip chip-unk">⬡ General</span>`;
 
+  // Diagnòstic — inclou el cas "Jaume" (45-55% sense KW)
   let diag;
-  if (neutral)          diag = 'ℹ️ Anàlisi Neutral: No es detecten indicadors de risc.';
-  else if (score <= 30) diag = '⛔ Risc alt: múltiples indicadors de bulo confirmats.';
-  else if (score <= 50) diag = '⚠️ Risc moderat: patrons sospitosos. Verificació urgent.';
-  else if (score <= 70) diag = '🔶 Inconclusiu: alguns indicadors dubtosos.';
-  else                  diag = '✅ Cap indicador crític detectat.';
+  if (neutral && score >= 45 && score <= 55) {
+    diag = '⚠️ Resultat Inconclusiu: El text no conté prou indicadors ni de risc ni de veracitat oficial. Sembla una opinió personal o un tema privat.';
+  } else if (score <= 30) {
+    diag = '⛔ Risc alt: múltiples indicadors de bulo confirmats.';
+  } else if (score <= 50) {
+    diag = '⚠️ Risc moderat: patrons sospitosos detectats. Verificació urgent.';
+  } else if (score <= 70) {
+    diag = '🔶 Inconclusiu: alguns indicadors dubtosos. Comprova les fonts.';
+  } else {
+    diag = '✅ Indicadors de fiabilitat superiors als de risc.';
+  }
 
-  // Fonts: preferim fonts_fiables (URLs) si existeixen, sinó fonts (labels)
-  const fontsArr   = temaData?.fonts_fiables || temaData?.fonts || ['maldita.es', 'newtral.es', 'verificat.cat'];
-  const fontsHtml  = fontsArr.map(f => {
+  // Fonts: preferim fonts_fiables (URLs clicables)
+  const fontsArr  = temaData?.fonts_fiables || temaData?.fonts || ['maldita.es','newtral.es','verificat.cat'];
+  const fontsHtml = fontsArr.map(f => {
     const isUrl = f.includes('.');
     const href  = isUrl ? `https://${f}` : '#';
     const label = isUrl ? f.replace(/^www\./, '') : f;
     return `<a href="${href}" target="_blank" rel="noopener" class="src-link">${label}</a>`;
   }).join('');
 
-  // Missatge de recomanació per a la categoria dominant
   const recomHtml = temaData
-    ? `<div class="recom-notice">Recomanem contrastar a: ${fontsArr.slice(0,3).map(f => `<strong>${f.replace(/^www\./,'')}</strong>`).join(', ')}</div>`
+    ? `<div class="recom-notice">Recomanem contrastar a: ${fontsArr.slice(0,3).map(f=>`<strong>${f.replace(/^www\./,'')}</strong>`).join(', ')}</div>`
     : '';
 
   const rows = [
@@ -494,7 +496,6 @@ function renderContext(temaData, to, score, neutral) {
     grid.appendChild(row);
   });
 
-  // Bloc de recomanació (sempre al final del panel)
   if (recomHtml) {
     const div = document.createElement('div');
     div.innerHTML = recomHtml;
@@ -504,48 +505,43 @@ function renderContext(temaData, to, score, neutral) {
 
 /* ═══════════════════════════════════════════════════════════════════
    4. CERCA DE CONTRAST Intel·ligent
-   - Top 2 KW per toxicity score del text analitzat
-   - site: construït amb les fonts_fiables de la categoria dominant
-   - Query: [KW1] [KW2] desmentido fact-check site:A OR site:B OR ...
+   - Top 2 paraules RISK (les de major toxicity score)
+   - Query: [KW1] [KW2] bulo desmentido verificacion + site:fonts_fiables
 ════════════════════════════════════════════════════════════════════ */
 function verificarGoogle() {
   const text = document.getElementById('msgInput').value.trim();
   if (!text) { flashInput(); return; }
 
-  // ── Top 2 paraules per toxicity score ──────────────────────────
+  // Top 2 paraules RISK ordenades per score (les de major perill)
   let topTerms = [];
   if (lastResult && lastResult.detectedKW.length >= 1) {
     const seen = new Set();
-    const uniq = lastResult.detectedKW.filter(kw => {
-      if (seen.has(kw.word)) return false;
-      seen.add(kw.word); return true;
-    });
-    topTerms = uniq
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 2)
-      .map(k => k.word);
-  }
-  if (topTerms.length < 1) {
-    topTerms = [...new Set(
-      text.replace(/[^\w\sàáèéíïòóúüç]/g, ' ').split(/\s+/)
-          .map(w => w.trim()).filter(w => w.length >= 5)
-    )].sort((a, b) => b.length - a.length).slice(0, 2);
+    const riskKW = lastResult.detectedKW
+      .filter(kw => kw.type === 'risk' || !kw.type)
+      .filter(kw => { if (seen.has(kw.word)) return false; seen.add(kw.word); return true; });
+    topTerms = riskKW.sort((a,b) => b.score - a.score).slice(0,2).map(k => k.word);
   }
 
-  // ── Site operators des de fonts_fiables de la categoria dominant ─
+  // Fallback: 2 paraules més llargues del text de l'usuari
+  if (topTerms.length < 1) {
+    topTerms = [...new Set(
+      text.replace(/[^\w\sàáèéíïòóúüç]/g,' ').split(/\s+/)
+          .map(w => w.trim()).filter(w => w.length >= 5)
+    )].sort((a,b) => b.length - a.length).slice(0,2);
+  }
+
+  // Site operators: fonts_fiables de la categoria dominant, o fallback genèric
   let siteOps;
   const temaData = lastResult?.temaData;
   if (temaData?.fonts_fiables?.length) {
-    siteOps = temaData.fonts_fiables
-      .slice(0, 4)
-      .map(u => `site:${u}`)
-      .join(' OR ');
+    siteOps = temaData.fonts_fiables.slice(0,4).map(u => `site:${u}`).join(' OR ');
   } else {
-    // Fallback genèric de fact-checkers
     siteOps = 'site:maldita.es OR site:newtral.es OR site:verificat.cat OR site:afpfactual.com';
   }
 
-  const q = encodeURIComponent(`${topTerms.join(' ')} desmentido fact-check ${siteOps}`);
+  // Construeix: [KW1] [KW2] bulo desmentido verificacion site:...
+  const verifyTerms = 'bulo desmentido verificacion';
+  const q = encodeURIComponent(`${topTerms.join(' ')} ${verifyTerms} ${siteOps}`);
   window.open('https://www.google.com/search?q=' + q, '_blank', 'noopener');
 }
 
