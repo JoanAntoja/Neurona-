@@ -410,6 +410,42 @@ kbd {
   font-family: var(--mono); font-size: 9px; color: var(--ink2); letter-spacing: .04em;
 }
 
+/* ── Notícies relacionades ───────────────────────────────────── */
+.news-loading {
+  font-family: var(--mono); font-size: 11px; color: var(--ink3);
+  text-align: center; padding: 12px 0;
+  animation: blink 1.5s ease-in-out infinite;
+}
+.news-item {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 10px 0; border-bottom: 1px solid var(--bd);
+}
+.news-item:last-child { border-bottom: none; padding-bottom: 0; }
+.news-item a {
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  color: var(--ink); text-decoration: none; line-height: 1.45;
+  transition: color var(--tr);
+}
+.news-item a:hover { color: var(--cyan); }
+.news-meta {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 10px; color: var(--ink2);
+}
+.news-source {
+  background: var(--surf3); border: 1px solid var(--bd2);
+  border-radius: 4px; padding: 1px 6px; color: var(--cyan);
+  font-size: 9.5px;
+}
+.news-date { color: var(--ink3); }
+.news-error {
+  font-family: var(--mono); font-size: 11px; color: var(--ink3);
+  text-align: center; padding: 10px 0; line-height: 1.6;
+}
+.news-error a {
+  color: var(--cyan); text-decoration: none;
+}
+.news-error a:hover { text-decoration: underline; }
+
 /* ── Recomanació de fonts ────────────────────────────────────── */
 .recom-notice {
   margin-top: 10px;
