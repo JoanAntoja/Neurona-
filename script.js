@@ -1,1084 +1,204 @@
-/* ═══════════════════════════════════════════════════════════════════
-   NEURONA v6.1 — script.js
-   Motor d'Anàlisi de Matriu de Pesos
-   Depèn de: data.json  (carregat via fetch en init)
-═══════════════════════════════════════════════════════════════════ */
-
-'use strict';
-
-/* ─── Estat global ─────────────────────────────────────────────── */
-let DB          = null;   // Dades carregades des de data.json
-let lastResult  = null;   // Últim resultat per a l'informe
-let scanCounter = 1000;
-
-/* ─── Utils ────────────────────────────────────────────────────── */
-const norm = s =>
-  s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-
-/**
- * Cerca un lexema en el text normalitzat.
- * Suporta frases (amb espai) i paraules simples.
- */
-function trobarLexema(textNorm, lexema) {
-  const l = norm(lexema);
-  if (l.includes(' ')) return textNorm.includes(l);
-  // Paraula sola: comprova que no formi part d'una paraula més llarga
-  const re = new RegExp(
-    '(^|[\\s,.:;!?¡¿()"\'\\-])' +
-    l.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') +
-    '([\\s,.:;!?¡¿()"\'\\-]|$)'
-  );
-  return re.test(' ' + textNorm + ' ');
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   RESET UI — alias públic de clearAll(false)
-   Cridada des de analyze() i des del botó "NETEJAR"
-════════════════════════════════════════════════════════════════════ */
-function resetUI() { clearAll(false); }
-
-/* ═══════════════════════════════════════════════════════════════════
-   RELACIÓ DE CONCEPTES — multiplicador x1.5
-   Si un mateix paràgraf conté paraules de dues categories
-   "emocionals" (por, urgència, emoció, pseudociència) combinades
-   amb qualsevol altra categoria de contingut, la penalització
-   total de toxicitat es multiplica x1.5.
-   Retorna: { active: bool, cats: string[], penalty: number }
-════════════════════════════════════════════════════════════════════ */
-const EMOTIONAL_CATS = new Set([
-  'TOPIC_EMOCIO', 'TOPIC_URGENCIA', 'TOPIC_PSEUDOCIENCIA', 'TOPIC_INSTITUCIONS',
-  'TOPIC_CONSPIRAC',
-]);
-
-function detectarRelacioConceptes(temaHits, toxicityTotal) {
-  const ids = Object.keys(temaHits);
-  if (ids.length < 2) return { active: false, cats: [], penalty: 0 };
-
-  // Comprova si hi ha almenys una cat emocional + una cat de contingut
-  const hasEmotional = ids.some(id => EMOTIONAL_CATS.has(id));
-  const hasContent   = ids.some(id => !EMOTIONAL_CATS.has(id));
-
-  if (!hasEmotional || !hasContent) return { active: false, cats: [], penalty: 0 };
-
-  // Penalty = 50% del toxicityTotal arrodonit (multiplicador x1.5 sobre base)
-  const extraPenalty = Math.min(40, Math.round(toxicityTotal * 0.5));
-  const cats = ids.map(id => temaHits[id].topic.nom);
-  return { active: true, cats, penalty: extraPenalty };
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   1. MOTOR PRINCIPAL — calcularFiabilitat(text)
-   BASE: 50 punts.  RISK → resta.  TRUST → suma.
-   Retorna: { score, det, detectedKW, bigramesDetectats,
-               verbsDetectats, temaData, riskTotal, trustTotal, neutral }
-════════════════════════════════════════════════════════════════════ */
-function calcularFiabilitat(text) {
-  const textNorm = norm(text);
-  let   score    = 50;          // ← BASE: 50 (neutre)
-  const det           = [];
-  const detectedKW    = [];
-  const bigramesDetectats = [];
-  const verbsDetectats    = [];
-
-  /* ── Fase 1: Escaneig de categories RISK i TRUST ────────────── */
-  let riskTotal  = 0;
-  let trustTotal = 0;
-  const temaHits = {};
-
-  for (const topic of DB.categories) {
-    let hits = 0, topicTox = 0;
-    const isTrust = topic.type === 'trust';
-
-    for (const lex of topic.lexemes) {
-      if (trobarLexema(textNorm, lex.w)) {
-        hits++;
-        topicTox += lex.s;
-        // TRUST: s < 0 → suma fiabilitat. RISK: s > 0 → resta.
-        if (isTrust) {
-          trustTotal += Math.abs(lex.s);
-          score      += Math.abs(lex.s);   // suma
-        } else {
-          riskTotal  += lex.s;
-          score      -= lex.s;             // resta
-        }
-        detectedKW.push({
-          word:      lex.w,
-          score:     lex.s,
-          topicId:   topic.id,
-          topicIcon: topic.icon,
-          topicNom:  topic.nom,
-          type:      topic.type || 'risk',
-        });
-      }
-    }
-    if (hits > 0) temaHits[topic.id] = { count: hits, tox: Math.abs(topicTox), topic };
-  }
-
-  // Resum de risc acumulat
-  if (riskTotal > 0) {
-    let ico, label;
-    if      (riskTotal >= 20) { ico = '☠️'; label = `Risc crític acumulat (Σ=${riskTotal})`; }
-    else if (riskTotal >= 10) { ico = '⚠️'; label = `Risc moderat (Σ=${riskTotal})`;          }
-    else                      { ico = '🔍'; label = `Indicadors de risc (Σ=${riskTotal})`;    }
-    det.push({ t: 'neg', ico, l: label,
-               d: `${detectedKW.filter(k=>k.type==='risk').length} lexemes de risc detectats`, p: -riskTotal });
-  }
-  if (trustTotal > 0) {
-    det.push({ t: 'pos', ico: '✅',
-               l: `Indicadors de fiabilitat (Σ=+${trustTotal})`,
-               d: `${detectedKW.filter(k=>k.type==='trust').length} lexemes de confiança`, p: +trustTotal });
-  }
-
-  /* ── Fase 2: Penalització per densitat ──────────────────────── */
-  const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
-  if (wordCount > 0 && wordCount < 80 && riskTotal >= 8) {
-    const densityRatio   = riskTotal / wordCount;
-    const densityPenalty = Math.min(25, Math.round(densityRatio * densityRatio * 4));
-    if (densityPenalty >= 3) {
-      score -= densityPenalty;
-      det.push({ t: 'neg', ico: '📐', l: 'Alta densitat de risc',
-                 d: `Text curt (${wordCount} paraules) amb risc alt`, p: -densityPenalty });
-    }
-  }
-
-  /* ── Fase 3: Verbs d'atac transversals ──────────────────────── */
-  let verbPenalty = 0;
-  for (const verb of DB.verbs_atac) {
-    if (trobarLexema(textNorm, verb.w)) {
-      verbsDetectats.push(verb.w);
-      verbPenalty += verb.s;
-    }
-  }
-  if (verbPenalty > 0) {
-    const cap = Math.min(verbPenalty, 20);
-    score -= cap;
-    det.push({ t: 'neg', ico: '🗡️',
-               l: `Verbs d'atac (${verbsDetectats.length})`,
-               d: `"${verbsDetectats.slice(0,4).join('", "')}"${verbsDetectats.length>4?'...':''}`,
-               p: -cap });
-  }
-
-  /* ── Fase 4: Bigrames perillosos (−25% del score actual) ───── */
-  for (const bigram of DB.bigrames_perill) {
-    const hasA = bigram.a.some(w => trobarLexema(textNorm, w));
-    const hasB = bigram.b.some(w => trobarLexema(textNorm, w));
-    if (hasA && hasB) {
-      bigramesDetectats.push(bigram.label);
-      const penalty = Math.round(score * 0.25);
-      score -= penalty;
-      det.push({ t: 'neg', ico: '💥',
-                 l: `Bigrama: ${bigram.label}`,
-                 d: 'Combinació temàtica+conspiracionista → −25% fiabilitat', p: -penalty });
-    }
-  }
-
-  /* ── Fase 5: Relació de conceptes (multiplicador ×1.5) ─────── */
-  const relacio = detectarRelacioConceptes(temaHits, riskTotal);
-  if (relacio.active && relacio.penalty > 0) {
-    score -= relacio.penalty;
-    det.push({ t: 'neg', ico: '🔗',
-               l: 'Relació de conceptes (×1.5)',
-               d: `Emocionalitat + contingut: ${relacio.cats.slice(0,3).join(' + ')}`,
-               p: -relacio.penalty });
-  }
-
-  /* ── Fase 6: Anomalies de format ────────────────────────────── */
-  // Majúscules ≥ 20% → −15% del score actual
-  const alfa   = text.replace(/[^a-zA-ZàáèéíïòóúüçÀÁÈÉÍÏÒÓÚÜÇ]/g, '');
-  const majPct = alfa.length > 10
-    ? alfa.replace(/[a-zàáèéíïòóúüç]/g, '').length / alfa.length : 0;
-  if (majPct >= 0.20) {
-    const rawP = Math.round(score * 0.15);
-    const p    = -(majPct >= 0.50 ? Math.min(rawP * 2, 25) : Math.max(rawP, 10));
-    score += p;
-    det.push({ t: 'neg', ico: '🔠', l: 'Majúscules excessives',
-               d: `${Math.round(majPct*100)}% del text en majúscules → −15% automàtic`, p });
-  }
-  // Exclamacions ≥ 3 → −15% del score actual
-  const excl = (text.match(/!/g) || []).length;
-  if (excl >= 3) {
-    const p = -(Math.max(Math.round(score * 0.15), 10));
-    score += p;
-    det.push({ t: 'neg', ico: '❗', l: 'Exclamacions excessives',
-               d: `${excl} signes d'exclamació → −15% automàtic`, p });
-  }
-  // Crida a l'acció
-  const ctaRx = /\b(passa.?ho|p[aà]sa.?lo|m[àa]xima.difusi[oó]|reenvieu|comparte|fes.ho.córrer|avisa.a.tothom|avisa.a.todos)\b/i;
-  const ctaM  = text.match(ctaRx);
-  if (ctaM) {
-    score -= 12;
-    det.push({ t: 'neg', ico: '📢', l: "Crida a l'acció buida", d: `"${ctaM[0]}"`, p: -12 });
-  }
-  // Emojis d'alarma
-  const alarmEmoji = (text.match(/[🚨⚠️🔴❗‼️🆘]/g) || []).length;
-  if (alarmEmoji >= 2) {
-    score -= 8;
-    det.push({ t: 'neg', ico: '🚨', l: "Emojis d'alarma", d: `${alarmEmoji} emojis d'alerta`, p: -8 });
-  }
-
-  /* ── Regla d'Or: si >3 paraules de risc, cap a 60% ─────────── *
-   * Encara que l'usuari escrigui "Segons la UNESCO", si ha detectat
-   * més de 3 paraules de risc la nota no pot pujar del 60%.
-   * ─────────────────────────────────────────────────────────────── */
-  const riskWordCount = detectedKW.filter(k => k.type !== 'trust').length;
-  if (riskWordCount > 3 && score > 60) {
-    score = 60;
-    det.push({ t: 'neg', ico: '🔒',
-               l: 'Regla d\'Or activada',
-               d: `Més de 3 paraules de risc detectades (${riskWordCount}) — nota limitada al 60%`, p: 0 });
-  }
-
-  /* ── Fase 7: Detector de Números ────────────────────────────── *
-   * REGLA 1: Només penalitza si el número porta % i és > 50.
-   * REGLA 2: Xifres monetàries (euros, $, €) → NO penalitzen,
-   *          però es detecten com a "Tema Econòmic" informatiu.
-   * ─────────────────────────────────────────────────────────────── */
-  let numAlarm = false;
-
-  // Percentatges: NOMÉS busca N% on N > 50
-  const pctMatches = [...text.matchAll(/(\d+(?:[.,]\d+)?)\s*%/g)];
-  const highPct    = pctMatches.filter(m => {
-    const v = parseFloat(m[1].replace(',','.'));
-    return !isNaN(v) && v > 50;
-  });
-  if (highPct.length > 0 && trustTotal === 0) {
-    const examples = highPct.map(m => m[0]).slice(0,3).join(', ');
-    score    -= 20;
-    numAlarm  = true;
-    det.push({ t: 'neg', ico: '📊',
-               l: 'Percentatge elevat sense font',
-               d: `Detectat: ${examples} — xifra alta sense font verificada → −20 pts`, p: -20 });
-  }
-
-  // Xifres monetàries: detecta però NO penalitza — marca tema econòmic
-  const monRx = /\b(\d+(?:[.,]\d+)?)\s*(euros?|€|\$|dòlars?|dolares?|lliures?)\b|\b(euros?|€|\$|dòlars?|dolares?|lliures?)\s*(\d+(?:[.,]\d+)?)\b/gi;
-  const monMatches = [...text.matchAll(monRx)];
-  if (monMatches.length > 0) {
-    const exemples = monMatches.map(m => m[0]).slice(0,3).join(', ');
-    det.push({ t: 'neg', ico: '💶',
-               l: 'Xifres econòmiques detectades',
-               d: `Imports: ${exemples} — verificar la font d'aquestes dades`, p: 0 });
-  }
-
-  /* ── Fase 8: Indicadors de rigor addicionals (+) ────────────── */
-  if (/\b(seg[uú]ns?|según|d.acord.amb|de.acuerdo.con|publicat.a|publicado.en|informe.de|estudi.de|font:)\b/i.test(text)) {
-    score += 8;
-    det.push({ t: 'pos', ico: '📎', l: 'Font citada en el text', d: 'El text menciona una font', p: +8 });
-  }
-  if (/https?:\/\/[^\s]+/.test(text)) {
-    score += 8;
-    det.push({ t: 'pos', ico: '🔗', l: 'URL verificable present', d: 'Conté un o més enllaços', p: +8 });
-  }
-  if (/\b(estudi[ao]?|investigaci[oó]|peer.review|assaig.cl[ií]nic|metaanàlisi)\b/i.test(text)) {
-    score += 8;
-    det.push({ t: 'pos', ico: '🔬', l: 'Referència científica', d: 'Menciona estudis o investigacions', p: +8 });
-  }
-
-  /* ── Cas Neutral: sense cap paraula del JSON → exactament 50% ── *
-   * Si no s'ha detectat cap paraula (ni risc ni confiança),
-   * la fiabilitat es fixa a 50 amb missatge d'avís específic.
-   * ─────────────────────────────────────────────────────────────── */
-  // Guarda isNaN: si el càlcul ha fallat per qualsevol motiu, fixa a 50
-  if (isNaN(score) || !isFinite(score)) score = 50;
-
-  let finalScore = Math.max(0, Math.min(100, Math.round(score)));
-  let neutral = false;
-
-  if (detectedKW.length === 0 && verbsDetectats.length === 0 && !numAlarm) {
-    // Cap paraula del JSON ni números alarmistes → text neutre
-    finalScore = 50;
-    neutral    = true;
-    det.push({ t: 'neg', ico: 'ℹ️',
-               l: 'Anàlisi Inconclusa',
-               d: 'No hi ha prou dades per validar el text', p: 0 });
-  } else if (isNaN(finalScore) || !isFinite(finalScore)) {
-    // Seguretat extra: si malgrat tot el valor és inválid
-    finalScore = 50;
-    neutral    = true;
-  } else if (finalScore >= 45 && finalScore <= 55 && detectedKW.length > 0) {
-    neutral = true;
-    det.push({ t: 'neg', ico: '⚖️',
-               l: 'Resultat Inconclusiu',
-               d: 'Indicadors equilibrats: no predomina risc ni fiabilitat', p: 0 });
-  }
-
-  /* ── Tema dominant (per categoria de risc) ───────────────────── */
-  let temaData = null, topTox = 0;
-  for (const [, data] of Object.entries(temaHits)) {
-    if (data.topic.type !== 'trust' && data.tox > topTox) {
-      topTox = data.tox; temaData = data.topic;
-    }
-  }
-
-  return {
-    score: finalScore,
-    det, detectedKW, bigramesDetectats, verbsDetectats,
-    temaData, riskTotal, trustTotal,
-    toxicityTotal: riskTotal,   // compatibilitat amb heatmap
-    neutral, numAlarm,
-  };
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   2. DETECCIÓ DE TO
-════════════════════════════════════════════════════════════════════ */
-function analitzarTo(text) {
-  const CONSP = /\b(illuminati|deep.state|nou.ordre|nuevo.orden|agenda.oculta|veritat.oculta|conspirac|shadow.government|reptilians|bilderberg)\b/i;
-  const ALARM = /\b(tots.morirem|fi.del.món|amenaça.mortal|genocidi|extermini|invasió.imminent|perill.extrem|fi.del.mundo)\b/i;
-  const PERS  = /\b(vota|comparteix|mobilitza|resistència|lluiteu|junts.podem)\b/i;
-  if (CONSP.test(text)) return { label: 'Conspiracionista',          cls: 'chip-consp' };
-  if (ALARM.test(text)) return { label: 'Alarmista / Emocional',     cls: 'chip-alarm' };
-  if (PERS.test(text))  return { label: 'Persuasiu / Propagandístic', cls: 'chip-pers'  };
-  return                       { label: 'Informatiu / Neutre',        cls: 'chip-info'  };
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   3. RENDER — neteja SEMPRE els contenidors abans de pintar
-════════════════════════════════════════════════════════════════════ */
-
-/* Helpers de neteja -------------------------------------------- */
-function clearPanel(id) {
-  const el = document.getElementById(id);
-  if (el) el.innerHTML = '';
-}
-function clearAll(full = false) {
-  if (full) {
-    document.getElementById('msgInput').value = '';
-    document.getElementById('charCount').textContent = '0 / 3000';
-  }
-  // Amaga el dashboard i neteja tots els contenidors
-  document.getElementById('dashboard').classList.remove('visible');
-  ['heatBody','varList','cebaGrid'].forEach(clearPanel);
-  document.getElementById('heatCount').textContent = '0';
-  document.getElementById('varCount').textContent  = '0';
-  document.getElementById('scanId').textContent    = '0000';
-  document.getElementById('scanTs').textContent    = '--:--:--';
-  // Reset gauge
-  const fill   = document.getElementById('gaugeFill');
-  const needle = document.getElementById('gaugeNeedle');
-  const val    = document.getElementById('scoreVal');
-  const verd   = document.getElementById('gaugeVerdict');
-  if (fill)   { fill.style.strokeDashoffset = '376.99'; fill.style.stroke = '#22d3ee'; }
-  if (needle) { needle.setAttribute('x2', '60'); needle.setAttribute('y2', '140'); }
-  if (val)    { val.textContent = '--'; val.style.color = 'var(--cyan)'; }
-  if (verd)   { verd.textContent = ''; verd.className = 'gauge-verdict'; }
-  lastResult = null;
-}
-
-/* Gauge --------------------------------------------------------- */
-function renderGauge(score) {
-  const CIRC  = 376.99;
-  const fill   = document.getElementById('gaugeFill');
-  const needle = document.getElementById('gaugeNeedle');
-  const val    = document.getElementById('scoreVal');
-  const verdict = document.getElementById('gaugeVerdict');
-
-  fill.style.strokeDashoffset = CIRC * (1 - score / 100);
-
-  let col, cls, vtext;
-  if      (score <= 30) { col = '#f87171'; cls = 'red';   vtext = 'BULO PROBABLE'; }
-  else if (score <= 70) { col = '#fbbf24'; cls = 'amber'; vtext = 'VERIFICACIÓ NECESSÀRIA'; }
-  else                  { col = '#10d98a'; cls = 'green'; vtext = 'INDICADORS FIABLES'; }
-
-  fill.style.stroke = col;
-  val.style.color   = col;
-
-  const angle = Math.PI * (1 - score / 100);
-  needle.setAttribute('x2', (150 + 90 * Math.cos(angle)).toFixed(1));
-  needle.setAttribute('y2', (140 - 90 * Math.sin(angle)).toFixed(1));
-
-  // Count-up animat
-  let cur = 0;
-  const step  = score / 40;
-  const timer = setInterval(() => {
-    cur = Math.min(cur + step, score);
-    val.textContent = Math.round(cur);
-    if (cur >= score) { clearInterval(timer); val.textContent = score; }
-  }, 25);
-
-  verdict.textContent = vtext;
-  verdict.className   = 'gauge-verdict ' + cls;
-}
-
-/* Heatmap ------------------------------------------------------- */
-function heatClass(s) {
-  if (s <= 3) return 'heat-t1';
-  if (s <= 6) return 'heat-t2';
-  if (s <= 8) return 'heat-t3';
-  return 'heat-t4';
-}
-
-function renderHeatmap(detectedKW, bigrames, verbs) {
-  const body  = document.getElementById('heatBody');
-  const count = document.getElementById('heatCount');
-  body.innerHTML = ''; // CLEAR
-
-  // Deduplicar i ordenar per score desc
-  const seen = new Set();
-  const uniq = detectedKW.filter(kw => {
-    if (seen.has(kw.word)) return false;
-    seen.add(kw.word);
-    return true;
-  }).sort((a, b) => b.score - a.score);
-
-  count.textContent = uniq.length + verbs.length;
-
-  if (!uniq.length && !verbs.length && !bigrames.length) {
-    body.innerHTML = '<div class="heatmap-empty">Cap paraula clau detectada en la base de dades.</div>';
-    return;
-  }
-
-  const tagsWrap = document.createElement('div');
-  tagsWrap.className = 'heatmap-wrap';
-  uniq.forEach(kw => {
-    const tag = document.createElement('span');
-    tag.className = `heat-tag ${heatClass(kw.score)}`;
-    tag.title     = `${kw.topicNom} · Toxicitat ${kw.score}/10`;
-    tag.innerHTML = `${kw.word}<span class="heat-tag__score">T${kw.score}</span><span class="heat-tag__cat">${kw.topicIcon}</span>`;
-    tagsWrap.appendChild(tag);
-  });
-  body.appendChild(tagsWrap);
-
-  if (verbs.length) {
-    const div = document.createElement('div');
-    div.className = 'verb-alert';
-    div.innerHTML = `⚔️ Verbs d'atac: <strong>${verbs.slice(0, 6).join(', ')}${verbs.length > 6 ? ` i ${verbs.length - 6} més` : ''}</strong>`;
-    body.appendChild(div);
-  }
-
-  bigrames.forEach(b => {
-    const div = document.createElement('div');
-    div.className = 'bigram-alert';
-    div.innerHTML = `💥 Bigrama perillós: <strong>${b}</strong> → −30% fiabilitat`;
-    body.appendChild(div);
-  });
-}
-
-/* Variable chips ------------------------------------------------ */
-function renderVariables(det) {
-  const list  = document.getElementById('varList');
-  const count = document.getElementById('varCount');
-  list.innerHTML = ''; // CLEAR
-  count.textContent = det.length;
-
-  if (!det.length) {
-    list.innerHTML = '<div class="var-empty">Cap variable detectada.</div>';
-    return;
-  }
-
-  const wrap = document.createElement('div');
-  wrap.className = 'var-chips';
-  det.forEach(v => {
-    const chip = document.createElement('span');
-    chip.className = `var-chip ${v.t}`;
-    chip.title     = v.d;
-    chip.innerHTML = `<span class="var-chip__ico">${v.ico}</span>${v.l}<span class="var-chip__pts">${v.p > 0 ? '+' : ''}${v.p}</span>`;
-    wrap.appendChild(chip);
-  });
-  list.appendChild(wrap);
-}
-
-/* Context panel ------------------------------------------------- */
-function renderContext(temaData, to, score, neutral, kwCount) {
-  const grid = document.getElementById('cebaGrid');
-  grid.innerHTML = ''; // CLEAR
-
-  const catHtml = temaData
-    ? `<span class="ceba-chip chip-cat">${temaData.icon} ${temaData.nom}</span>`
-    : `<span class="ceba-chip chip-unk">⬡ General</span>`;
-
-  // Diagnòstic — kwCount evita el bug de scope de detectedKW
-  let diag;
-  if (neutral && kwCount === 0) {
-    diag = '🔍 Text no identificat com a notícia: No s\'han detectat paraules clau informatives. Pot ser una conversa personal, una opinió o un tema privat. No és possible determinar si és un bulo o una veritat.';
-  } else if (neutral) {
-    diag = '⚖️ Resultat Inconclusiu: els indicadors de risc i de fiabilitat s\'equilibren. Aplica verificació manual.';
-  } else if (score <= 30) {
-    diag = '⛔ Risc alt: múltiples indicadors de bulo confirmats.';
-  } else if (score <= 50) {
-    diag = '⚠️ Risc moderat: patrons sospitosos detectats. Verificació urgent.';
-  } else if (score <= 70) {
-    diag = '🔶 Inconclusiu: alguns indicadors dubtosos. Comprova les fonts.';
-  } else {
-    diag = '✅ Indicadors de fiabilitat superiors als de risc.';
-  }
-
-  // Fonts: preferim fonts_fiables (URLs clicables)
-  const fontsArr  = temaData?.fonts_fiables || temaData?.fonts || ['maldita.es','newtral.es','verificat.cat'];
-  const fontsHtml = fontsArr.map(f => {
-    const isUrl = f.includes('.');
-    const href  = isUrl ? `https://${f}` : '#';
-    const label = isUrl ? f.replace(/^www\./, '') : f;
-    return `<a href="${href}" target="_blank" rel="noopener" class="src-link">${label}</a>`;
-  }).join('');
-
-  const recomHtml = temaData
-    ? `<div class="recom-notice">Recomanem contrastar a: ${fontsArr.slice(0,3).map(f=>`<strong>${f.replace(/^www\./,'')}</strong>`).join(', ')}</div>`
-    : '';
-
-  const rows = [
-    ['CATEGORIA',   catHtml],
-    ['TO DETECTAT', `<span class="ceba-chip ${to.cls}">${to.label}</span>`],
-    ['DIAGNÒSTIC',  diag],
-    ['FONTS',       `<div class="ceba-sources">${fontsHtml}</div>`],
-  ];
-
-  rows.forEach(([key, val]) => {
-    const row  = document.createElement('div');
-    row.className = 'ceba-row';
-    row.innerHTML = `<div class="ceba-key">${key}</div><div class="ceba-val">${val}</div>`;
-    grid.appendChild(row);
-  });
-
-  if (recomHtml) {
-    const div = document.createElement('div');
-    div.innerHTML = recomHtml;
-    grid.appendChild(div.firstElementChild);
-  }
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   CERCA INTEL·LIGENT — Multi-cerca (Opció C)
-   1. Extreu paraules clau reals del text (no del JSON)
-   2. Obre Google News per informació recent
-   3. Obre els fact-checkers per verificació
-   Les paraules clau s'extreuen del text de l'usuari directament,
-   ignorant articles, preposicions i paraules buides.
-════════════════════════════════════════════════════════════════════ */
-
-// Paraules buides que NO volem a la cerca (ca + es + en)
-const STOP_WORDS = new Set([
-  'el','la','els','les','un','una','uns','unes','de','del','dels','a','en','i','o','que',
-  'es','per','amb','com','però','si','no','sí','ja','molt','més','tot','tots','tota',
-  'totes','aquest','aquesta','aquests','aquestes','aquell','aquella','aquells','aquelles',
-  'lo','los','las','hay','han','son','ser','este','esta','estos','estas','ese','esa',
-  'con','por','para','pero','porque','como','cuando','donde','me','te','se','nos',
-  'os','le','les','al','mi','tu','su','sus','mis','tus','yo','tú','él','ella',
-  'nosotros','ellos','ellas','the','and','for','are','but','not','you','all','can',
-  'had','her','was','one','our','que','les','des','une','est','qui','que','sur',
-  'se','si','ni','na','hi','ho','li','hem','heu','han','era','eren','fou','van',
-  'molt','poc','cap','cada','altre','altres','mateix','mateixa',
-  'también','también','también','porque','cuando','donde','sobre','entre',
-  'hasta','desde','hacia','según','durante','mediante','ante','bajo','tras',
-  'este','aquel','algún','ningún','todo','cada','ambos','varios'
-]);
-
-function extraureParaulesClau(text) {
-  return [...new Set(
-    text
-      .replace(/[^\w\sàáèéíïòóúüçÀÁÈÉÍÏÒÓÚÜÇ]/g, ' ')
-      .split(/\s+/)
-      .map(w => w.trim().toLowerCase())
-      .filter(w => w.length >= 4 && !STOP_WORDS.has(w) && !/^\d+$/.test(w))
-  )].sort((a, b) => b.length - a.length);
-}
-
-function verificarGoogle() {
-  const text = document.getElementById('msgInput').value.trim();
-  if (!text) { flashInput(); return; }
-
-  // ── Extreu les paraules clau reals del text ──────────────────────
-  const kwText    = extraureParaulesClau(text);
-  // Top 4 paraules més llargues i significatives del text de l'usuari
-  const topText   = kwText.slice(0, 4);
-
-  // ── Afegeix paraules de risc del JSON si n'hi ha ─────────────────
-  const riskKW = lastResult?.detectedKW
-    ?.filter(kw => kw.type === 'risk' || !kw.type)
-    ?.sort((a, b) => b.score - a.score)
-    ?.slice(0, 2)
-    ?.map(k => k.word) || [];
-
-  // Combina: text real primer, després paraules de risc del JSON
-  const allTerms = [...new Set([...topText, ...riskKW])].slice(0, 5);
-  const queryBase = allTerms.join(' ');
-
-  // ── Fonts específiques de la categoria detectada ─────────────────
-  const temaData  = lastResult?.temaData;
-  const siteFC    = temaData?.fonts_fiables?.length
-    ? temaData.fonts_fiables.slice(0, 3).map(u => `site:${u}`).join(' OR ')
-    : 'site:maldita.es OR site:newtral.es OR site:verificat.cat OR site:afpfactual.com';
-
-  // ── Construeix les 3 URLs ─────────────────────────────────────────
-
-  // 1. Google News — informació recent sobre el tema
-  const qNews = encodeURIComponent(queryBase);
-  const urlNews = `https://news.google.com/search?q=${qNews}&hl=ca&gl=ES`;
-
-  // 2. Fact-checkers oficials — verificació específica
-  const qFC = encodeURIComponent(`${queryBase} ${siteFC}`);
-  const urlFC = `https://www.google.com/search?q=${qFC}`;
-
-  // 3. Google general — context ampli
-  const qGeneral = encodeURIComponent(`${queryBase} verificacion bulo`);
-  const urlGeneral = `https://www.google.com/search?q=${qGeneral}`;
-
-  // ── Obre les 3 pestanyes amb un petit retard entre elles ─────────
-  // (alguns navegadors bloquegen obertures simultànies)
-  window.open(urlNews,    '_blank', 'noopener');
-  setTimeout(() => window.open(urlFC,     '_blank', 'noopener'), 300);
-  setTimeout(() => window.open(urlGeneral,'_blank', 'noopener'), 600);
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   5. INFORME FORENSE — Blob HTML, download directe
-════════════════════════════════════════════════════════════════════ */
-function descarregarInforme() {
-  if (!lastResult) return;
-  const { text, score, det, detectedKW, bigramesDetectats, verbsDetectats,
-          temaData, to, scanId, scanTs, toxicityTotal } = lastResult;
-
-  const now      = new Date();
-  const dateStr  = now.toLocaleDateString('ca-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-  let scoreColor, scoreLabel;
-  if      (score <= 30) { scoreColor = '#f87171'; scoreLabel = 'BULO PROBABLE'; }
-  else if (score <= 70) { scoreColor = '#fbbf24'; scoreLabel = 'VERIFICACIÓ NECESSÀRIA'; }
-  else                  { scoreColor = '#10d98a'; scoreLabel = 'INDICADORS FIABLES'; }
-
-  // Heatmap tags
-  const seen = new Set();
-  const uniqKW = detectedKW.filter(kw => {
-    if (seen.has(kw.word)) return false;
-    seen.add(kw.word); return true;
-  }).sort((a, b) => b.score - a.score);
-
-  function tagColor(s) {
-    if (s <= 3) return ['rgba(16,217,138,.12)', '#10d98a'];
-    if (s <= 6) return ['rgba(251,191,36,.12)',  '#fbbf24'];
-    if (s <= 8) return ['rgba(248,113,113,.12)', '#f87171'];
-    return              ['rgba(255,50,50,.18)',   '#ff4466'];
-  }
-
-  const heatTagsHtml = uniqKW.map(kw => {
-    const [bg, col] = tagColor(kw.score);
-    return `<span style="display:inline-flex;align-items:center;gap:5px;background:${bg};color:${col};border:1px solid ${col}44;border-radius:6px;padding:4px 9px;font-family:'Share Tech Mono',monospace;font-size:11px;font-weight:700;margin:3px">` +
-           `${kw.word}<span style="background:rgba(0,0,0,.3);border-radius:3px;padding:1px 4px;font-size:9px">T${kw.score}</span>` +
-           `<span style="font-size:10px">${kw.topicIcon}</span></span>`;
-  }).join('') || '<span style="font-family:Share Tech Mono,monospace;font-size:11px;color:#2e3650;padding:8px 0;display:block">Cap paraula clau detectada.</span>';
-
-  const varsHtml = det.map(v => `
-    <tr style="border-bottom:1px solid rgba(90,120,220,.08)">
-      <td style="padding:8px 10px;font-size:17px;text-align:center">${v.ico}</td>
-      <td style="padding:8px 10px;font-family:'Exo 2',sans-serif;font-weight:600;font-size:13px;color:#c8d0e8">${v.l}</td>
-      <td style="padding:8px 10px;font-family:'Share Tech Mono',monospace;font-size:10.5px;color:#6472a0">${v.d}</td>
-      <td style="padding:8px 10px;font-family:'Bebas Neue',sans-serif;font-size:18px;text-align:right;color:${v.t === 'neg' ? '#f87171' : '#10d98a'}">${v.p > 0 ? '+' : ''}${v.p}</td>
-    </tr>`).join('');
-
-  const bigramHtml = bigramesDetectats.map(b =>
-    `<div style="background:rgba(255,50,50,.08);border:1px solid rgba(255,50,50,.25);border-radius:8px;padding:8px 12px;` +
-    `font-family:'Share Tech Mono',monospace;font-size:11px;color:#ff7a8a;margin-top:6px">💥 ${b} → −30%</div>`
-  ).join('');
-
-  const verbHtml = verbsDetectats.length
-    ? `<div style="background:rgba(184,126,255,.08);border:1px solid rgba(184,126,255,.2);border-radius:8px;padding:8px 12px;` +
-      `font-family:'Share Tech Mono',monospace;font-size:11px;color:#b87eff;margin-top:6px">⚔️ Verbs d'atac: ${verbsDetectats.slice(0, 6).join(', ')}</div>`
-    : '';
-
-  const metaItems = [
-    ['SCAN ID', `#${scanId}`], ['DATA', dateStr], ['HORA', scanTs],
-    ['CARÀCTERS', text.length], ['TOXICITAT Σ', toxicityTotal],
-  ].map(([k, v]) =>
-    `<div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#6472a0">${k}: <span style="color:#c8d0e8">${v}</span></div>`
-  ).join('');
-
-  const html = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ca">
 <head>
-<meta charset="UTF-8"/>
-<title>Informe NEURONA #${scanId}</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Exo 2',sans-serif;background:#07090f;color:#c8d0e8;min-height:100vh;padding:36px 20px 60px;
-background-image:linear-gradient(rgba(34,211,238,.012) 1px,transparent 1px),linear-gradient(90deg,rgba(34,211,238,.012) 1px,transparent 1px);background-size:32px 32px}
-.report{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
-.card{border:1px solid rgba(90,120,220,.15);border-radius:14px;background:#0f1320;overflow:hidden}
-.card-hdr{padding:13px 20px;border-bottom:1px solid rgba(90,120,220,.1);background:#141828;display:flex;align-items:center;gap:10px}
-.card-hdr-ico{font-size:14px}
-.card-hdr-t{font-family:'Share Tech Mono',monospace;font-size:10.5px;color:#6472a0;letter-spacing:.1em;text-transform:uppercase}
-.card-body{padding:20px}
-@media print{body{background:#07090f!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.no-print{display:none}}
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NEURONA · Sistema d'Anàlisi Forense v6.1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Share+Tech+Mono&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-<div class="report">
+<div class="app">
 
-  <div class="no-print" style="text-align:right;margin-bottom:-8px">
-    <button onclick="window.print()" style="background:#1a1f30;color:#22d3ee;border:1px solid rgba(34,211,238,.3);border-radius:8px;padding:8px 16px;font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;letter-spacing:.06em">🖨️ IMPRIMIR / GUARDAR PDF</button>
-  </div>
-
-  <div class="card">
-    <div class="card-body" style="padding:28px">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#22d3ee;letter-spacing:.12em;margin-bottom:8px">▸ INFORME TÈCNIC FORENSE — NEURONA v6.1</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:.1em;color:#fff;line-height:1">WEIGHTED MATRIX ANALYSIS REPORT</div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#6472a0;letter-spacing:.07em;margin-top:6px">SISTEMA D'ANÀLISI DE MATRIU DE PESOS · data.json extern</div>
-      <div style="display:flex;gap:22px;margin-top:14px;flex-wrap:wrap">${metaItems}</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-body" style="text-align:center;padding:32px">
-      <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:#6472a0;letter-spacing:.1em;margin-bottom:12px">ÍNDEX DE FIABILITAT</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:96px;line-height:1;color:${scoreColor}">${score}<span style="font-size:22px;color:#6472a0">/100</span></div>
-      <div style="width:100%;max-width:420px;height:10px;background:#1a1f30;border-radius:5px;margin:16px auto;overflow:hidden">
-        <div style="height:100%;width:${score}%;background:${scoreColor};border-radius:5px"></div>
+  <!-- ════ HEADER ════════════════════════════════════════════ -->
+  <header class="header">
+    <div class="header__row">
+      <div class="header__brand">
+        <div class="logo">🧠</div>
+        <div>
+          <div class="brand-name">NEURONA</div>
+          <div class="brand-sub">WEIGHTED MATRIX ANALYSIS ENGINE v6.1</div>
+        </div>
       </div>
-      <div style="display:inline-block;font-family:'Exo 2',sans-serif;font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;padding:5px 20px;border-radius:20px;color:${scoreColor};background:${scoreColor}18;border:1px solid ${scoreColor}44">${scoreLabel}</div>
-      <div style="margin-top:12px;font-size:13px;color:#6472a0">Categoria: <strong style="color:#c8d0e8">${temaData ? temaData.icon + ' ' + temaData.nom : '⬡ General'}</strong> · To: <strong style="color:#c8d0e8">${to.label}</strong></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-hdr"><span class="card-hdr-ico">📄</span><span class="card-hdr-t">Text original analitzat</span></div>
-    <div class="card-body"><div style="font-size:14px;font-weight:300;line-height:1.75;color:#9298b0;font-style:italic;word-break:break-word">${text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>
-  </div>
-
-  <div class="card">
-    <div class="card-hdr"><span class="card-hdr-ico">🔥</span><span class="card-hdr-t">Mapa de calor · ${uniqKW.length} paraules detectades</span></div>
-    <div class="card-body">
-      <div style="display:flex;flex-wrap:wrap;gap:4px">${heatTagsHtml}</div>
-      <div style="font-family:'Share Tech Mono',monospace;font-size:9px;color:#6472a0;margin-top:12px;display:flex;gap:14px;flex-wrap:wrap">
-        <span>🟢 T1-3 (baix)</span><span>🟡 T4-6 (moderat)</span><span>🟠 T7-8 (alt)</span><span>🔴 T9-10 (crític)</span>
+      <div class="status-row">
+        <div class="status-dot"></div>
+        <span class="status-txt">CARREGANT...</span>
+        <span class="ver-badge">v6.1</span>
       </div>
-      ${verbHtml}${bigramHtml}
+    </div>
+  </header>
+
+  <!-- ════ LOADING OVERLAY (full-screen) ═════════════════════ -->
+  <div id="loadingOverlay">
+    <div class="loading-box">
+      <div class="loading-title">ANALITZANT...</div>
+      <div class="scan-line s1">
+        <div class="scan-dot"></div>
+        <span style="width:150px">Anàlisi local...</span>
+        <div class="scan-bar-wrap"><div class="scan-bar" id="sb1"></div></div>
+      </div>
+      <div class="scan-line s2">
+        <div class="scan-dot"></div>
+        <span style="width:150px">Detectant patrons...</span>
+        <div class="scan-bar-wrap"><div class="scan-bar" id="sb2"></div></div>
+      </div>
+      <div class="scan-line s3">
+        <div class="scan-dot"></div>
+        <span style="width:150px">IA externa (si cal)...</span>
+        <div class="scan-bar-wrap"><div class="scan-bar" id="sb3"></div></div>
+      </div>
+      <div class="scan-line s4">
+        <div class="scan-dot"></div>
+        <span style="width:150px">Computant resultat...</span>
+        <div class="scan-bar-wrap"><div class="scan-bar" id="sb4"></div></div>
+      </div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-hdr"><span class="card-hdr-ico">⬡</span><span class="card-hdr-t">Variables estructurals (${det.length})</span></div>
-    <div class="card-body" style="padding:0">
-      <table style="width:100%;border-collapse:collapse">
-        <thead><tr style="background:#141828;font-family:'Share Tech Mono',monospace;font-size:9px;color:#6472a0;letter-spacing:.07em">
-          <th style="padding:8px 10px;font-weight:400;text-align:left"></th>
-          <th style="padding:8px 10px;font-weight:400;text-align:left">VARIABLE</th>
-          <th style="padding:8px 10px;font-weight:400;text-align:left">DETALL</th>
-          <th style="padding:8px 10px;font-weight:400;text-align:right">IMPACTE</th>
-        </tr></thead>
-        <tbody>${varsHtml}</tbody>
-      </table>
+  <!-- ════ MAIN ═══════════════════════════════════════════════ -->
+  <main class="main">
+
+    <!-- Textarea input -->
+    <div class="inp-block">
+      <div class="sec-label">INPUT / Missatge a analitzar</div>
+      <div class="ta-wrap">
+        <textarea
+          id="msgInput"
+          maxlength="3000"
+          placeholder="Enganxa aquí el missatge sospitós per iniciar l'anàlisi de matriu de pesos..."
+          oninput="updateCount(this)"
+          aria-label="Missatge a analitzar"
+        ></textarea>
+        <div class="ta-bar">
+          <span class="char-ct" id="charCount">0 / 3000</span>
+          <span class="kbd-hint"><kbd>⌘</kbd>+<kbd>↵</kbd></span>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div style="text-align:center;font-family:'Share Tech Mono',monospace;font-size:9px;color:#2e3650;letter-spacing:.05em;line-height:1.9">
-    NEURONA v6.1 · WEIGHTED MATRIX ANALYSIS ENGINE<br>
-    ANÀLISI 100% LOCAL · CAP DADA ENVIADA A SERVIDORS EXTERNS<br>
-    Aquest informe és una eina orientativa. No substitueix la verificació humana experta.
-  </div>
+    <!-- Action buttons -->
+    <div class="btn-row">
+      <button class="btn-analyze" id="btnAnalyze" onclick="analyze()">
+        <span class="btn-ico">⬡</span>
+        <span class="btn-lbl">INICIAR ANÀLISI</span>
+        <div class="spinner"></div>
+      </button>
+      <button class="btn-clear" onclick="clearAll(true)">NETEJAR</button>
+    </div>
 
-</div>
+    <!-- ════ DASHBOARD ═══════════════════════════════════════ -->
+    <div class="dashboard" id="dashboard">
+
+      <!-- Scan header -->
+      <div class="scan-hdr">
+        <span class="scan-id">SCAN #<span id="scanId">0000</span></span>
+        <span class="scan-ts" id="scanTs">--:--:--</span>
+      </div>
+
+      <!-- Gauge: Índex de Fiabilitat -->
+      <div class="gauge-panel">
+        <div class="gauge-label-top">ÍNDEX DE FIABILITAT</div>
+        <svg class="gauge-svg" viewBox="0 0 300 165" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- Track fosc (fons) — única barra de fons -->
+          <path d="M 30,140 A 120,120 0 0 1 270,140" stroke="#1a1f30" stroke-width="14" stroke-linecap="round" fill="none"/>
+          <!-- Arc de resultat (JS controla color i longitud) -->
+          <path id="gaugeFill"
+            d="M 30,140 A 120,120 0 0 1 270,140"
+            stroke="#22d3ee" stroke-width="14" stroke-linecap="round" fill="none"
+            stroke-dasharray="376.99" stroke-dashoffset="376.99"
+            style="transition: stroke-dashoffset 1s cubic-bezier(.4,0,.2,1), stroke .5s ease"/>
+          <!-- Ticks dels extrems -->
+          <line x1="26"  y1="140" x2="18"  y2="140" stroke="#2e3650" stroke-width="1.5"/>
+          <line x1="274" y1="140" x2="282" y2="140" stroke="#2e3650" stroke-width="1.5"/>
+          <!-- Agulla (JS controla posició) -->
+          <line id="gaugeNeedle"
+            x1="150" y1="140" x2="60" y2="140"
+            stroke="#c8d0e8" stroke-width="2" stroke-linecap="round"
+            style="transform-origin: 150px 140px; transition: all 1s cubic-bezier(.4,0,.2,1)"/>
+          <!-- Punt central -->
+          <circle cx="150" cy="140" r="5" fill="#0f1320" stroke="#22d3ee" stroke-width="1.5"/>
+          <!-- Etiquetes numèriques -->
+          <text x="22"  y="157" font-family="Share Tech Mono" font-size="9" fill="#3d4560">0</text>
+          <text x="268" y="157" font-family="Share Tech Mono" font-size="9" fill="#3d4560">100</text>
+          <text x="84"  y="27"  font-family="Share Tech Mono" font-size="9" fill="#3d4560">30</text>
+          <text x="203" y="27"  font-family="Share Tech Mono" font-size="9" fill="#3d4560">70</text>
+        </svg>
+        <div class="gauge-score-wrap">
+          <span class="score-val" id="scoreVal" style="color:var(--cyan)">--</span>
+          <span class="score-unit">/100</span>
+        </div>
+        <div class="gauge-verdict" id="gaugeVerdict"></div>
+        <div class="gauge-zones">
+          <span class="zone-pill z-red">0–30 · BULO PROBABLE</span>
+          <span class="zone-pill z-amber">31–70 · VERIFICAR</span>
+          <span class="zone-pill z-green">71–100 · FIABLE</span>
+        </div>
+      </div>
+
+      <!-- Mapa de Calor -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-ico">🔥</span>
+          <span class="panel-title">Mapa de Calor · Paraules Clau Detectades</span>
+          <span class="panel-count" id="heatCount">0</span>
+        </div>
+        <div class="panel-body" id="heatBody"></div>
+      </div>
+
+      <!-- Variables Estructurals -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-ico">⬡</span>
+          <span class="panel-title">Variables Estructurals</span>
+          <span class="panel-count" id="varCount">0</span>
+        </div>
+        <div class="panel-body">
+          <div id="varList"></div>
+        </div>
+      </div>
+
+      <!-- Anàlisi de Context -->
+      <div class="panel">
+        <div class="panel-hdr">
+          <span class="panel-ico">◎</span>
+          <span class="panel-title">ANÀLISI DE CONTEXT</span>
+        </div>
+        <div class="panel-body">
+          <div class="ceba-grid" id="cebaGrid"></div>
+        </div>
+      </div>
+
+      <!-- Verificar a Google -->
+      <button class="btn-verify" onclick="verificarGoogle()">
+        <div>🔍 VERIFICAR · 3 CERQUES SIMULTÀNIES</div>
+        <div class="verify-sites">Google News · Fact-checkers · Google General</div>
+      </button>
+
+      <!-- Descarregar Informe -->
+      <button class="btn-download" onclick="descarregarInforme()">
+        📥 DESCARREGAR INFORME FORENSE (.html)
+      </button>
+
+      <!-- Anàlisi Profunda amb Claude -->
+      <button class="btn-claude" onclick="analisiProfunda()">
+        <div>🧠 ANÀLISI PROFUNDA AMB IA</div>
+        <div class="btn-claude-sub">Obre Claude·ai amb un prompt preparat · Gratuït</div>
+      </button>
+
+    </div><!-- /dashboard -->
+
+  </main>
+
+  <footer class="footer">
+    <div class="footer-txt">
+      NEURONA v6.1 · WEIGHTED MATRIX ENGINE · ANÀLISI 100% LOCAL · CAP DADA S'ENVIA A SERVIDORS EXTERNS
+    </div>
+  </footer>
+
+</div><!-- /app -->
+
+<script src="script.js"></script>
 </body>
-</html>`;
-
-  // Descàrrega via Blob — cap popup, cap window.open
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `neurona-informe-${scanId}-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.html`;
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1200);
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   6. UI HELPERS
-════════════════════════════════════════════════════════════════════ */
-function updateCount(el) {
-  document.getElementById('charCount').textContent = `${el.value.length} / ${el.maxLength}`;
-}
-
-function flashInput() {
-  const ta = document.getElementById('msgInput');
-  ta.focus();
-  ta.style.borderColor = 'rgba(248,113,113,.6)';
-  setTimeout(() => ta.style.borderColor = '', 1400);
-}
-
-function showLoading(on) {
-  const ov  = document.getElementById('loadingOverlay');
-  const btn = document.getElementById('btnAnalyze');
-  if (on) {
-    ov.classList.add('active');
-    btn.disabled = true;
-    btn.classList.add('loading');
-    // Anima barres
-    ['sb1','sb2','sb3','sb4'].forEach((id, i) => {
-      setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) { el.style.transition = 'width .9s ease'; el.style.width = ['68%','90%','55%','100%'][i]; }
-      }, i * 280 + 80);
-    });
-  } else {
-    ov.classList.remove('active');
-    btn.disabled = false;
-    btn.classList.remove('loading');
-    ['sb1','sb2','sb3','sb4'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.width = '0';
-    });
-  }
-}
-
-function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-/* ═══════════════════════════════════════════════════════════════════
-   MOTOR HÍBRID — Hugging Face Inference API (gratuïta)
-   Model: valurank/distilroberta-base-fake-news-climate (multilingüe)
-   S'activa NOMÉS quan el resultat local és inconclusiu (40-60%).
-   No necessita clau API ni servidor intermediari.
-════════════════════════════════════════════════════════════════════ */
-const HF_MODEL = 'valurank/distilroberta-base-fake-news-climate';
-const HF_URL   = `https://api-inference.huggingface.co/models/${HF_MODEL}`;
-
-// Models alternatius de fallback si el primer no respon
-const HF_FALLBACK = [
-  'mrm8488/bert-tiny-finetuned-fake-news-classification',
-  'hamzab/cnn-fake-news-detection',
-];
-
-async function consultarHuggingFace(text) {
-  // Trunca el text a 400 caràcters — suficient per classificar
-  const input = text.slice(0, 400);
-
-  const models = [HF_MODEL, ...HF_FALLBACK];
-
-  for (const model of models) {
-    try {
-      const url  = `https://api-inference.huggingface.co/models/${model}`;
-      const resp = await fetch(url, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ inputs: input }),
-      });
-
-      // Si el model encara s'està carregant (503), passa al següent
-      if (resp.status === 503) continue;
-      if (!resp.ok) continue;
-
-      const data = await resp.json();
-
-      // Hugging Face retorna [ [{label, score}, ...] ] o [{label, score}, ...]
-      const preds = Array.isArray(data[0]) ? data[0] : data;
-      if (!preds || !preds.length) continue;
-
-      // Busca l'etiqueta que indica "fake" o "LABEL_1" (depèn del model)
-      const fakeLabels = ['FAKE','fake','LABEL_1','misleading','unreliable','conspiracy'];
-      const realLabels = ['REAL','real','LABEL_0','reliable','credible','true'];
-
-      const fakeEntry = preds.find(p => fakeLabels.some(l => p.label?.toUpperCase().includes(l.toUpperCase())));
-      const realEntry = preds.find(p => realLabels.some(l => p.label?.toUpperCase().includes(l.toUpperCase())));
-
-      if (!fakeEntry && !realEntry) continue;
-
-      // Converteix la confiança del model a un ajust de la puntuació
-      // fakePct alt → text sospitós → baixa fiabilitat
-      const fakePct = fakeEntry ? fakeEntry.score : (realEntry ? 1 - realEntry.score : 0.5);
-      const conf    = Math.round(fakePct * 100);  // 0-100, on 100 = molt probablement fals
-
-      return {
-        ok:      true,
-        model,
-        fakePct: conf,       // probabilitat que sigui fals (0-100)
-        ajust:   Math.round((50 - conf) * 0.4),  // ajust al score: fake→negatiu, real→positiu
-      };
-    } catch (e) {
-      // Error de xarxa o CORS — prova el següent model
-      continue;
-    }
-  }
-
-  // Tots els models han fallat
-  return { ok: false };
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   7. ANÀLISI PRINCIPAL — Motor Híbrid
-   Fase 1: Anàlisi local (sempre, instantani)
-   Fase 2: Hugging Face (només si resultat inconclusiu 40-60%)
-════════════════════════════════════════════════════════════════════ */
-async function analyze() {
-  const input = document.getElementById('msgInput');
-  if (!input.value.trim()) { flashInput(); return; }
-  if (!DB) { alert('La base de dades encara s\'està carregant. Torna a intentar-ho.'); return; }
-
-  const text = input.value.trim();
-
-  // ── FASE 1: Anàlisi local ───────────────────────────────────────
-  resetUI();
-  showLoading(true);
-
-  // Actualitza el missatge de la barra de càrrega — Fase 1
-  const loadTitle = document.querySelector('.loading-title');
-  if (loadTitle) loadTitle.textContent = 'ANALITZANT...';
-
-  await delay(1500);
-
-  let result, to;
-  try {
-    result = calcularFiabilitat(text);
-    to     = analitzarTo(text);
-  } catch (err) {
-    console.error('[NEURONA] Error al càlcul:', err);
-    result = {
-      score: 50, det: [], detectedKW: [], bigramesDetectats: [], verbsDetectats: [],
-      temaData: null, riskTotal: 0, trustTotal: 0, toxicityTotal: 0, neutral: true, numAlarm: false
-    };
-    result.det.push({ t: 'neg', ico: '⚠️', l: 'Error intern', d: `El sistema ha trobat un problema: ${err.message}`, p: 0 });
-    to = { label: 'Indeterminat', cls: 'chip-unk' };
-  }
-
-  // ── FASE 2: Hugging Face (si resultat inconclusiu) ──────────────
-  const esInconclusiu = result.score >= 40 && result.score <= 60;
-
-  if (esInconclusiu) {
-    if (loadTitle) loadTitle.textContent = 'IA EXTERNA...';
-
-    // Canvia les barres per indicar una 2a fase
-    ['sb1','sb2','sb3','sb4'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) { el.style.transition = 'none'; el.style.width = '0'; }
-    });
-    await delay(200);
-    ['sb1','sb2','sb3','sb4'].forEach((id, i) => {
-      setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) { el.style.transition = 'width 1.2s ease'; el.style.width = ['45%','75%','90%','100%'][i]; }
-      }, i * 350);
-    });
-
-    const hf = await consultarHuggingFace(text);
-
-    if (hf.ok) {
-      // Aplica l'ajust al score
-      const scoreAnterior = result.score;
-      result.score = Math.max(5, Math.min(95, result.score + hf.ajust));
-
-      // Afegeix un chip explicatiu al detall
-      const ico    = hf.fakePct > 60 ? '🤖' : hf.fakePct < 40 ? '✅' : '🔄';
-      const label  = hf.fakePct > 60
-        ? `IA externa: probable desinformació (${hf.fakePct}% confiança)`
-        : hf.fakePct < 40
-          ? `IA externa: contingut probablement fiable (${100 - hf.fakePct}% confiança)`
-          : `IA externa: resultat inconclusiu (${hf.fakePct}% risc)`;
-
-      const ajustMostrat = result.score - scoreAnterior;
-      result.det.push({
-        t:   hf.fakePct > 50 ? 'neg' : 'pos',
-        ico,
-        l:   label,
-        d:   `Model: ${hf.model.split('/').pop()} · Ajust aplicat: ${ajustMostrat >= 0 ? '+' : ''}${ajustMostrat} pts`,
-        p:   ajustMostrat,
-      });
-
-      // Actualitza neutral si el nou score ja no és inconclusiu
-      if (result.score < 40 || result.score > 60) result.neutral = false;
-
-      console.info(`[NEURONA] HF ajust: ${scoreAnterior} → ${result.score} (fake: ${hf.fakePct}%)`);
-    } else {
-      // HF no disponible — avisa però no bloqueja
-      result.det.push({
-        t: 'neg', ico: '🌐',
-        l: 'IA externa no disponible',
-        d: 'El servei de Hugging Face no ha respost. Resultat basat únicament en anàlisi local.',
-        p: 0,
-      });
-      console.warn('[NEURONA] HF no disponible — mostrant resultat local');
-    }
-  }
-
-  showLoading(false);
-
-  // ── Finalitza i pinta ───────────────────────────────────────────
-  scanCounter++;
-  const scanId = scanCounter;
-  const scanTs = new Date().toLocaleTimeString('ca-ES');
-
-  document.getElementById('scanId').textContent = scanId;
-  document.getElementById('scanTs').textContent = scanTs;
-
-  lastResult = { ...result, text, to, scanId, scanTs };
-
-  renderGauge(result.score);
-  renderHeatmap(result.detectedKW, result.bigramesDetectats, result.verbsDetectats);
-  renderVariables(result.det);
-  renderContext(result.temaData, to, result.score, result.neutral, result.detectedKW.length);
-
-  const dash = document.getElementById('dashboard');
-  dash.classList.add('visible');
-  setTimeout(() => dash.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   ANÀLISI PROFUNDA AMB CLAUDE (gratuït via claude.ai)
-   Construeix un prompt forense preformat i obre Claude.ai
-   amb el text de l'usuari ja inclòs. No necessita API key.
-════════════════════════════════════════════════════════════════════ */
-function analisiProfunda() {
-  const text = document.getElementById('msgInput').value.trim();
-  if (!text) { flashInput(); return; }
-
-  // Resum del que el motor local ja ha detectat (per donar context a Claude)
-  let resumLocal = '';
-  if (lastResult) {
-    const { score, riskTotal, trustTotal, temaData } = lastResult;
-    resumLocal = `\n\nCONTEXT: El meu analitzador local ha obtingut una puntuació de fiabilitat de ${score}/100 (risc acumulat: ${riskTotal}, confiança: ${trustTotal})${temaData ? `, categoria detectada: ${temaData.nom}` : ''}.`;
-  }
-
-  // Prompt forense complet que enviem a Claude
-  const prompt =
-    `Ets un expert en verificació de fets i detecció de desinformació. ` +
-    `Analitza el text següent i respon en català amb:\n\n` +
-    `1. **Veredicte** (0-100): Quina probabilitat hi ha que sigui desinformació?\n` +
-    `2. **Indicadors de risc**: Quines frases o elements et semblen sospitosos?\n` +
-    `3. **Indicadors de credibilitat**: Hi ha elements que augmentin la confiança?\n` +
-    `4. **Context**: De quin tema tracta i quines fonts oficials es podrien consultar?\n` +
-    `5. **Recomanació**: Hauria l'usuari de compartir aquest contingut?\n\n` +
-    `TEXT A ANALITZAR:\n"${text}"` +
-    resumLocal;
-
-  // Obre claude.ai amb el prompt preomplert a la URL
-  const url = 'https://claude.ai/new?q=' + encodeURIComponent(prompt);
-  window.open(url, '_blank', 'noopener');
-}
-
-/* ═══════════════════════════════════════════════════════════════════
-   8. INICIALITZACIÓ — carrega data.json via fetch
-════════════════════════════════════════════════════════════════════ */
-async function init() {
-  const statusTxt = document.querySelector('.status-txt');
-  const statusDot = document.querySelector('.status-dot');
-
-  if (statusTxt) statusTxt.textContent = 'CARREGANT DB...';
-  if (statusDot) statusDot.style.background = '#fbbf24';
-
-  try {
-    const resp = await fetch('data.json');
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    DB = await resp.json();
-
-    const total = DB.categories.reduce((acc, c) => acc + c.lexemes.length, 0);
-    console.info(`[NEURONA] DB carregada: ${DB.categories.length} categories, ${total} lexemes, ${DB.verbs_atac.length} verbs d'atac, ${DB.bigrames_perill.length} bigrames`);
-
-    if (statusTxt) statusTxt.textContent = 'EN LÍNIA';
-    if (statusDot) { statusDot.style.background = '#10d98a'; statusDot.style.boxShadow = '0 0 6px #10d98a'; }
-  } catch (err) {
-    console.error('[NEURONA] Error carregant data.json:', err);
-    if (statusTxt) statusTxt.textContent = 'DB ERROR';
-    if (statusDot) { statusDot.style.background = '#f87171'; statusDot.style.boxShadow = '0 0 6px #f87171'; }
-    // Alerta no bloquejant
-    setTimeout(() => alert(
-      'No s\'ha pogut carregar data.json.\n' +
-      'Assegura\'t d\'obrir index.html des d\'un servidor web (no des del sistema de fitxers directament).\n\n' +
-      'Prova: python3 -m http.server 8000'
-    ), 500);
-  }
-}
-
-/* ── Escolta d'events ──────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
-  init();
-  document.addEventListener('keydown', e => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') analyze();
-  });
-});
+</html>
